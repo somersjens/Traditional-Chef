@@ -6,27 +6,17 @@
 //
 
 import SwiftUI
-import SwiftData
 
 @main
 struct Traditional_ChefApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    @StateObject private var recipeStore = RecipeStore()
+    @StateObject private var tipStore = TipStore()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(recipeStore)
+                .environmentObject(tipStore)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
