@@ -1,0 +1,107 @@
+"ok" = "OK";
+"done" = "Gereed";
+
+"welcome.title" = "Welkom bij Famous Chef!";
+"welcome.body" = "Ben je klaar voor wereldklasse recepten in je zak, met gemakken die een vaste boodschappenlijst of receptenboek nooit kan bieden. Maak je vertrouwd met alle bediening, en begin vandaag nog met koken. De app verzamelt geen data en heeft geen premium betaalde functies. Krijg je veel complimenten? Overweeg dan een fooi!";
+"welcome.startButton" = "Maak iets lekkers!";
+"welcome.alertTitle" = "Fooi";
+
+"tip.notConfigured" = "De fooi-producten zijn nog niet ingesteld in App Store Connect.";
+"tip.thanks" = "Dankjewel voor je fooi! ❤️";
+"tip.cancelled" = "Geen probleem — fooi geannuleerd.";
+
+"recipes.title" = "Recepten";
+"recipes.search" = "Zoek recept";
+"recipes.allCountries" = "Alle landen inbegrepen";
+"recipes.countryOnly" = "Landfilter";
+"recipes.pickCountry" = "Kies een land";
+"recipes.countryFilterTitle" = "Landen";
+"recipes.favoritesOnly" = "Alleen favorieten";
+
+"recipes.column.name" = "Recept";
+"recipes.column.time" = "Tijd";
+"recipes.column.cal" = "Cal";
+"recipes.column.ing" = "Ing";
+
+"recipes.noResults" = "Geen resultaten";
+"recipes.noResultsHint" = "Verwijder een filter om resultaten te krijgen, of probeer een andere zoekopdracht.";
+
+"category.breakfast" = "Ontbijt";
+"category.snack" = "Snack";
+"category.starter" = "Voorgerecht";
+"category.main" = "Hoofdgerecht";
+"category.dessert" = "Dessert";
+
+"recipe.groceryTitle" = "Boodschappenlijst";
+"recipe.stepsTitle" = "Stappen";
+"grocery.optional" = "Optioneel";
+"grocery.allCollected" = "Alles verzameld!";
+
+"grocery.sortLabel.useOrder" = "Volgorde";
+"grocery.sortLabel.grams" = "Meeste gram";
+"grocery.sortLabel.supermarket" = "Supermarkt";
+
+"grocery.sort.useOrder" = "Sorteer op gebruiksvolgorde";
+"grocery.sort.grams" = "Sorteer op hoogste gram";
+"grocery.sort.supermarket" = "Sorteer op supermarktlogica";
+
+"timer.title" = "Timer";
+"timer.remaining" = "Resterend";
+"timer.finished" = "Klaar";
+"timer.start" = "Start";
+"timer.pause" = "Pauze";
+"timer.reset" = "Reset";
+
+"aisle.vegetables" = "Groenten";
+"aisle.aromatics" = "Aromaten";
+"aisle.meat" = "Vlees";
+"aisle.canned" = "Blik";
+"aisle.dairy" = "Zuivel";
+"aisle.pantry" = "Voorraadkast";
+"aisle.spices" = "Kruiden";
+"aisle.other" = "Overig";
+
+/* Recept: Pasta Bolognese */
+"recipe.it.bolognese.name" = "Pasta Bolognese";
+
+"ingredient.pasta" = "Pasta";
+"ingredient.minced_meat" = "Gehakt (rund of half-om-half)";
+"ingredient.onion" = "Ui";
+"ingredient.carrot" = "Wortel";
+"ingredient.celery" = "Bleekselderij";
+"ingredient.garlic_optional" = "Knoflook";
+"ingredient.canned_tomatoes" = "Tomatenblokjes uit blik";
+"ingredient.tomato_paste" = "Tomatenpuree";
+"ingredient.beef_stock" = "Runderbouillon";
+"ingredient.red_wine_optional" = "Rode wijn";
+"ingredient.olive_oil" = "Olijfolie";
+"ingredient.bay_leaf" = "Laurierblad";
+"ingredient.oregano" = "Gedroogde oregano";
+"ingredient.salt_total" = "Zout (totaal)";
+"ingredient.black_pepper" = "Zwarte peper";
+"ingredient.butter_optional" = "Boter";
+"ingredient.parmesan_to_serve" = "Parmezaan (om te serveren)";
+
+"recipe.it.bolognese.step1.title" = "Groenten voorbereiden (10 min)";
+"recipe.it.bolognese.step1.body"  = "Snijd ui, wortel, bleekselderij (en knoflook als je dat gebruikt).";
+
+"recipe.it.bolognese.step2.title" = "Groenten bakken (8 min)";
+"recipe.it.bolognese.step2.body"  = "Verhit olijfolie in een grote pan. Voeg ui, wortel en bleekselderij toe. Bak tot zacht.";
+
+"recipe.it.bolognese.step3.title" = "Gehakt bakken (8 min)";
+"recipe.it.bolognese.step3.body"  = "Voeg het gehakt toe. Bak rul en mooi bruin.";
+
+"recipe.it.bolognese.step4.title" = "Tomatenpuree meebakken (2 min)";
+"recipe.it.bolognese.step4.body"  = "Roer tomatenpuree erdoor en bak 2 minuten mee.";
+
+"recipe.it.bolognese.step5.title" = "Blussen (3 min)";
+"recipe.it.bolognese.step5.body"  = "Schenk rode wijn erbij (of een scheut runderbouillon). Roer los en laat even pruttelen.";
+
+"recipe.it.bolognese.step6.title" = "Saus laten pruttelen (45 min)";
+"recipe.it.bolognese.step6.body"  = "Voeg tomatenblokjes, runderbouillon, laurier, oregano, zout en zwarte peper toe. Laat zachtjes pruttelen met deksel op een kier, af en toe roeren.";
+
+"recipe.it.bolognese.step7.title" = "Pasta koken (10–12 min)";
+"recipe.it.bolognese.step7.body"  = "Breng water aan de kook, voeg zout toe, kook pasta al dente. Giet af.";
+
+"recipe.it.bolognese.step8.title" = "Afmaken & serveren (2 min)";
+"recipe.it.bolognese.step8.body"  = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
