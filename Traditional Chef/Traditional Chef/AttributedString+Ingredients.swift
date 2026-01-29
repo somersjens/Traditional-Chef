@@ -18,7 +18,8 @@ extension AttributedString {
             guard !ing.isEmpty else { continue }
             // naive substring matching (works well for your current content)
             var searchRange = attr.startIndex..<attr.endIndex
-            while let range = attr.range(of: ing, options: [.caseInsensitive], range: searchRange) {
+            while searchRange.lowerBound < searchRange.upperBound,
+                  let range = attr[searchRange].range(of: ing, options: [.caseInsensitive], locale: nil) {
                 attr[range].font = .system(.body, design: .default).bold()
                 searchRange = range.upperBound..<attr.endIndex
             }
