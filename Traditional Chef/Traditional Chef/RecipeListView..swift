@@ -139,7 +139,7 @@ struct RecipeListView: View {
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 24)
         .padding(.top, 4)
     }
 
