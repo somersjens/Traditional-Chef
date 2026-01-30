@@ -7,8 +7,8 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
-    @Environment(\.locale) private var locale
     let recipe: Recipe
+    private var locale: Locale { AppLanguage.currentLocale }
 
     var body: some View {
         ScrollView {
@@ -88,7 +88,7 @@ private struct StepRowView: View {
     let ingredients: [Ingredient]
 
     @State private var showTimer: Bool = false
-    @Environment(\.locale) private var locale
+    private var locale: Locale { AppLanguage.currentLocale }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {

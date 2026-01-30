@@ -7,7 +7,7 @@ import SwiftUI
 
 struct GroceryListCard: View {
     let recipe: Recipe
-    @Environment(\.locale) private var locale
+    private var locale: Locale { AppLanguage.currentLocale }
 
     enum SortMode: String, CaseIterable {
         case useOrder

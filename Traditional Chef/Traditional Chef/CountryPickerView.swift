@@ -11,7 +11,7 @@ struct CountryPickerView: View {
     let onSelect: (String?) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.locale) private var locale
+    private var locale: Locale { AppLanguage.currentLocale }
 
     var body: some View {
         NavigationStack {

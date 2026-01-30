@@ -7,6 +7,7 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
 
     var body: some View {
         Group {
@@ -16,6 +17,7 @@ struct ContentView: View {
                 WelcomeView()
             }
         }
+        .environment(\.locale, Locale(identifier: appLanguage))
     }
 }
 

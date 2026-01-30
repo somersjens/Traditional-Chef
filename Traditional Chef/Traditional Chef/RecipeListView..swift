@@ -7,7 +7,6 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
-    @Environment(\.locale) private var locale
     @StateObject private var vm = RecipeListViewModel()
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
@@ -31,7 +30,7 @@ struct RecipeListView: View {
                         countryLabel: countryChipLabel,
                         isCountrySelected: vm.selectedCountryCode != nil,
                         onCountryTap: { showCountryPicker = true },
-                        locale: locale
+                        locale: AppLanguage.currentLocale
                     )
                     .padding(.top, 10)
 
@@ -102,7 +101,7 @@ struct RecipeListView: View {
         if let code = vm.selectedCountryCode {
             return FlagEmoji.from(countryCode: code)
         }
-        return AppLanguage.string("recipes.allCountriesShort", locale: locale)
+        return AppLanguage.string("recipes.allCountriesShort", locale: AppLanguage.currentLocale)
     }
 
     private var headerRow: some View {
@@ -141,7 +140,7 @@ struct RecipeListView: View {
                 arrowPlacement: .trailing,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.name", locale: locale))
+                Text(AppLanguage.string("recipes.column.name", locale: AppLanguage.currentLocale))
             } action: {
                 vm.setSort(.name)
             }
@@ -154,7 +153,7 @@ struct RecipeListView: View {
                 arrowPlacement: .leading,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.time", locale: locale))
+                Text(AppLanguage.string("recipes.column.time", locale: AppLanguage.currentLocale))
             } action: {
                 vm.setSort(.time)
             }
@@ -171,7 +170,7 @@ struct RecipeListView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
 
-            TextField(AppLanguage.string("recipes.search", locale: locale), text: $vm.searchText)
+            TextField(AppLanguage.string("recipes.search", locale: AppLanguage.currentLocale), text: $vm.searchText)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .foregroundStyle(AppTheme.textPrimary)
@@ -229,7 +228,7 @@ struct RecipeListView: View {
         if !vm.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             let query = vm.searchText.normalizedSearchKey
             list = list.filter { recipe in
-                let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale).normalizedSearchKey
+                let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: AppLanguage.currentLocale).normalizedSearchKey
                 let country = recipe.countryCode.normalizedSearchKey
                 return name.contains(query) || country.contains(query)
             }
@@ -257,8 +256,8 @@ struct RecipeListView: View {
             case .country:
                 result = a.countryCode < b.countryCode
             case .name:
-                let an = AppLanguage.string(String.LocalizationValue(a.nameKey), locale: locale)
-                let bn = AppLanguage.string(String.LocalizationValue(b.nameKey), locale: locale)
+                let an = AppLanguage.string(String.LocalizationValue(a.nameKey), locale: AppLanguage.currentLocale)
+                let bn = AppLanguage.string(String.LocalizationValue(b.nameKey), locale: AppLanguage.currentLocale)
                 result = an.localizedCaseInsensitiveCompare(bn) == .orderedAscending
             case .time:
                 result = a.approximateMinutes < b.approximateMinutes
@@ -299,14 +298,14 @@ struct RecipeListView: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: locale)))
+        .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: AppLanguage.currentLocale)))
         .confirmationDialog(
-            AppLanguage.string("language.selector", locale: locale),
+            AppLanguage.string("language.selector", locale: AppLanguage.currentLocale),
             isPresented: $showLanguagePicker,
             titleVisibility: .visible
         ) {
             ForEach(AppLanguage.supported) { option in
-                let label = "\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: locale))"
+                let label = "\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: AppLanguage.currentLocale))"
                 let isCurrent = appLanguage == option.code
                 Button(isCurrent ? "\(label) ✓" : label) {
                     appLanguage = option.code

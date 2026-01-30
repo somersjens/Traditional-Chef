@@ -8,8 +8,8 @@ import StoreKit
 
 struct WelcomeView: View {
     @EnvironmentObject private var tipStore: TipStore
-    @Environment(\.locale) private var locale
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
+    private var locale: Locale { AppLanguage.currentLocale }
 
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
