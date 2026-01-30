@@ -172,7 +172,9 @@ struct RecipeListView: View {
         }
 
         // Category filter
-        list = list.filter { vm.selectedCategories.contains($0.category) }
+        if !vm.selectedCategories.isEmpty {
+            list = list.filter { vm.selectedCategories.contains($0.category) }
+        }
 
         // Country filter
         if let cc = vm.selectedCountryCode {

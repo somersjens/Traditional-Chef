@@ -10,6 +10,10 @@ enum RecipeCategory: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    static var filterCategories: [RecipeCategory] {
+        [.starter, .main, .dessert]
+    }
+
     var localizedName: String {
         switch self {
         case .breakfast: return String(localized: "category.breakfast")

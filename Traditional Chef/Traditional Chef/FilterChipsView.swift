@@ -12,7 +12,7 @@ struct FilterChipsView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(RecipeCategory.allCases) { cat in
+                ForEach(RecipeCategory.filterCategories) { cat in
                     let isOn = selected.contains(cat)
                     Button {
                         onToggle(cat)

@@ -11,7 +11,7 @@ import SwiftUI
 final class RecipeListViewModel: ObservableObject {
     @Published var searchText: String = ""
 
-    @Published var selectedCategories: Set<RecipeCategory> = Set(RecipeCategory.allCases)
+    @Published var selectedCategories: Set<RecipeCategory> = []
     @Published var selectedCountryCode: String? = nil // nil = all countries
     @Published var favoritesOnly: Bool = false
 
@@ -29,9 +29,9 @@ final class RecipeListViewModel: ObservableObject {
             selectedCategories.insert(cat)
         }
 
-        // If last one is deselected -> select all automatically
-        if selectedCategories.isEmpty {
-            selectedCategories = Set(RecipeCategory.allCases)
+        let filterSet = Set(RecipeCategory.filterCategories)
+        if selectedCategories == filterSet {
+            selectedCategories.removeAll()
         }
     }
 
