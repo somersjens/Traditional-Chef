@@ -8,6 +8,7 @@ import SwiftUI
 struct RecipeListView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @StateObject private var vm = RecipeListViewModel()
+    @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
 
     @State private var showCountryPicker: Bool = false
 
@@ -50,9 +51,21 @@ struct RecipeListView: View {
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
             }
-            .navigationTitle(Text("recipes.title"))
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("recipes.search"))
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Button {
+                        hasSeenWelcome = false
+                    } label: {
+                        Text(appDisplayName)
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(AppTheme.primaryBlue)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("welcome.title"))
+                }
+            }
             .sheet(isPresented: $showCountryPicker) {
                 CountryPickerView(
                     allCountryCodes: allCountryCodes,
@@ -198,6 +211,12 @@ struct RecipeListView: View {
         }
 
         return list
+    }
+
+    private var appDisplayName: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
+            ?? "App"
     }
 }
 
