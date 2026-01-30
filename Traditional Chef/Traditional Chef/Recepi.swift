@@ -14,14 +14,18 @@ enum RecipeCategory: String, CaseIterable, Identifiable {
         [.starter, .main, .dessert]
     }
 
-    var localizedName: String {
+    func localizedName(in locale: Locale) -> String {
         switch self {
-        case .breakfast: return AppLanguage.string("category.breakfast")
-        case .snack:     return AppLanguage.string("category.snack")
-        case .starter:   return AppLanguage.string("category.starter")
-        case .main:      return AppLanguage.string("category.main")
-        case .dessert:   return AppLanguage.string("category.dessert")
+        case .breakfast: return AppLanguage.string("category.breakfast", locale: locale)
+        case .snack:     return AppLanguage.string("category.snack", locale: locale)
+        case .starter:   return AppLanguage.string("category.starter", locale: locale)
+        case .main:      return AppLanguage.string("category.main", locale: locale)
+        case .dessert:   return AppLanguage.string("category.dessert", locale: locale)
         }
+    }
+
+    var localizedName: String {
+        localizedName(in: AppLanguage.currentLocale)
     }
 }
 
@@ -72,17 +76,21 @@ enum GroceryAisle: Int, CaseIterable {
     case spices
     case other
 
-    var localizedName: String {
+    func localizedName(in locale: Locale) -> String {
         switch self {
-        case .vegetables: return AppLanguage.string("aisle.vegetables")
-        case .aromatics:  return AppLanguage.string("aisle.aromatics")
-        case .meat:       return AppLanguage.string("aisle.meat")
-        case .canned:     return AppLanguage.string("aisle.canned")
-        case .dairy:      return AppLanguage.string("aisle.dairy")
-        case .pantry:     return AppLanguage.string("aisle.pantry")
-        case .spices:     return AppLanguage.string("aisle.spices")
-        case .other:      return AppLanguage.string("aisle.other")
+        case .vegetables: return AppLanguage.string("aisle.vegetables", locale: locale)
+        case .aromatics:  return AppLanguage.string("aisle.aromatics", locale: locale)
+        case .meat:       return AppLanguage.string("aisle.meat", locale: locale)
+        case .canned:     return AppLanguage.string("aisle.canned", locale: locale)
+        case .dairy:      return AppLanguage.string("aisle.dairy", locale: locale)
+        case .pantry:     return AppLanguage.string("aisle.pantry", locale: locale)
+        case .spices:     return AppLanguage.string("aisle.spices", locale: locale)
+        case .other:      return AppLanguage.string("aisle.other", locale: locale)
         }
+    }
+
+    var localizedName: String {
+        localizedName(in: AppLanguage.currentLocale)
     }
 }
 

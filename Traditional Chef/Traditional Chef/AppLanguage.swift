@@ -21,8 +21,16 @@ enum AppLanguage {
 
     static func defaultCode() -> String {
         let locale = Locale.current
-        let languageCode = locale.language.languageCode?.identifier ?? locale.languageCode
-        let regionCode = locale.region?.identifier ?? locale.regionCode
+        let languageCode: String?
+        let regionCode: String?
+
+        if #available(iOS 16, *) {
+            languageCode = locale.language.languageCode?.identifier
+            regionCode = locale.region?.identifier
+        } else {
+            languageCode = locale.languageCode
+            regionCode = locale.regionCode
+        }
 
         if languageCode == "nl" || regionCode == "NL" {
             return "nl"
@@ -52,5 +60,13 @@ enum AppLanguage {
 
     static func string(_ key: String) -> String {
         String(localized: String.LocalizationValue(key), locale: currentLocale)
+    }
+
+    static func string(_ key: String.LocalizationValue, locale: Locale) -> String {
+        String(localized: key, locale: locale)
+    }
+
+    static func string(_ key: String, locale: Locale) -> String {
+        String(localized: String.LocalizationValue(key), locale: locale)
     }
 }

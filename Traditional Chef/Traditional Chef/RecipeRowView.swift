@@ -10,6 +10,7 @@ struct RecipeRowView: View {
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
+    @Environment(\.locale) private var locale
 
     var body: some View {
         HStack(spacing: 10) {
@@ -49,7 +50,7 @@ struct RecipeRowView: View {
     }
 
     private var highlightedName: AttributedString {
-        let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey))
+        let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
         var attributedName = AttributedString(name)
         attributedName.font = .headline
         attributedName.foregroundColor = AppTheme.textPrimary

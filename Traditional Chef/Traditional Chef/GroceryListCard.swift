@@ -7,6 +7,7 @@ import SwiftUI
 
 struct GroceryListCard: View {
     let recipe: Recipe
+    @Environment(\.locale) private var locale
 
     enum SortMode: String, CaseIterable {
         case useOrder
@@ -29,9 +30,9 @@ struct GroceryListCard: View {
                     Spacer()
 
                     Menu {
-                        Button(AppLanguage.string("grocery.sort.useOrder")) { sortMode = .useOrder }
-                        Button(AppLanguage.string("grocery.sort.grams")) { sortMode = .gramsDesc }
-                        Button(AppLanguage.string("grocery.sort.supermarket")) { sortMode = .supermarket }
+                        Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
+                        Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
+                        Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
                     } label: {
                         HStack(spacing: 6) {
                             Text(sortModeLabel)
@@ -83,9 +84,9 @@ struct GroceryListCard: View {
 
     private var sortModeLabel: String {
         switch sortMode {
-        case .useOrder: return AppLanguage.string("grocery.sortLabel.useOrder")
-        case .gramsDesc: return AppLanguage.string("grocery.sortLabel.grams")
-        case .supermarket: return AppLanguage.string("grocery.sortLabel.supermarket")
+        case .useOrder: return AppLanguage.string("grocery.sortLabel.useOrder", locale: locale)
+        case .gramsDesc: return AppLanguage.string("grocery.sortLabel.grams", locale: locale)
+        case .supermarket: return AppLanguage.string("grocery.sortLabel.supermarket", locale: locale)
         }
     }
 
@@ -128,7 +129,7 @@ struct GroceryListCard: View {
                     .foregroundStyle(AppTheme.primaryBlue)
                     .frame(width: 70, alignment: .leading)
 
-                Text(AppLanguage.string(String.LocalizationValue(ing.nameKey)))
+                Text(AppLanguage.string(String.LocalizationValue(ing.nameKey), locale: locale))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary)
 

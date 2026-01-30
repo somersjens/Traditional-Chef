@@ -7,11 +7,13 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
+    @Environment(\.locale) private var locale
     @StateObject private var vm = RecipeListViewModel()
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
 
     @State private var showCountryPicker: Bool = false
+    @State private var showLanguagePicker: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -28,7 +30,8 @@ struct RecipeListView: View {
                         },
                         countryLabel: countryChipLabel,
                         isCountrySelected: vm.selectedCountryCode != nil,
-                        onCountryTap: { showCountryPicker = true }
+                        onCountryTap: { showCountryPicker = true },
+                        locale: locale
                     )
                     .padding(.top, 10)
 
@@ -99,7 +102,7 @@ struct RecipeListView: View {
         if let code = vm.selectedCountryCode {
             return FlagEmoji.from(countryCode: code)
         }
-        return AppLanguage.string("recipes.allCountriesShort")
+        return AppLanguage.string("recipes.allCountriesShort", locale: locale)
     }
 
     private var headerRow: some View {
@@ -138,7 +141,7 @@ struct RecipeListView: View {
                 arrowPlacement: .trailing,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.name"))
+                Text(AppLanguage.string("recipes.column.name", locale: locale))
             } action: {
                 vm.setSort(.name)
             }
@@ -151,7 +154,7 @@ struct RecipeListView: View {
                 arrowPlacement: .leading,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.time"))
+                Text(AppLanguage.string("recipes.column.time", locale: locale))
             } action: {
                 vm.setSort(.time)
             }
@@ -168,7 +171,7 @@ struct RecipeListView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
 
-            TextField(AppLanguage.string("recipes.search"), text: $vm.searchText)
+            TextField(AppLanguage.string("recipes.search", locale: locale), text: $vm.searchText)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .foregroundStyle(AppTheme.textPrimary)
@@ -226,7 +229,7 @@ struct RecipeListView: View {
         if !vm.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             let query = vm.searchText.normalizedSearchKey
             list = list.filter { recipe in
-                let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey)).normalizedSearchKey
+                let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale).normalizedSearchKey
                 let country = recipe.countryCode.normalizedSearchKey
                 return name.contains(query) || country.contains(query)
             }
@@ -254,8 +257,8 @@ struct RecipeListView: View {
             case .country:
                 result = a.countryCode < b.countryCode
             case .name:
-                let an = AppLanguage.string(String.LocalizationValue(a.nameKey))
-                let bn = AppLanguage.string(String.LocalizationValue(b.nameKey))
+                let an = AppLanguage.string(String.LocalizationValue(a.nameKey), locale: locale)
+                let bn = AppLanguage.string(String.LocalizationValue(b.nameKey), locale: locale)
                 result = an.localizedCaseInsensitiveCompare(bn) == .orderedAscending
             case .time:
                 result = a.approximateMinutes < b.approximateMinutes
@@ -277,19 +280,8 @@ struct RecipeListView: View {
     }
 
     private var languageMenu: some View {
-        Menu {
-            ForEach(AppLanguage.supported) { option in
-                Button {
-                    appLanguage = option.code
-                } label: {
-                    HStack {
-                        Text("\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey))")
-                        if appLanguage == option.code {
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-            }
+        Button {
+            showLanguagePicker = true
         } label: {
             HStack(spacing: 6) {
                 Text(AppLanguage.flag(for: appLanguage))
@@ -306,7 +298,21 @@ struct RecipeListView: View {
                 Capsule().stroke(AppTheme.primaryBlue.opacity(0.15), lineWidth: 1)
             )
         }
-        .accessibilityLabel(Text(AppLanguage.string("language.selector")))
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: locale)))
+        .confirmationDialog(
+            AppLanguage.string("language.selector", locale: locale),
+            isPresented: $showLanguagePicker,
+            titleVisibility: .visible
+        ) {
+            ForEach(AppLanguage.supported) { option in
+                let label = "\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: locale))"
+                let isCurrent = appLanguage == option.code
+                Button(isCurrent ? "\(label) ✓" : label) {
+                    appLanguage = option.code
+                }
+            }
+        }
     }
 }
 

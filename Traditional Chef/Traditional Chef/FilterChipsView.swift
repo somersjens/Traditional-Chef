@@ -11,6 +11,7 @@ struct FilterChipsView: View {
     let countryLabel: String
     let isCountrySelected: Bool
     let onCountryTap: () -> Void
+    let locale: Locale
 
     var body: some View {
         GeometryReader { proxy in
@@ -27,7 +28,7 @@ struct FilterChipsView: View {
                     Button {
                         onToggle(cat)
                     } label: {
-                        chipLabel(text: cat.localizedName, isSelected: isOn, availableWidth: proxy.size.width)
+                        chipLabel(text: cat.localizedName(in: locale), isSelected: isOn, availableWidth: proxy.size.width)
                     }
                     .buttonStyle(.plain)
                 }

@@ -7,6 +7,7 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
+    @Environment(\.locale) private var locale
     let recipe: Recipe
 
     var body: some View {
@@ -21,7 +22,7 @@ struct RecipeDetailView: View {
             .padding(12)
         }
         .background(AppTheme.pageBackground)
-        .navigationTitle(Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey))))
+        .navigationTitle(Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -41,7 +42,7 @@ struct RecipeDetailView: View {
                 .font(.largeTitle)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey)))
+                Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale))
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(AppTheme.textPrimary)
 
@@ -87,6 +88,7 @@ private struct StepRowView: View {
     let ingredients: [Ingredient]
 
     @State private var showTimer: Bool = false
+    @Environment(\.locale) private var locale
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -96,12 +98,16 @@ private struct StepRowView: View {
                     .frame(width: 22, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(AppLanguage.string(String.LocalizationValue(step.titleKey)))
+                Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
 
-                let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey))
-                Text(AttributedString.boldIngredients(in: raw, ingredientKeys: ingredients.map { $0.nameKey }))
+                let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
+                Text(AttributedString.boldIngredients(
+                    in: raw,
+                    ingredientKeys: ingredients.map { $0.nameKey },
+                    locale: locale
+                ))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
             }

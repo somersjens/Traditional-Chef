@@ -64,6 +64,7 @@ struct CountryPickerView: View {
                             .background(AppTheme.searchBarBackground)
                             .clipShape(Capsule())
                     }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .principal) {
                     Text("recipes.countryFilterTitle")

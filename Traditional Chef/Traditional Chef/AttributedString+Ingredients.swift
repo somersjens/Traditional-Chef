@@ -9,9 +9,11 @@ import SwiftUI
 extension AttributedString {
     /// Bold ingredient mentions inside the step text.
     /// We match by the localized ingredient display names.
-    static func boldIngredients(in text: String, ingredientKeys: [String]) -> AttributedString {
+    static func boldIngredients(in text: String, ingredientKeys: [String], locale: Locale) -> AttributedString {
         var attr = AttributedString(text)
-        let localizedIngredients: [String] = ingredientKeys.map { AppLanguage.string(String.LocalizationValue($0)) }
+        let localizedIngredients: [String] = ingredientKeys.map {
+            AppLanguage.string(String.LocalizationValue($0), locale: locale)
+        }
             .sorted { $0.count > $1.count } // longer first to avoid partial overlaps
 
         for ing in localizedIngredients {

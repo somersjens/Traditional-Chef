@@ -8,6 +8,7 @@ import StoreKit
 
 struct WelcomeView: View {
     @EnvironmentObject private var tipStore: TipStore
+    @Environment(\.locale) private var locale
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
 
     @State private var showAlert: Bool = false
@@ -73,17 +74,17 @@ struct WelcomeView: View {
 
     private func buyTip(productID: String) async {
         guard let product = tipStore.product(for: productID) else {
-            alertMessage = AppLanguage.string("tip.notConfigured")
+            alertMessage = AppLanguage.string("tip.notConfigured", locale: locale)
             showAlert = true
             return
         }
         let success = await tipStore.buy(product)
         if success {
-            alertMessage = AppLanguage.string("tip.thanks")
+            alertMessage = AppLanguage.string("tip.thanks", locale: locale)
         } else if let msg = tipStore.lastErrorMessage {
             alertMessage = msg
         } else {
-            alertMessage = AppLanguage.string("tip.cancelled")
+            alertMessage = AppLanguage.string("tip.cancelled", locale: locale)
         }
         showAlert = true
     }
