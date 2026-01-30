@@ -16,11 +16,11 @@ enum RecipeCategory: String, CaseIterable, Identifiable {
 
     var localizedName: String {
         switch self {
-        case .breakfast: return String(localized: "category.breakfast")
-        case .snack:     return String(localized: "category.snack")
-        case .starter:   return String(localized: "category.starter")
-        case .main:      return String(localized: "category.main")
-        case .dessert:   return String(localized: "category.dessert")
+        case .breakfast: return AppLanguage.string("category.breakfast")
+        case .snack:     return AppLanguage.string("category.snack")
+        case .starter:   return AppLanguage.string("category.starter")
+        case .main:      return AppLanguage.string("category.main")
+        case .dessert:   return AppLanguage.string("category.dessert")
         }
     }
 }
@@ -74,14 +74,14 @@ enum GroceryAisle: Int, CaseIterable {
 
     var localizedName: String {
         switch self {
-        case .vegetables: return String(localized: "aisle.vegetables")
-        case .aromatics:  return String(localized: "aisle.aromatics")
-        case .meat:       return String(localized: "aisle.meat")
-        case .canned:     return String(localized: "aisle.canned")
-        case .dairy:      return String(localized: "aisle.dairy")
-        case .pantry:     return String(localized: "aisle.pantry")
-        case .spices:     return String(localized: "aisle.spices")
-        case .other:      return String(localized: "aisle.other")
+        case .vegetables: return AppLanguage.string("aisle.vegetables")
+        case .aromatics:  return AppLanguage.string("aisle.aromatics")
+        case .meat:       return AppLanguage.string("aisle.meat")
+        case .canned:     return AppLanguage.string("aisle.canned")
+        case .dairy:      return AppLanguage.string("aisle.dairy")
+        case .pantry:     return AppLanguage.string("aisle.pantry")
+        case .spices:     return AppLanguage.string("aisle.spices")
+        case .other:      return AppLanguage.string("aisle.other")
         }
     }
 }

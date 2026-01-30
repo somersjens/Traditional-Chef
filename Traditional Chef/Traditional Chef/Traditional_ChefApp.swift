@@ -11,12 +11,14 @@ import SwiftUI
 struct Traditional_ChefApp: App {
     @StateObject private var recipeStore = RecipeStore()
     @StateObject private var tipStore = TipStore()
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(recipeStore)
                 .environmentObject(tipStore)
+                .environment(\.locale, Locale(identifier: appLanguage))
         }
     }
 }

@@ -21,7 +21,7 @@ struct RecipeDetailView: View {
             .padding(12)
         }
         .background(AppTheme.pageBackground)
-        .navigationTitle(Text(String(localized: String.LocalizationValue(recipe.nameKey))))
+        .navigationTitle(Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey))))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -41,7 +41,7 @@ struct RecipeDetailView: View {
                 .font(.largeTitle)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: String.LocalizationValue(recipe.nameKey)))
+                Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey)))
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(AppTheme.textPrimary)
 
@@ -90,17 +90,17 @@ private struct StepRowView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("\(step.stepNumber)")
-                .font(.headline.weight(.bold))
-                .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 22, alignment: .leading)
+                Text("\(step.stepNumber)")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 22, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: String.LocalizationValue(step.titleKey)))
+                Text(AppLanguage.string(String.LocalizationValue(step.titleKey)))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
 
-                let raw = String(localized: String.LocalizationValue(step.bodyKey))
+                let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey))
                 Text(AttributedString.boldIngredients(in: raw, ingredientKeys: ingredients.map { $0.nameKey }))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))

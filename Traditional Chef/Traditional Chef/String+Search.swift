@@ -8,7 +8,7 @@ import Foundation
 extension String {
     /// Lowercased, diacritics-insensitive, and removes all spaces so "bolo gnese" matches "bolognese".
     var normalizedSearchKey: String {
-        let lowered = self.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        let lowered = self.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: AppLanguage.currentLocale)
         let noSpaces = lowered.replacingOccurrences(of: " ", with: "")
         return noSpaces.trimmingCharacters(in: .whitespacesAndNewlines)
     }

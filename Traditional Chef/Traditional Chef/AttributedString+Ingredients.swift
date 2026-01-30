@@ -11,7 +11,7 @@ extension AttributedString {
     /// We match by the localized ingredient display names.
     static func boldIngredients(in text: String, ingredientKeys: [String]) -> AttributedString {
         var attr = AttributedString(text)
-        let localizedIngredients: [String] = ingredientKeys.map { String(localized: String.LocalizationValue($0)) }
+        let localizedIngredients: [String] = ingredientKeys.map { AppLanguage.string(String.LocalizationValue($0)) }
             .sorted { $0.count > $1.count } // longer first to avoid partial overlaps
 
         for ing in localizedIngredients {

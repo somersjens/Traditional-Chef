@@ -29,9 +29,9 @@ struct GroceryListCard: View {
                     Spacer()
 
                     Menu {
-                        Button(String(localized: "grocery.sort.useOrder")) { sortMode = .useOrder }
-                        Button(String(localized: "grocery.sort.grams")) { sortMode = .gramsDesc }
-                        Button(String(localized: "grocery.sort.supermarket")) { sortMode = .supermarket }
+                        Button(AppLanguage.string("grocery.sort.useOrder")) { sortMode = .useOrder }
+                        Button(AppLanguage.string("grocery.sort.grams")) { sortMode = .gramsDesc }
+                        Button(AppLanguage.string("grocery.sort.supermarket")) { sortMode = .supermarket }
                     } label: {
                         HStack(spacing: 6) {
                             Text(sortModeLabel)
@@ -83,9 +83,9 @@ struct GroceryListCard: View {
 
     private var sortModeLabel: String {
         switch sortMode {
-        case .useOrder: return String(localized: "grocery.sortLabel.useOrder")
-        case .gramsDesc: return String(localized: "grocery.sortLabel.grams")
-        case .supermarket: return String(localized: "grocery.sortLabel.supermarket")
+        case .useOrder: return AppLanguage.string("grocery.sortLabel.useOrder")
+        case .gramsDesc: return AppLanguage.string("grocery.sortLabel.grams")
+        case .supermarket: return AppLanguage.string("grocery.sortLabel.supermarket")
         }
     }
 
@@ -128,7 +128,7 @@ struct GroceryListCard: View {
                     .foregroundStyle(AppTheme.primaryBlue)
                     .frame(width: 70, alignment: .leading)
 
-                Text(String(localized: String.LocalizationValue(ing.nameKey)))
+                Text(AppLanguage.string(String.LocalizationValue(ing.nameKey)))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary)
 

@@ -11,6 +11,7 @@ struct CountryPickerView: View {
     let onSelect: (String?) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
 
     var body: some View {
         NavigationStack {
@@ -74,6 +75,6 @@ struct CountryPickerView: View {
     }
 
     private func countryName(for code: String) -> String {
-        Locale.current.localizedString(forRegionCode: code) ?? code
+        locale.localizedString(forRegionCode: code) ?? code
     }
 }

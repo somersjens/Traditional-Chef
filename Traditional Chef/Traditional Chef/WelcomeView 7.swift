@@ -73,17 +73,17 @@ struct WelcomeView: View {
 
     private func buyTip(productID: String) async {
         guard let product = tipStore.product(for: productID) else {
-            alertMessage = String(localized: "tip.notConfigured")
+            alertMessage = AppLanguage.string("tip.notConfigured")
             showAlert = true
             return
         }
         let success = await tipStore.buy(product)
         if success {
-            alertMessage = String(localized: "tip.thanks")
+            alertMessage = AppLanguage.string("tip.thanks")
         } else if let msg = tipStore.lastErrorMessage {
             alertMessage = msg
         } else {
-            alertMessage = String(localized: "tip.cancelled")
+            alertMessage = AppLanguage.string("tip.cancelled")
         }
         showAlert = true
     }

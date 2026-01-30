@@ -49,7 +49,7 @@ struct RecipeRowView: View {
     }
 
     private var highlightedName: AttributedString {
-        let name = String(localized: String.LocalizationValue(recipe.nameKey))
+        let name = AppLanguage.string(String.LocalizationValue(recipe.nameKey))
         var attributedName = AttributedString(name)
         attributedName.font = .headline
         attributedName.foregroundColor = AppTheme.textPrimary
