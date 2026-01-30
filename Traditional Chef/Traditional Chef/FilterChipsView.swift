@@ -13,21 +13,12 @@ struct FilterChipsView: View {
     let onCountryTap: () -> Void
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+        GeometryReader { proxy in
+            HStack(spacing: 7) {
                 Button {
                     onCountryTap()
                 } label: {
-                    Text(countryLabel)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(AppTheme.secondaryOffWhite)
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule().stroke(AppTheme.primaryBlue.opacity(isCountrySelected ? 0.6 : 0.18), lineWidth: isCountrySelected ? 2 : 1)
-                        )
+                    chipLabel(text: countryLabel, isSelected: isCountrySelected, availableWidth: proxy.size.width)
                 }
                 .buttonStyle(.plain)
 
@@ -36,22 +27,36 @@ struct FilterChipsView: View {
                     Button {
                         onToggle(cat)
                     } label: {
-                        Text(cat.localizedName)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(AppTheme.secondaryOffWhite)
-                            .clipShape(Capsule())
-                            .overlay(
-                                Capsule().stroke(AppTheme.primaryBlue.opacity(isOn ? 0.6 : 0.18), lineWidth: isOn ? 2 : 1)
-                            )
+                        chipLabel(text: cat.localizedName, isSelected: isOn, availableWidth: proxy.size.width)
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 16)
             .padding(.vertical, 4)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
+        .frame(height: 40)
+    }
+
+    private func chipLabel(text: String, isSelected: Bool, availableWidth: CGFloat) -> some View {
+        Text(text)
+            .font(chipFont(for: availableWidth))
+            .foregroundStyle(isSelected ? AppTheme.pageBackground : AppTheme.primaryBlue)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(isSelected ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
+            .clipShape(Capsule())
+            .overlay(
+                Capsule().stroke(AppTheme.primaryBlue.opacity(isSelected ? 0.6 : 0.18), lineWidth: isSelected ? 2 : 1)
+            )
+    }
+
+    private func chipFont(for availableWidth: CGFloat) -> Font {
+        let compactThreshold: CGFloat = 350
+        return availableWidth < compactThreshold
+            ? .footnote.weight(.semibold)
+            : .subheadline.weight(.semibold)
     }
 }
