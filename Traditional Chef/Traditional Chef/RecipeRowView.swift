@@ -9,6 +9,7 @@ struct RecipeRowView: View {
     let recipe: Recipe
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
+    let searchText: String
 
     var body: some View {
         HStack(spacing: 10) {
@@ -16,9 +17,7 @@ struct RecipeRowView: View {
                 .font(.title3)
                 .frame(width: 34, alignment: .leading)
 
-            Text(String(localized: String.LocalizationValue(recipe.nameKey)))
-                .font(.headline)
-                .foregroundStyle(AppTheme.textPrimary)
+            Text(highlightedName)
                 .lineLimit(2)
                 .truncationMode(.tail)
 
@@ -48,5 +47,42 @@ struct RecipeRowView: View {
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
             .frame(width: width, alignment: .trailing)
+    }
+
+    private var highlightedName: AttributedString {
+        let name = String(localized: String.LocalizationValue(recipe.nameKey))
+        var attributedName = AttributedString(name)
+        attributedName.font = .headline
+        attributedName.foregroundColor = AppTheme.textPrimary
+
+        let trimmedSearch = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSearch.isEmpty else {
+            return attributedName
+        }
+
+        var tokens = trimmedSearch
+            .split(whereSeparator: \.isWhitespace)
+            .map { String($0) }
+        let normalizedSearch = trimmedSearch.normalizedSearchKey
+        if tokens.isEmpty, !normalizedSearch.isEmpty {
+            tokens = [normalizedSearch]
+        } else if !normalizedSearch.isEmpty, !tokens.contains(normalizedSearch) {
+            tokens.append(normalizedSearch)
+        }
+
+        for token in tokens {
+            var searchRange = attributedName.startIndex..<attributedName.endIndex
+            while searchRange.lowerBound < searchRange.upperBound,
+                  let range = attributedName[searchRange].range(
+                    of: token,
+                    options: [.caseInsensitive],
+                    locale: nil
+                  ) {
+                attributedName[range].foregroundColor = AppTheme.searchHighlight
+                searchRange = range.upperBound..<attributedName.endIndex
+            }
+        }
+
+        return attributedName
     }
 }

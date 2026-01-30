@@ -35,7 +35,8 @@ struct RecipeListView: View {
                                         RecipeRowView(
                                             recipe: recipe,
                                             isFavorite: recipeStore.isFavorite(recipe),
-                                            onToggleFavorite: { recipeStore.toggleFavorite(recipe) }
+                                            onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
+                                            searchText: vm.searchText
                                         )
                                     }
                                     .buttonStyle(.plain)
