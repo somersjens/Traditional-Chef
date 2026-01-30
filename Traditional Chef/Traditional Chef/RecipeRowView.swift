@@ -13,9 +13,16 @@ struct RecipeRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
+            Button(action: onToggleFavorite) {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
+                    .frame(width: 26, alignment: .center)
+            }
+            .buttonStyle(.plain)
+
             Text(FlagEmoji.from(countryCode: recipe.countryCode))
                 .font(.title3)
-                .frame(width: 34, alignment: .leading)
+                .frame(width: 34, alignment: .center)
 
             Text(highlightedName)
                 .lineLimit(2)
@@ -23,15 +30,7 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            HStack(spacing: 12) {
-                meta("\(recipe.approximateMinutes)", width: 44)
-
-                Button(action: onToggleFavorite) {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
-                }
-                .buttonStyle(.plain)
-            }
+            meta("\(recipe.approximateMinutes)", width: 44)
         }
         .padding(12)
         .background(AppTheme.cardBackground)
@@ -44,7 +43,7 @@ struct RecipeRowView: View {
 
     private func meta(_ text: String, width: CGFloat) -> some View {
         Text(text)
-            .font(.subheadline.weight(.semibold))
+            .font(.headline.weight(.semibold))
             .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
             .frame(width: width, alignment: .trailing)
     }

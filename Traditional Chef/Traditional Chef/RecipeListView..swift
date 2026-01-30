@@ -98,21 +98,6 @@ struct RecipeListView: View {
             }
             .buttonStyle(.plain)
 
-            Spacer()
-
-            Button {
-                // Favorites only: if no favorites exist, keep showing all (rule)
-                vm.favoritesOnly.toggle()
-            } label: {
-                Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                    .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue)
-                    .padding(10)
-                    .background(AppTheme.secondaryOffWhite)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(AppTheme.primaryBlue.opacity(0.12), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text("recipes.favoritesOnly"))
         }
         .padding(.horizontal, 12)
         .padding(.top, 10)
@@ -120,12 +105,23 @@ struct RecipeListView: View {
 
     private var headerRow: some View {
         HStack(spacing: 8) {
+            Button {
+                // Favorites only: if no favorites exist, keep showing all (rule)
+                vm.favoritesOnly.toggle()
+            } label: {
+                Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
+                    .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
+                    .frame(width: 26, alignment: .center)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("recipes.favoritesOnly"))
+
             SortHeaderButton(
                 title: "🇺🇳",
                 isActive: vm.sortKey == .country,
                 isAscending: vm.ascending
             ) { vm.setSort(.country) }
-                .frame(width: 44, alignment: .leading)
+                .frame(width: 34, alignment: .center)
 
             SortHeaderButton(
                 title: String(localized: "recipes.column.name"),
