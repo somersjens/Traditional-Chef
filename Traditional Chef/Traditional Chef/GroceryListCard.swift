@@ -44,7 +44,7 @@ struct GroceryListCard: View {
                     }
                 }
 
-                Grid(horizontalSpacing: 6, verticalSpacing: 8) {
+                VStack(alignment: .leading, spacing: 8) {
                     ForEach(uncheckedIngredients) { ing in
                         ingredientRow(ing, isChecked: false)
                     }
@@ -53,7 +53,7 @@ struct GroceryListCard: View {
                 if !checkedIngredients.isEmpty {
                     Divider().overlay(AppTheme.hairline)
 
-                    Grid(horizontalSpacing: 6, verticalSpacing: 8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         ForEach(checkedIngredients) { ing in
                             ingredientRow(ing, isChecked: true)
                                 .opacity(0.65)
@@ -116,7 +116,7 @@ struct GroceryListCard: View {
     }
 
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {
-        GridRow {
+        HStack(spacing: 8) {
             HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(ing.nameKey), locale: locale))
                     .font(.body)
@@ -132,23 +132,21 @@ struct GroceryListCard: View {
                         .clipShape(Capsule())
                 }
             }
-            .gridColumnAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(gramsValueString(ing.grams))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
                 .frame(width: 44, alignment: .trailing)
-                .gridColumnAlignment(.trailing)
 
             Text(gramsUnitString(ing.grams))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
                 .frame(width: 28, alignment: .leading)
-                .gridColumnAlignment(.leading)
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
-                .gridColumnAlignment(.trailing)
+                .frame(width: 24, alignment: .trailing)
         }
         .contentShape(Rectangle())
         .onTapGesture {
