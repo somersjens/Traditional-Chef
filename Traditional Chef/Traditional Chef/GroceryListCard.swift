@@ -7,7 +7,8 @@ import SwiftUI
 
 struct GroceryListCard: View {
     let recipe: Recipe
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     enum SortMode: String, CaseIterable {
         case useOrder
@@ -23,7 +24,7 @@ struct GroceryListCard: View {
         ZStack {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text("recipe.groceryTitle")
+                    Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
 
@@ -66,7 +67,7 @@ struct GroceryListCard: View {
             )
 
             if showCelebration {
-                CelebrationOverlay()
+                CelebrationOverlay(locale: locale)
                     .transition(.opacity)
             }
         }
@@ -134,7 +135,7 @@ struct GroceryListCard: View {
                     .foregroundStyle(AppTheme.textPrimary)
 
                 if ing.isOptional {
-                    Text("grocery.optional")
+                    Text(AppLanguage.string("grocery.optional", locale: locale))
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
                         .padding(.horizontal, 8)
@@ -162,6 +163,7 @@ struct GroceryListCard: View {
 }
 
 private struct CelebrationOverlay: View {
+    let locale: Locale
     @State private var pop: Bool = false
 
     var body: some View {
@@ -174,7 +176,7 @@ private struct CelebrationOverlay: View {
                     .font(.system(size: 44))
                     .scaleEffect(pop ? 1.15 : 0.8)
 
-                Text("grocery.allCollected")
+                Text(AppLanguage.string("grocery.allCollected", locale: locale))
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
                     .opacity(pop ? 1 : 0.3)

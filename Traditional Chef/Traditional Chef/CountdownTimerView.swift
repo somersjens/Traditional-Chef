@@ -10,6 +10,8 @@ struct CountdownTimerView: View {
     let initialSeconds: Int
 
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     @State private var isRunning: Bool = false
     @State private var secondsLeft: Int
@@ -44,7 +46,7 @@ struct CountdownTimerView: View {
                             .monospacedDigit()
                             .foregroundStyle(AppTheme.primaryBlue)
 
-                        Text(isFinished ? "timer.finished" : "timer.remaining")
+                        Text(AppLanguage.string(isFinished ? "timer.finished" : "timer.remaining", locale: locale))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
                     }
@@ -56,7 +58,7 @@ struct CountdownTimerView: View {
                     Button {
                         reset()
                     } label: {
-                        Text("timer.reset")
+                        Text(AppLanguage.string("timer.reset", locale: locale))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(AppTheme.primaryBlue.opacity(0.10))
@@ -67,7 +69,7 @@ struct CountdownTimerView: View {
                     Button {
                         toggleRun()
                     } label: {
-                        Text(isRunning ? "timer.pause" : "timer.start")
+                        Text(AppLanguage.string(isRunning ? "timer.pause" : "timer.start", locale: locale))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(AppTheme.primaryBlue)
@@ -80,11 +82,11 @@ struct CountdownTimerView: View {
                 Spacer()
             }
             .background(AppTheme.pageBackground.ignoresSafeArea())
-            .navigationTitle(Text("timer.title"))
+            .navigationTitle(Text(AppLanguage.string("timer.title", locale: locale)))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("done") { dismiss() }
+                    Button(AppLanguage.string("done", locale: locale)) { dismiss() }
                 }
             }
             .onReceive(tick) { _ in

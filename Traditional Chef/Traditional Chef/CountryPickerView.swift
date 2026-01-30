@@ -11,7 +11,8 @@ struct CountryPickerView: View {
     let onSelect: (String?) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
         NavigationStack {
@@ -21,14 +22,14 @@ struct CountryPickerView: View {
                     dismiss()
                 } label: {
                     HStack {
-                        Text("recipes.allCountries")
+                        Text(AppLanguage.string("recipes.allCountries", locale: locale))
                         Spacer()
                         if selected == nil { Image(systemName: "checkmark") }
                     }
                 }
                 .listRowBackground(AppTheme.searchBarBackground)
 
-                Section("recipes.pickCountry") {
+                Section(AppLanguage.string("recipes.pickCountry", locale: locale)) {
                     ForEach(allCountryCodes, id: \.self) { code in
                         Button {
                             onSelect(code)
@@ -57,7 +58,7 @@ struct CountryPickerView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("done")
+                        Text(AppLanguage.string("done", locale: locale))
                             .font(.subheadline.weight(.semibold))
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -67,7 +68,7 @@ struct CountryPickerView: View {
                     .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .principal) {
-                    Text("recipes.countryFilterTitle")
+                    Text(AppLanguage.string("recipes.countryFilterTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                 }

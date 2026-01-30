@@ -10,7 +10,8 @@ struct RecipeRowView: View {
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
         HStack(spacing: 10) {

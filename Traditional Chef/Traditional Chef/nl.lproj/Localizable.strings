@@ -15,6 +15,7 @@
 
 "recipes.title" = "Recepten";
 "recipes.search" = "Zoek recept";
+"recipes.search.clear" = "Zoekopdracht wissen";
 "recipes.allCountries" = "Alle landen inbegrepen";
 "recipes.allCountriesShort" = "Alle 🌍";
 "recipes.countryOnly" = "Landfilter";

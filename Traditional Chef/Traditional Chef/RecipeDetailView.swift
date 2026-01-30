@@ -8,7 +8,8 @@ import SwiftUI
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     let recipe: Recipe
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
         ScrollView {
@@ -63,7 +64,7 @@ struct RecipeDetailView: View {
 
     private var stepsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("recipe.stepsTitle")
+            Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
                 .font(.headline)
                 .foregroundStyle(AppTheme.textPrimary)
 
@@ -88,7 +89,8 @@ private struct StepRowView: View {
     let ingredients: [Ingredient]
 
     @State private var showTimer: Bool = false
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {

@@ -15,6 +15,7 @@
 
 "recipes.title" = "Recipes";
 "recipes.search" = "Search recipes";
+"recipes.search.clear" = "Clear search";
 "recipes.allCountries" = "All countries included";
 "recipes.allCountriesShort" = "All 🌍";
 "recipes.countryOnly" = "Country filter";

@@ -81,7 +81,7 @@ struct RecipeListView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(Text("welcome.title"))
+                    .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: AppLanguage.currentLocale)))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     languageMenu
@@ -115,7 +115,7 @@ struct RecipeListView: View {
                     .frame(width: 26, alignment: .center)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("recipes.favoritesOnly"))
+            .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: AppLanguage.currentLocale)))
 
             SortHeaderButton(
                 isActive: vm.sortKey == .country,
@@ -183,7 +183,7 @@ struct RecipeListView: View {
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.6))
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text("Clear search"))
+                .accessibilityLabel(Text(AppLanguage.string("recipes.search.clear", locale: AppLanguage.currentLocale)))
             }
         }
         .padding(.vertical, 10)
@@ -203,11 +203,11 @@ struct RecipeListView: View {
                 .font(.system(size: 34))
                 .foregroundStyle(AppTheme.primaryBlue)
 
-            Text("recipes.noResults")
+            Text(AppLanguage.string("recipes.noResults", locale: AppLanguage.currentLocale))
                 .font(.headline)
                 .foregroundStyle(AppTheme.textPrimary)
 
-            Text("recipes.noResultsHint")
+            Text(AppLanguage.string("recipes.noResultsHint", locale: AppLanguage.currentLocale))
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.textPrimary)
                 .multilineTextAlignment(.center)

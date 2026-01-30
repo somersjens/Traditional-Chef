@@ -28,8 +28,9 @@ enum AppLanguage {
             languageCode = locale.language.languageCode?.identifier
             regionCode = locale.region?.identifier
         } else {
-            languageCode = locale.languageCode
-            regionCode = locale.regionCode
+            let parts = locale.identifier.split(whereSeparator: { $0 == "_" || $0 == "-" })
+            languageCode = parts.first.map(String.init)
+            regionCode = parts.count > 1 ? String(parts[1]) : nil
         }
 
         if languageCode == "nl" || regionCode == "NL" {
@@ -46,6 +47,29 @@ enum AppLanguage {
         Locale(identifier: currentCode)
     }
 
+    private static func languageCode(from locale: Locale) -> String? {
+        if #available(iOS 16, *) {
+            return locale.language.languageCode?.identifier
+        }
+        return locale.identifier
+            .split(whereSeparator: { $0 == "_" || $0 == "-" })
+            .first
+            .map(String.init)
+    }
+
+    private static func bundle(for locale: Locale) -> Bundle {
+        guard let languageCode = languageCode(from: locale),
+              let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return .main
+        }
+        return bundle
+    }
+
+    static var currentBundle: Bundle {
+        bundle(for: currentLocale)
+    }
+
     static func option(for code: String) -> Option {
         supported.first { $0.code == code } ?? supported[0]
     }
@@ -55,18 +79,18 @@ enum AppLanguage {
     }
 
     static func string(_ key: String.LocalizationValue) -> String {
-        String(localized: key, locale: currentLocale)
+        String(localized: key, bundle: currentBundle, locale: currentLocale)
     }
 
     static func string(_ key: String) -> String {
-        String(localized: String.LocalizationValue(key), locale: currentLocale)
+        String(localized: String.LocalizationValue(key), bundle: currentBundle, locale: currentLocale)
     }
 
     static func string(_ key: String.LocalizationValue, locale: Locale) -> String {
-        String(localized: key, locale: locale)
+        String(localized: key, bundle: bundle(for: locale), locale: locale)
     }
 
     static func string(_ key: String, locale: Locale) -> String {
-        String(localized: String.LocalizationValue(key), locale: locale)
+        String(localized: String.LocalizationValue(key), bundle: bundle(for: locale), locale: locale)
     }
 }

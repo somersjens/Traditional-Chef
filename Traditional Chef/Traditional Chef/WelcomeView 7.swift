@@ -9,7 +9,8 @@ import StoreKit
 struct WelcomeView: View {
     @EnvironmentObject private var tipStore: TipStore
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
-    private var locale: Locale { AppLanguage.currentLocale }
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -28,11 +29,11 @@ struct WelcomeView: View {
                     .frame(width: 120, height: 120)
                     .foregroundStyle(AppTheme.primaryBlue)
 
-                Text("welcome.title")
+                Text(AppLanguage.string("welcome.title", locale: locale))
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(AppTheme.textPrimary)
 
-                Text("welcome.body")
+                Text(AppLanguage.string("welcome.body", locale: locale))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
                     .multilineTextAlignment(.center)
@@ -48,7 +49,7 @@ struct WelcomeView: View {
                     Button {
                         hasSeenWelcome = true
                     } label: {
-                        Text("welcome.startButton")
+                        Text(AppLanguage.string("welcome.startButton", locale: locale))
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -65,8 +66,8 @@ struct WelcomeView: View {
             }
         }
         .task { await tipStore.loadProducts() }
-        .alert("welcome.alertTitle", isPresented: $showAlert) {
-            Button("ok", role: .cancel) {}
+        .alert(AppLanguage.string("welcome.alertTitle", locale: locale), isPresented: $showAlert) {
+            Button(AppLanguage.string("ok", locale: locale), role: .cancel) {}
         } message: {
             Text(alertMessage)
         }
