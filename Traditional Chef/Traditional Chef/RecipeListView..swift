@@ -91,7 +91,7 @@ struct RecipeListView: View {
     }
 
     private var headerRow: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
                 vm.favoritesOnly.toggle()
@@ -106,27 +106,33 @@ struct RecipeListView: View {
             SortHeaderButton(
                 title: "🇺🇳",
                 isActive: vm.sortKey == .country,
-                isAscending: vm.ascending
+                isAscending: vm.ascending,
+                textAlignment: .center,
+                arrowPlacement: .trailing
             ) { vm.setSort(.country) }
                 .frame(width: 34, alignment: .center)
 
             SortHeaderButton(
                 title: String(localized: "recipes.column.name"),
                 isActive: vm.sortKey == .name,
-                isAscending: vm.ascending
+                isAscending: vm.ascending,
+                textAlignment: .leading,
+                arrowPlacement: .leadingGap(offset: -12)
             ) { vm.setSort(.name) }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             SortHeaderButton(
                 title: String(localized: "recipes.column.time"),
                 isActive: vm.sortKey == .time,
-                isAscending: vm.ascending
+                isAscending: vm.ascending,
+                textAlignment: .trailing,
+                arrowPlacement: .trailing
             ) { vm.setSort(.time) }
                 .frame(width: 44, alignment: .trailing)
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 12)
         .padding(.top, 4)
     }
 
@@ -213,22 +219,49 @@ struct RecipeListView: View {
 }
 
 private struct SortHeaderButton: View {
+    enum ArrowPlacement {
+        case trailing
+        case leadingGap(offset: CGFloat)
+    }
+
     let title: String
     let isActive: Bool
     let isAscending: Bool
+    let textAlignment: Alignment
+    let arrowPlacement: ArrowPlacement
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 4) {
-                Text(title)
-                if isActive {
-                    Image(systemName: isAscending ? "arrow.up" : "arrow.down")
-                        .font(.caption2)
+            Text(title)
+                .frame(maxWidth: .infinity, alignment: textAlignment)
+                .overlay(alignment: overlayAlignment) {
+                    if isActive {
+                        Image(systemName: isAscending ? "arrow.up" : "arrow.down")
+                            .font(.caption2)
+                            .offset(x: arrowOffset)
+                    }
                 }
-            }
-            .foregroundStyle(isActive ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.65))
+                .foregroundStyle(isActive ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.65))
         }
         .buttonStyle(.plain)
+    }
+
+    private var overlayAlignment: Alignment {
+        switch arrowPlacement {
+        case .trailing:
+            return .trailing
+        case .leadingGap:
+            return .leading
+        }
+    }
+
+    private var arrowOffset: CGFloat {
+        switch arrowPlacement {
+        case .trailing:
+            return 0
+        case .leadingGap(let offset):
+            return offset
+        }
     }
 }
