@@ -25,6 +25,7 @@ struct CountryPickerView: View {
                         if selected == nil { Image(systemName: "checkmark") }
                     }
                 }
+                .listRowBackground(AppTheme.searchBarBackground)
 
                 Section("recipes.pickCountry") {
                     ForEach(allCountryCodes, id: \.self) { code in
@@ -38,14 +39,35 @@ struct CountryPickerView: View {
                                 if selected == code { Image(systemName: "checkmark") }
                             }
                         }
+                        .listRowBackground(AppTheme.searchBarBackground)
                     }
                 }
+                .listRowBackground(AppTheme.searchBarBackground)
             }
-            .navigationTitle(Text("recipes.countryFilterTitle"))
             .navigationBarTitleDisplayMode(.inline)
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.pageBackground)
+            .foregroundStyle(AppTheme.primaryBlue)
+            .tint(AppTheme.primaryBlue)
+            .toolbarBackground(AppTheme.pageBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("done") { dismiss() }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("done")
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(AppTheme.searchBarBackground)
+                            .clipShape(Capsule())
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("recipes.countryFilterTitle")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
                 }
             }
         }
