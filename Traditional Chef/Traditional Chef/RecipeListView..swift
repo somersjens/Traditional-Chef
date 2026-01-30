@@ -18,6 +18,8 @@ struct RecipeListView: View {
                 AppTheme.pageBackground.ignoresSafeArea()
 
                 VStack(spacing: 10) {
+                    searchBar
+
                     FilterChipsView(
                         selected: vm.selectedCategories,
                         onToggle: { cat in
@@ -59,21 +61,20 @@ struct RecipeListView: View {
                 RecipeDetailView(recipe: recipe)
             }
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("recipes.search"))
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Button {
                         hasSeenWelcome = false
                     } label: {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 10) {
+                            Text(appDisplayName)
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundStyle(AppTheme.primaryBlue)
+
                             Image("chef_no_background")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
-
-                            Text(appDisplayName)
-                                .font(.title3.weight(.semibold))
-                                .foregroundStyle(AppTheme.primaryBlue)
+                                .frame(width: 29, height: 29)
                         }
                     }
                     .buttonStyle(.plain)
@@ -141,6 +142,38 @@ struct RecipeListView: View {
         .foregroundStyle(AppTheme.primaryBlue)
         .padding(.horizontal, 24)
         .padding(.top, 4)
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
+
+            TextField(String(localized: "recipes.search"), text: $vm.searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .foregroundStyle(AppTheme.textPrimary)
+
+            if !vm.searchText.isEmpty {
+                Button {
+                    vm.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.6))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Clear search"))
+            }
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(AppTheme.searchBarBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
     }
 
     private var emptyState: some View {

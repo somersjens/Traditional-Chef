@@ -33,7 +33,7 @@ struct RecipeRowView: View {
             meta("\(recipe.approximateMinutes)", width: 44)
         }
         .padding(12)
-        .background(AppTheme.cardBackground)
+        .background(AppTheme.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
