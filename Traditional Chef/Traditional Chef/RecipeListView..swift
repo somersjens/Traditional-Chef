@@ -120,7 +120,9 @@ struct RecipeListView: View {
                 isAscending: vm.ascending,
                 textAlignment: .center,
                 arrowPlacement: .trailing,
-                arrowSpacing: 6
+                arrowSpacing: 6,
+                arrowLayout: .overlay,
+                arrowOverlayOffset: 5
             ) {
                 Image(systemName: "flag.fill")
                     .font(.system(size: 14, weight: .semibold))
@@ -314,29 +316,68 @@ private struct SortHeaderButton<Label: View>: View {
         case trailing
     }
 
+    enum ArrowLayout {
+        case inline
+        case overlay
+    }
+
     let isActive: Bool
     let isAscending: Bool
     let textAlignment: Alignment
     let arrowPlacement: ArrowPlacement
     let arrowSpacing: CGFloat
+    let arrowLayout: ArrowLayout
+    let arrowOverlayOffset: CGFloat
     let label: () -> Label
     let action: () -> Void
+
+    init(
+        isActive: Bool,
+        isAscending: Bool,
+        textAlignment: Alignment,
+        arrowPlacement: ArrowPlacement,
+        arrowSpacing: CGFloat,
+        arrowLayout: ArrowLayout = .inline,
+        arrowOverlayOffset: CGFloat = 0,
+        @ViewBuilder label: @escaping () -> Label,
+        action: @escaping () -> Void
+    ) {
+        self.isActive = isActive
+        self.isAscending = isAscending
+        self.textAlignment = textAlignment
+        self.arrowPlacement = arrowPlacement
+        self.arrowSpacing = arrowSpacing
+        self.arrowLayout = arrowLayout
+        self.arrowOverlayOffset = arrowOverlayOffset
+        self.label = label
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: arrowSpacing) {
-                if arrowPlacement == .leading {
+                if arrowPlacement == .leading, arrowLayout == .inline {
                     arrowView
                 }
                 label()
-                if arrowPlacement == .trailing {
+                if arrowPlacement == .trailing, arrowLayout == .inline {
                     arrowView
                 }
             }
             .frame(maxWidth: .infinity, alignment: textAlignment)
             .foregroundStyle(AppTheme.primaryBlue)
+            .overlay(alignment: arrowAlignment) {
+                if arrowLayout == .overlay {
+                    arrowView
+                        .offset(x: arrowPlacement == .leading ? -arrowOverlayOffset : arrowOverlayOffset)
+                }
+            }
         }
         .buttonStyle(.plain)
+    }
+
+    private var arrowAlignment: Alignment {
+        arrowPlacement == .leading ? .leading : .trailing
     }
 
     @ViewBuilder
