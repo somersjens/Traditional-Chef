@@ -20,13 +20,13 @@ struct FilterChipsView: View {
                 } label: {
                     Text(countryLabel)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(isCountrySelected ? AppTheme.secondaryOffWhite : AppTheme.primaryBlue)
+                        .foregroundStyle(AppTheme.primaryBlue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(isCountrySelected ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
+                        .background(AppTheme.secondaryOffWhite)
                         .clipShape(Capsule())
                         .overlay(
-                            Capsule().stroke(AppTheme.primaryBlue.opacity(0.18), lineWidth: 1)
+                            Capsule().stroke(AppTheme.primaryBlue.opacity(isCountrySelected ? 0.6 : 0.18), lineWidth: isCountrySelected ? 2 : 1)
                         )
                 }
                 .buttonStyle(.plain)
@@ -38,13 +38,13 @@ struct FilterChipsView: View {
                     } label: {
                         Text(cat.localizedName)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(isOn ? AppTheme.secondaryOffWhite : AppTheme.primaryBlue)
+                            .foregroundStyle(AppTheme.primaryBlue)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(isOn ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
+                            .background(AppTheme.secondaryOffWhite)
                             .clipShape(Capsule())
                             .overlay(
-                                Capsule().stroke(AppTheme.primaryBlue.opacity(0.18), lineWidth: 1)
+                                Capsule().stroke(AppTheme.primaryBlue.opacity(isOn ? 0.6 : 0.18), lineWidth: isOn ? 2 : 1)
                             )
                     }
                     .buttonStyle(.plain)

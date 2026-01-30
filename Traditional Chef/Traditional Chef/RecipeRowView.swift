@@ -44,7 +44,7 @@ struct RecipeRowView: View {
     private func meta(_ text: String, width: CGFloat) -> some View {
         Text(text)
             .font(.headline.weight(.semibold))
-            .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
+            .foregroundStyle(AppTheme.primaryBlue)
             .frame(width: width, alignment: .trailing)
     }
 

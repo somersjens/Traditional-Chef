@@ -65,9 +65,16 @@ struct RecipeListView: View {
                     Button {
                         hasSeenWelcome = false
                     } label: {
-                        Text(appDisplayName)
-                            .font(.headline.weight(.semibold))
-                            .foregroundStyle(AppTheme.primaryBlue)
+                        HStack(spacing: 8) {
+                            Image("chef_no_background")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+
+                            Text(appDisplayName)
+                                .font(.title3.weight(.semibold))
+                                .foregroundStyle(AppTheme.primaryBlue)
+                        }
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(Text("welcome.title"))
@@ -131,7 +138,7 @@ struct RecipeListView: View {
                 .frame(width: 44, alignment: .trailing)
         }
         .font(.headline.weight(.semibold))
-        .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
+        .foregroundStyle(AppTheme.primaryBlue)
         .padding(.horizontal, 12)
         .padding(.top, 4)
     }
@@ -140,7 +147,7 @@ struct RecipeListView: View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 34))
-                .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
+                .foregroundStyle(AppTheme.primaryBlue)
 
             Text("recipes.noResults")
                 .font(.headline)
@@ -148,7 +155,7 @@ struct RecipeListView: View {
 
             Text("recipes.noResultsHint")
                 .font(.subheadline)
-                .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+                .foregroundStyle(AppTheme.textPrimary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 26)
         }
@@ -242,7 +249,7 @@ private struct SortHeaderButton: View {
                             .offset(x: arrowOffset)
                     }
                 }
-                .foregroundStyle(isActive ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.65))
+                .foregroundStyle(AppTheme.primaryBlue)
         }
         .buttonStyle(.plain)
     }
