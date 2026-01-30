@@ -13,6 +13,7 @@
 "recipes.title" = "Recepten";
 "recipes.search" = "Zoek recept";
 "recipes.allCountries" = "Alle landen inbegrepen";
+"recipes.allCountriesShort" = "Alle 🌍";
 "recipes.countryOnly" = "Landfilter";
 "recipes.pickCountry" = "Kies een land";
 "recipes.countryFilterTitle" = "Landen";

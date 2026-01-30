@@ -18,10 +18,16 @@ struct RecipeListView: View {
                 AppTheme.pageBackground.ignoresSafeArea()
 
                 VStack(spacing: 10) {
-                    topBar
-                    FilterChipsView(selected: vm.selectedCategories) { cat in
-                        vm.toggleCategory(cat)
-                    }
+                    FilterChipsView(
+                        selected: vm.selectedCategories,
+                        onToggle: { cat in
+                            vm.toggleCategory(cat)
+                        },
+                        countryLabel: countryChipLabel,
+                        isCountrySelected: vm.selectedCountryCode != nil,
+                        onCountryTap: { showCountryPicker = true }
+                    )
+                    .padding(.top, 10)
 
                     headerRow
 
@@ -77,30 +83,11 @@ struct RecipeListView: View {
         }
     }
 
-    private var topBar: some View {
-        HStack(spacing: 12) {
-            Button {
-                showCountryPicker = true
-            } label: {
-                HStack(spacing: 6) {
-                    Text(vm.selectedCountryCode == nil ? "recipes.allCountries" : "recipes.countryOnly")
-                        .font(.subheadline.weight(.semibold))
-                    Text(vm.selectedCountryCode.map { FlagEmoji.from(countryCode: $0) } ?? "🌍")
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(AppTheme.secondaryOffWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(AppTheme.primaryBlue.opacity(0.12), lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
-
+    private var countryChipLabel: String {
+        if let code = vm.selectedCountryCode {
+            return FlagEmoji.from(countryCode: code)
         }
-        .padding(.horizontal, 12)
-        .padding(.top, 10)
+        return String(localized: "recipes.allCountriesShort")
     }
 
     private var headerRow: some View {
