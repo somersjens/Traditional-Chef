@@ -29,9 +29,9 @@
 
 "category.breakfast" = "Ontbijt";
 "category.snack" = "Snack";
-"category.starter" = "Voorgerecht";
-"category.main" = "Hoofdgerecht";
-"category.dessert" = "Dessert";
+"category.starter" = "Voor";
+"category.main" = "Hoofd";
+"category.dessert" = "Na";
 
 "recipe.groceryTitle" = "Boodschappenlijst";
 "recipe.stepsTitle" = "Stappen";

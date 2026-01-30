@@ -112,31 +112,44 @@ struct RecipeListView: View {
             .accessibilityLabel(Text("recipes.favoritesOnly"))
 
             SortHeaderButton(
-                title: "🇺🇳",
                 isActive: vm.sortKey == .country,
                 isAscending: vm.ascending,
                 textAlignment: .center,
-                arrowPlacement: .trailing
-            ) { vm.setSort(.country) }
-                .frame(width: 34, alignment: .center)
+                arrowPlacement: .trailing,
+                arrowSpacing: 6
+            ) {
+                Image(systemName: "flag.fill")
+                    .font(.system(size: 14, weight: .semibold))
+            } action: {
+                vm.setSort(.country)
+            }
+            .frame(width: 34, alignment: .center)
 
             SortHeaderButton(
-                title: String(localized: "recipes.column.name"),
                 isActive: vm.sortKey == .name,
                 isAscending: vm.ascending,
                 textAlignment: .leading,
-                arrowPlacement: .leadingGap(offset: -12)
-            ) { vm.setSort(.name) }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                arrowPlacement: .trailing,
+                arrowSpacing: 4
+            ) {
+                Text(String(localized: "recipes.column.name"))
+            } action: {
+                vm.setSort(.name)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             SortHeaderButton(
-                title: String(localized: "recipes.column.time"),
                 isActive: vm.sortKey == .time,
                 isAscending: vm.ascending,
                 textAlignment: .trailing,
-                arrowPlacement: .trailing
-            ) { vm.setSort(.time) }
-                .frame(width: 44, alignment: .trailing)
+                arrowPlacement: .leading,
+                arrowSpacing: 4
+            ) {
+                Text(String(localized: "recipes.column.time"))
+            } action: {
+                vm.setSort(.time)
+            }
+            .frame(width: 44, alignment: .trailing)
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue)
@@ -258,50 +271,42 @@ struct RecipeListView: View {
     }
 }
 
-private struct SortHeaderButton: View {
+private struct SortHeaderButton<Label: View>: View {
     enum ArrowPlacement {
+        case leading
         case trailing
-        case leadingGap(offset: CGFloat)
     }
 
-    let title: String
     let isActive: Bool
     let isAscending: Bool
     let textAlignment: Alignment
     let arrowPlacement: ArrowPlacement
+    let arrowSpacing: CGFloat
+    let label: () -> Label
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .frame(maxWidth: .infinity, alignment: textAlignment)
-                .overlay(alignment: overlayAlignment) {
-                    if isActive {
-                        Image(systemName: isAscending ? "arrow.up" : "arrow.down")
-                            .font(.caption2)
-                            .offset(x: arrowOffset)
-                    }
+            HStack(spacing: arrowSpacing) {
+                if arrowPlacement == .leading {
+                    arrowView
                 }
-                .foregroundStyle(AppTheme.primaryBlue)
+                label()
+                if arrowPlacement == .trailing {
+                    arrowView
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: textAlignment)
+            .foregroundStyle(AppTheme.primaryBlue)
         }
         .buttonStyle(.plain)
     }
 
-    private var overlayAlignment: Alignment {
-        switch arrowPlacement {
-        case .trailing:
-            return .trailing
-        case .leadingGap:
-            return .leading
-        }
-    }
-
-    private var arrowOffset: CGFloat {
-        switch arrowPlacement {
-        case .trailing:
-            return 0
-        case .leadingGap(let offset):
-            return offset
+    @ViewBuilder
+    private var arrowView: some View {
+        if isActive {
+            Image(systemName: isAscending ? "arrow.up" : "arrow.down")
+                .font(.caption2)
         }
     }
 }
