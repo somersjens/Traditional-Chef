@@ -119,16 +119,28 @@ struct RecipeListView: View {
 
     private var headerRow: some View {
         HStack(spacing: 8) {
-            SortHeaderButton(title: "🇺🇳", isActive: vm.sortKey == .country) { vm.setSort(.country) }
+            SortHeaderButton(
+                title: "🇺🇳",
+                isActive: vm.sortKey == .country,
+                isAscending: vm.ascending
+            ) { vm.setSort(.country) }
                 .frame(width: 44, alignment: .leading)
 
-            SortHeaderButton(title: String(localized: "recipes.column.name"), isActive: vm.sortKey == .name) { vm.setSort(.name) }
+            SortHeaderButton(
+                title: String(localized: "recipes.column.name"),
+                isActive: vm.sortKey == .name,
+                isAscending: vm.ascending
+            ) { vm.setSort(.name) }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            SortHeaderButton(title: String(localized: "recipes.column.time"), isActive: vm.sortKey == .time) { vm.setSort(.time) }
+            SortHeaderButton(
+                title: String(localized: "recipes.column.time"),
+                isActive: vm.sortKey == .time,
+                isAscending: vm.ascending
+            ) { vm.setSort(.time) }
                 .frame(width: 44, alignment: .trailing)
         }
-        .font(.caption.weight(.semibold))
+        .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))
         .padding(.horizontal, 16)
         .padding(.top, 4)
@@ -219,6 +231,7 @@ struct RecipeListView: View {
 private struct SortHeaderButton: View {
     let title: String
     let isActive: Bool
+    let isAscending: Bool
     let action: () -> Void
 
     var body: some View {
@@ -226,7 +239,7 @@ private struct SortHeaderButton: View {
             HStack(spacing: 4) {
                 Text(title)
                 if isActive {
-                    Image(systemName: "arrow.up.arrow.down")
+                    Image(systemName: isAscending ? "arrow.up" : "arrow.down")
                         .font(.caption2)
                 }
             }
