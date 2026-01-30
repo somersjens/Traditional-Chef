@@ -44,14 +44,16 @@ struct GroceryListCard: View {
                     }
                 }
 
-                VStack(spacing: 8) {
+                Grid(horizontalSpacing: 6, verticalSpacing: 8) {
                     ForEach(uncheckedIngredients) { ing in
                         ingredientRow(ing, isChecked: false)
                     }
+                }
 
-                    if !checkedIngredients.isEmpty {
-                        Divider().overlay(AppTheme.hairline)
+                if !checkedIngredients.isEmpty {
+                    Divider().overlay(AppTheme.hairline)
 
+                    Grid(horizontalSpacing: 6, verticalSpacing: 8) {
                         ForEach(checkedIngredients) { ing in
                             ingredientRow(ing, isChecked: true)
                                 .opacity(0.65)
@@ -114,22 +116,8 @@ struct GroceryListCard: View {
     }
 
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {
-        Button {
-            if isChecked {
-                checked.remove(ing.id)
-            } else {
-                checked.insert(ing.id)
-            }
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isChecked ? .green : AppTheme.primaryBlue.opacity(0.8))
-
-                Text(gramsString(ing.grams))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 70, alignment: .leading)
-
+        GridRow {
+            HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(ing.nameKey), locale: locale))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary)
@@ -143,22 +131,48 @@ struct GroceryListCard: View {
                         .background(AppTheme.primaryBlue.opacity(0.08))
                         .clipShape(Capsule())
                 }
-
-                Spacer()
             }
-            .contentShape(Rectangle())
+            .gridColumnAlignment(.leading)
+
+            Text(gramsValueString(ing.grams))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 44, alignment: .trailing)
+                .gridColumnAlignment(.trailing)
+
+            Text(gramsUnitString(ing.grams))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 28, alignment: .leading)
+                .gridColumnAlignment(.leading)
+
+            Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
+                .gridColumnAlignment(.trailing)
         }
-        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if isChecked {
+                checked.remove(ing.id)
+            } else {
+                checked.insert(ing.id)
+            }
+        }
     }
 
-    private func gramsString(_ grams: Double) -> String {
+    private func gramsValueString(_ grams: Double) -> String {
         if grams < 1 {
-            return String(format: "%.1f g", grams)
+            return String(format: "%.1f", grams)
         }
         if grams.rounded(.down) == grams {
-            return "\(Int(grams)) g"
+            return "\(Int(grams))"
         }
-        return String(format: "%.0f g", grams)
+        return String(format: "%.0f", grams)
+    }
+
+    private func gramsUnitString(_ grams: Double) -> String {
+        _ = grams
+        return "g"
     }
 }
 
