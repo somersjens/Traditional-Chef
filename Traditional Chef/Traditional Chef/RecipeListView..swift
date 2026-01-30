@@ -126,13 +126,7 @@ struct RecipeListView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             SortHeaderButton(title: String(localized: "recipes.column.time"), isActive: vm.sortKey == .time) { vm.setSort(.time) }
-                .frame(width: 64, alignment: .trailing)
-
-            SortHeaderButton(title: String(localized: "recipes.column.cal"), isActive: vm.sortKey == .calories) { vm.setSort(.calories) }
-                .frame(width: 62, alignment: .trailing)
-
-            SortHeaderButton(title: String(localized: "recipes.column.ing"), isActive: vm.sortKey == .ingredients) { vm.setSort(.ingredients) }
-                .frame(width: 54, alignment: .trailing)
+                .frame(width: 44, alignment: .trailing)
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue.opacity(0.9))

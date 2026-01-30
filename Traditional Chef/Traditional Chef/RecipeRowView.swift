@@ -16,22 +16,16 @@ struct RecipeRowView: View {
                 .font(.title3)
                 .frame(width: 34, alignment: .leading)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: String.LocalizationValue(recipe.nameKey)))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
-
-                Text(recipe.countryCode)
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
-            }
+            Text(String(localized: String.LocalizationValue(recipe.nameKey)))
+                .font(.headline)
+                .foregroundStyle(AppTheme.textPrimary)
+                .lineLimit(2)
+                .truncationMode(.tail)
 
             Spacer()
 
             HStack(spacing: 12) {
-                meta("\(recipe.approximateMinutes)m", width: 60)
-                meta("\(recipe.calories)", width: 50)
-                meta("\(recipe.ingredientsCountForList)", width: 40)
+                meta("\(recipe.approximateMinutes)", width: 44)
 
                 Button(action: onToggleFavorite) {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
