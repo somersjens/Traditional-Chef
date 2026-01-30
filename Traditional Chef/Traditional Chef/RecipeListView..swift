@@ -302,11 +302,6 @@ struct RecipeListView: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(AppTheme.searchBarBackground)
-            .clipShape(Capsule())
-            .overlay(
-                Capsule().stroke(AppTheme.primaryBlue.opacity(0.15), lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: locale)))

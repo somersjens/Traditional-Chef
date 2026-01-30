@@ -62,8 +62,6 @@ struct CountryPickerView: View {
                             .font(.subheadline.weight(.semibold))
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
-                            .background(AppTheme.searchBarBackground)
-                            .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
                 }
