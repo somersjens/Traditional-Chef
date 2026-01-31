@@ -122,13 +122,13 @@ private struct StepRowView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 3) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 Text("\(step.stepNumber). ")
-                    .font(.headline.weight(.bold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(AppTheme.primaryBlue)
                 Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
-                    .font(.headline)
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(AppTheme.textPrimary)
 
                 Spacer()
@@ -149,9 +149,9 @@ private struct StepRowView: View {
                 ingredientKeys: ingredients.map { $0.nameKey },
                 locale: locale
             ))
-                .font(.body)
+                .font(.system(size: 16))
                 .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 }

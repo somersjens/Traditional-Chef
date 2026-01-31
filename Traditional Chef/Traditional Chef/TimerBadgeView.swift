@@ -16,10 +16,10 @@ struct TimerBadgeView: View {
                 Text(label)
                     .monospacedDigit()
             }
-            .font(.caption.weight(.semibold))
+            .font(.caption2.weight(.semibold))
             .foregroundStyle(AppTheme.primaryBlue)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(AppTheme.primaryBlue.opacity(0.08))
             .clipShape(Capsule())
         }
