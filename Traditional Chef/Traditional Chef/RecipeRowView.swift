@@ -34,7 +34,8 @@ struct RecipeRowView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(12)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 4)
         .background(AppTheme.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
