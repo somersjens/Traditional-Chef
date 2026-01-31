@@ -9,6 +9,7 @@ struct DrinkPairingCard: View {
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
+    @State private var isExpanded: Bool = true
 
     var body: some View {
         if let bodyKey = recipe.drinkPairingKey {
@@ -21,20 +22,39 @@ struct DrinkPairingCard: View {
                     Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
+
+                    Spacer()
+
+                    Button {
+                        withAnimation(.easeInOut) {
+                            isExpanded.toggle()
+                        }
+                    } label: {
+                        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
+                    }
+                    .buttonStyle(.plain)
                 }
 
-                Divider()
-                    .overlay(AppTheme.hairline)
+                if isExpanded {
+                    Divider()
+                        .overlay(AppTheme.hairline)
+                        .transition(.opacity)
 
-                let raw = AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale)
-                let boldPhrases = recipe.drinkPairingBoldPhraseKeys.map {
-                    AppLanguage.string(String.LocalizationValue($0), locale: locale)
+                    let raw = AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale)
+                    let boldPhrases = recipe.drinkPairingBoldPhraseKeys.map {
+                        AppLanguage.string(String.LocalizationValue($0), locale: locale)
+                    }
+
+                    Text(AttributedString.boldPhrases(in: raw, phrases: boldPhrases))
+                        .font(.body)
+                        .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                 }
-
-                Text(AttributedString.boldPhrases(in: raw, phrases: boldPhrases))
-                    .font(.body)
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
             }
+            .animation(.easeInOut, value: isExpanded)
             .padding(12)
             .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 16))

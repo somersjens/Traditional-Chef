@@ -10,6 +10,7 @@ struct RecipeDetailView: View {
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
+    @State private var isInfoExpanded: Bool = true
 
     var body: some View {
         ScrollView {
@@ -64,15 +65,32 @@ struct RecipeDetailView: View {
                 Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
                     .font(.subheadline)
                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isInfoExpanded.toggle()
+                    }
+                } label: {
+                    Image(systemName: isInfoExpanded ? "chevron.down" : "chevron.right")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .accessibilityLabel(Text(isInfoExpanded ? "Collapse info" : "Expand info"))
+                }
+                .buttonStyle(.plain)
             }
 
-            Divider()
-                .overlay(AppTheme.hairline)
+            if isInfoExpanded {
+                Divider()
+                    .overlay(AppTheme.hairline)
+                    .transition(.opacity)
 
-            Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
-                .font(.body)
-                .foregroundStyle(AppTheme.textPrimary)
+                Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
+                    .font(.body)
+                    .foregroundStyle(AppTheme.textPrimary)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
+        .animation(.easeInOut, value: isInfoExpanded)
         .padding(12)
         .background(AppTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -82,7 +100,7 @@ struct RecipeDetailView: View {
     }
 
     private var stepsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Image(systemName: "figure.walk")
                     .font(.headline)
@@ -148,9 +166,9 @@ private struct StepRowView: View {
                 ingredientKeys: ingredients.map { $0.nameKey },
                 locale: locale
             ))
-                .font(.system(size: 16))
+                .font(.system(size: 14))
                 .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 1.5)
     }
 }
