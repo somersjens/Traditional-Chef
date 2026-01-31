@@ -95,37 +95,35 @@ private struct StepRowView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-                Text("\(step.stepNumber)")
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
+                Text("\(step.stepNumber). ")
                     .font(.headline.weight(.bold))
                     .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 22, alignment: .leading)
-
-            VStack(alignment: .leading, spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
 
-                let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-                Text(AttributedString.boldIngredients(
-                    in: raw,
-                    ingredientKeys: ingredients.map { $0.nameKey },
-                    locale: locale
-                ))
-                    .font(.body)
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
-            }
+                Spacer()
 
-            Spacer()
-
-            if let seconds = step.timerSeconds {
-                TimerBadgeView(seconds: seconds) {
-                    showTimer = true
-                }
-                .sheet(isPresented: $showTimer) {
-                    CountdownTimerView(initialSeconds: seconds)
+                if let seconds = step.timerSeconds {
+                    TimerBadgeView(seconds: seconds) {
+                        showTimer = true
+                    }
+                    .sheet(isPresented: $showTimer) {
+                        CountdownTimerView(initialSeconds: seconds)
+                    }
                 }
             }
+
+            let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
+            Text(AttributedString.boldIngredients(
+                in: raw,
+                ingredientKeys: ingredients.map { $0.nameKey },
+                locale: locale
+            ))
+                .font(.body)
+                .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
         }
         .padding(.vertical, 4)
     }
