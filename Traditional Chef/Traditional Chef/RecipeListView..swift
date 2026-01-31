@@ -219,26 +219,22 @@ struct RecipeListView: View {
     }
 
     private var allCountryCodes: [String] {
-        Array(Set(recipeStore.recipes.map { $0.countryCode }))
-            .sorted()
+        recipeStore.countryCodes
     }
 
     private var filteredAndSortedRecipes: [Recipe] {
         var list = recipeStore.recipes
-        let localizedNames = Dictionary(
-            uniqueKeysWithValues: recipeStore.recipes.map {
-                ($0.id, AppLanguage.string(String.LocalizationValue($0.nameKey), locale: locale))
-            }
-        )
+        let localizedNames = recipeStore.localizedNames(for: locale)
+        let normalizedNames = recipeStore.normalizedNames(for: locale)
 
         // Search: wildcard both sides + ignore spaces
         if !vm.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let query = vm.searchText.normalizedSearchKey
+            let query = vm.searchText.normalizedSearchKey(locale: locale)
             list = list.filter { recipe in
-                let name = (localizedNames[recipe.id]
-                    ?? AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale))
-                    .normalizedSearchKey
-                let country = recipe.countryCode.normalizedSearchKey
+                let name = normalizedNames[recipe.id]
+                    ?? AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+                        .normalizedSearchKey(locale: locale)
+                let country = recipe.countryCode.normalizedSearchKey(locale: locale)
                 return name.contains(query) || country.contains(query)
             }
         }
