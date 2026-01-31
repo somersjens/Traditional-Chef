@@ -58,6 +58,12 @@ struct RecipeDetailView: View {
                 Text(AppLanguage.string("recipe.infoTitle", locale: locale))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
+
+                Spacer()
+
+                Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
             }
 
             Divider()
@@ -66,13 +72,6 @@ struct RecipeDetailView: View {
             Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
                 .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
-
-            Divider()
-                .overlay(AppTheme.hairline)
-
-            Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
         }
         .padding(12)
         .background(AppTheme.cardBackground)
