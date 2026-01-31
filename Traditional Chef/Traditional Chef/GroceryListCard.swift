@@ -74,6 +74,7 @@ struct GroceryListCard: View {
             }
         }
         .onChange(of: checked) { _, newValue in
+            saveChecked(newValue)
             if newValue.count == recipe.ingredients.count {
                 Haptics.success()
                 withAnimation(.easeInOut(duration: 0.2)) { showCelebration = true }
@@ -82,6 +83,9 @@ struct GroceryListCard: View {
                     checked.removeAll()
                 }
             }
+        }
+        .onAppear {
+            checked = loadChecked()
         }
     }
 
@@ -171,6 +175,23 @@ struct GroceryListCard: View {
     private func gramsUnitString(_ grams: Double) -> String {
         _ = grams
         return "g"
+    }
+
+    private var checkedStorageKey: String {
+        "grocery.checked.\(recipe.id)"
+    }
+
+    private func loadChecked() -> Set<String> {
+        guard let data = UserDefaults.standard.data(forKey: checkedStorageKey),
+              let decoded = try? JSONDecoder().decode([String].self, from: data) else {
+            return []
+        }
+        return Set(decoded)
+    }
+
+    private func saveChecked(_ values: Set<String>) {
+        let encoded = try? JSONEncoder().encode(Array(values))
+        UserDefaults.standard.set(encoded, forKey: checkedStorageKey)
     }
 }
 
