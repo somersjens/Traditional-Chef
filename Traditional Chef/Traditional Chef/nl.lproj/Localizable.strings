@@ -92,26 +92,26 @@
 "ingredient.butter_optional" = "Boter";
 "ingredient.parmesan_to_serve" = "Parmezaan (om te serveren)";
 
-"recipe.it.bolognese.step1.title" = "Groenten voorbereiden (10 min)";
+"recipe.it.bolognese.step1.title" = "Groenten voorbereiden";
 "recipe.it.bolognese.step1.body"  = "Snijd ui, wortel, bleekselderij (en knoflook als je dat gebruikt).";
 
-"recipe.it.bolognese.step2.title" = "Groenten bakken (8 min)";
+"recipe.it.bolognese.step2.title" = "Groenten bakken";
 "recipe.it.bolognese.step2.body"  = "Verhit olijfolie in een grote pan. Voeg ui, wortel en bleekselderij toe. Bak tot zacht.";
 
-"recipe.it.bolognese.step3.title" = "Gehakt bakken (8 min)";
+"recipe.it.bolognese.step3.title" = "Gehakt bakken";
 "recipe.it.bolognese.step3.body"  = "Voeg het gehakt toe. Bak rul en mooi bruin.";
 
-"recipe.it.bolognese.step4.title" = "Tomatenpuree meebakken (2 min)";
+"recipe.it.bolognese.step4.title" = "Tomatenpuree meebakken";
 "recipe.it.bolognese.step4.body"  = "Roer tomatenpuree erdoor en bak 2 minuten mee.";
 
-"recipe.it.bolognese.step5.title" = "Blussen (3 min)";
+"recipe.it.bolognese.step5.title" = "Blussen";
 "recipe.it.bolognese.step5.body"  = "Schenk rode wijn erbij (of een scheut runderbouillon). Roer los en laat even pruttelen.";
 
-"recipe.it.bolognese.step6.title" = "Saus laten pruttelen (45 min)";
+"recipe.it.bolognese.step6.title" = "Saus laten pruttelen";
 "recipe.it.bolognese.step6.body"  = "Voeg tomatenblokjes, runderbouillon, laurier, oregano, zout en zwarte peper toe. Laat zachtjes pruttelen met deksel op een kier, af en toe roeren.";
 
-"recipe.it.bolognese.step7.title" = "Pasta koken (10–12 min)";
+"recipe.it.bolognese.step7.title" = "Pasta koken";
 "recipe.it.bolognese.step7.body"  = "Breng water aan de kook, voeg zout toe, kook pasta al dente. Giet af.";
 
-"recipe.it.bolognese.step8.title" = "Afmaken & serveren (2 min)";
+"recipe.it.bolognese.step8.title" = "Afmaken & serveren";
 "recipe.it.bolognese.step8.body"  = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
