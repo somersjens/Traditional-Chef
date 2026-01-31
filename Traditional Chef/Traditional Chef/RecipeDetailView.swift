@@ -25,12 +25,17 @@ struct RecipeDetailView: View {
             .padding(12)
         }
         .background(AppTheme.pageBackground)
-        .navigationTitle(Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text(FlagEmoji.from(countryCode: recipe.countryCode))
-                    .font(.title2)
+            ToolbarItem(placement: .principal) {
+                let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+                Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .truncationMode(.tail)
+                    .accessibilityLabel(Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)"))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
