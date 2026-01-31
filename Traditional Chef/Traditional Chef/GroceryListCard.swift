@@ -24,9 +24,15 @@ struct GroceryListCard: View {
         ZStack {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.textPrimary)
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Image(systemName: "checkmark")
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+
+                        Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.textPrimary)
+                    }
 
                     Spacer()
 
@@ -43,6 +49,9 @@ struct GroceryListCard: View {
                         .foregroundStyle(AppTheme.primaryBlue)
                     }
                 }
+
+                Divider()
+                    .overlay(AppTheme.hairline)
 
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(uncheckedIngredients) { ing in

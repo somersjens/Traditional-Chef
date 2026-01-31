@@ -40,6 +40,7 @@
 "recipe.groceryTitle" = "Grocery list";
 "recipe.stepsTitle" = "Steps";
 "recipe.drinkTitle" = "What to drink?";
+"recipe.infoTitle" = "Information";
 "recipe.drink.redWine" = "red wine";
 "grocery.optional" = "Optional";
 "grocery.allCollected" = "All collected!";

@@ -50,6 +50,19 @@ struct RecipeDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: "globe")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
+
+                Text(AppLanguage.string("recipe.infoTitle", locale: locale))
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.textPrimary)
+            }
+
+            Divider()
+                .overlay(AppTheme.hairline)
+
             Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
                 .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
@@ -71,9 +84,18 @@ struct RecipeDetailView: View {
 
     private var stepsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
-                .font(.headline)
-                .foregroundStyle(AppTheme.textPrimary)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: "figure.walk")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
+
+                Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.textPrimary)
+            }
+
+            Divider()
+                .overlay(AppTheme.hairline)
 
             ForEach(recipe.steps) { step in
                 StepRowView(step: step, ingredients: recipe.ingredients)

@@ -13,9 +13,18 @@ struct DrinkPairingCard: View {
     var body: some View {
         if let bodyKey = recipe.drinkPairingKey {
             VStack(alignment: .leading, spacing: 10) {
-                Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "wineglass")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
+
+                    Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
+                }
+
+                Divider()
+                    .overlay(AppTheme.hairline)
 
                 let raw = AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale)
                 let boldPhrases = recipe.drinkPairingBoldPhraseKeys.map {
