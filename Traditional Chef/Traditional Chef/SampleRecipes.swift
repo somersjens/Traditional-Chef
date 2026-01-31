@@ -15,6 +15,7 @@ enum SampleRecipes {
         countryCode: "IT",
         nameKey: "recipe.it.bolognese.name",
         category: .main,
+        infoKey: "recipe.it.bolognese.info",
         approximateMinutes: 90,
         calories: 400,
         ingredientsCountForList: 10,

@@ -28,6 +28,10 @@ struct RecipeDetailView: View {
         .navigationTitle(Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Text(FlagEmoji.from(countryCode: recipe.countryCode))
+                    .font(.title2)
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     recipeStore.toggleFavorite(recipe)
@@ -40,21 +44,17 @@ struct RecipeDetailView: View {
     }
 
     private var header: some View {
-        HStack {
-            Text(FlagEmoji.from(countryCode: recipe.countryCode))
-                .font(.largeTitle)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
+                .font(.body)
+                .foregroundStyle(AppTheme.textPrimary)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale))
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+            Divider()
+                .overlay(AppTheme.hairline)
 
-                Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
-            }
-
-            Spacer()
+            Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
+                .font(.subheadline)
+                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
         }
         .padding(12)
         .background(AppTheme.cardBackground)

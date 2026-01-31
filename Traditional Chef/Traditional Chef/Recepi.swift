@@ -41,6 +41,9 @@ struct Recipe: Identifiable, Hashable {
     /// Category used in filters
     let category: RecipeCategory
 
+    /// Localized recipe information key.
+    let infoKey: String
+
     /// List view metadata
     let approximateMinutes: Int
     let calories: Int

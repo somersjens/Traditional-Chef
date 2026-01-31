@@ -70,6 +70,7 @@
 
 /* Recipe: Pasta Bolognese */
 "recipe.it.bolognese.name" = "Pasta Bolognese";
+"recipe.it.bolognese.info" = "It originated in Bologna (Northern Italy), where the sauce is known as ragu alla bolognese and is mainly built around slow-cooked meat with a little tomato. It is traditionally served with tagliatelle because those wide, flat ribbons hold on to the thick, meaty sauce far better than thin spaghetti.";
 "recipe.it.bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
 
 "ingredient.pasta" = "Pasta";
