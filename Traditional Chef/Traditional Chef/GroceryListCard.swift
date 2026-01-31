@@ -18,48 +18,57 @@ struct GroceryListCard: View {
 
     @State private var sortMode: SortMode = .useOrder
     @State private var checked: Set<String> = []
-    @State private var showCelebration: Bool = false
+    @State private var isResettingChecks: Bool = false
+    @State private var resetDisplayIngredients: [Ingredient] = []
 
     var body: some View {
-        ZStack {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Image(systemName: "checkmark")
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-
-                        Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.textPrimary)
-                    }
-
-                    Spacer()
-
-                    Menu {
-                        Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
-                        Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
-                        Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text(sortModeLabel)
-                                .font(.subheadline.weight(.semibold))
-                            Image(systemName: "arrow.up.arrow.down")
-                        }
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "checkmark")
+                        .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
-                    }
+
+                    Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
                 }
 
-                Divider()
-                    .overlay(AppTheme.hairline)
+                Spacer()
 
+                Menu {
+                    Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
+                    Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
+                    Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(sortModeLabel)
+                            .font(.subheadline.weight(.semibold))
+                        Image(systemName: "arrow.up.arrow.down")
+                    }
+                    .foregroundStyle(AppTheme.primaryBlue)
+                }
+            }
+
+            Divider()
+                .overlay(AppTheme.hairline)
+
+            if isResettingChecks {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(resetDisplayIngredients) { ing in
+                        let isChecked = checked.contains(ing.id)
+                        ingredientRow(ing, isChecked: isChecked)
+                            .opacity(isChecked ? 0.65 : 1)
+                    }
+                }
+            } else {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(uncheckedIngredients) { ing in
                         ingredientRow(ing, isChecked: false)
                     }
                 }
 
-                if !checkedIngredients.isEmpty {
+                if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
                     Divider().overlay(AppTheme.hairline)
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -70,27 +79,20 @@ struct GroceryListCard: View {
                     }
                 }
             }
-            .padding(12)
-            .background(AppTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
-            )
-
-            if showCelebration {
-                CelebrationOverlay(locale: locale)
-                    .transition(.opacity)
-            }
         }
+        .padding(12)
+        .background(AppTheme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+        )
+        .animation(nil, value: checked)
+        .allowsHitTesting(!isResettingChecks)
         .onChange(of: checked) { _, newValue in
             saveChecked(newValue)
-            if newValue.count == recipe.ingredients.count {
+            if newValue.count == recipe.ingredients.count && !isResettingChecks {
                 Haptics.success()
-                withAnimation(.easeInOut(duration: 0.2)) { showCelebration = true }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                    withAnimation(.easeInOut(duration: 0.2)) { showCelebration = false }
-                    checked.removeAll()
-                }
+                startSequentialUncheck()
             }
         }
         .onAppear {
@@ -160,6 +162,7 @@ struct GroceryListCard: View {
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
                 .frame(width: 24, alignment: .trailing)
+                .animation(.easeInOut(duration: 0.2), value: isChecked)
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -202,32 +205,21 @@ struct GroceryListCard: View {
         let encoded = try? JSONEncoder().encode(Array(values))
         UserDefaults.standard.set(encoded, forKey: checkedStorageKey)
     }
-}
 
-private struct CelebrationOverlay: View {
-    let locale: Locale
-    @State private var pop: Bool = false
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.black.opacity(0.08))
-
-            VStack(spacing: 8) {
-                Text("🎉")
-                    .font(.system(size: 44))
-                    .scaleEffect(pop ? 1.15 : 0.8)
-
-                Text(AppLanguage.string("grocery.allCollected", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .opacity(pop ? 1 : 0.3)
+    private func startSequentialUncheck() {
+        isResettingChecks = true
+        resetDisplayIngredients = sortedAll
+        let idsToClear = sortedAll.map(\.id).filter { checked.contains($0) }
+        let stepDelay = 0.12
+        for (index, id) in idsToClear.enumerated() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (stepDelay * Double(index))) {
+                _ = checked.remove(id)
             }
         }
-        .onAppear {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
-                pop = true
-            }
+        let totalDelay = (stepDelay * Double(idsToClear.count)) + 0.2
+        DispatchQueue.main.asyncAfter(deadline: .now() + totalDelay) {
+            isResettingChecks = false
+            resetDisplayIngredients = []
         }
     }
 }

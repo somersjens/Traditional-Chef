@@ -51,7 +51,7 @@ struct RecipeDetailView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "globe")
+                Image(systemName: "mappin")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
 
