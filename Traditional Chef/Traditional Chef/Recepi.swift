@@ -51,6 +51,12 @@ struct Recipe: Identifiable, Hashable {
 
     /// Steps (localized per step)
     let steps: [RecipeStep]
+
+    /// Optional drink pairing description key.
+    let drinkPairingKey: String?
+
+    /// Optional localized phrase keys to render in bold within the drink pairing text.
+    let drinkPairingBoldPhraseKeys: [String]
 }
 
 struct Ingredient: Identifiable, Hashable {

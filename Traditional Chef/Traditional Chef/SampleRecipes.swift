@@ -90,6 +90,8 @@ enum SampleRecipes {
                 bodyKey: "recipe.it.bolognese.step8.body",
                 timerSeconds: 2 * 60
             ),
-        ]
+        ],
+        drinkPairingKey: "recipe.it.bolognese.drink.body",
+        drinkPairingBoldPhraseKeys: ["recipe.drink.redWine"]
     )
 }

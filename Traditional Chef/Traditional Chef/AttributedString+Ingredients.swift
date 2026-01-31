@@ -29,4 +29,23 @@ extension AttributedString {
 
         return attr
     }
+
+    /// Bold matching phrases inside the provided text.
+    static func boldPhrases(in text: String, phrases: [String]) -> AttributedString {
+        var attr = AttributedString(text)
+        let orderedPhrases = phrases
+            .filter { !$0.isEmpty }
+            .sorted { $0.count > $1.count }
+
+        for phrase in orderedPhrases {
+            var searchRange = attr.startIndex..<attr.endIndex
+            while searchRange.lowerBound < searchRange.upperBound,
+                  let range = attr[searchRange].range(of: phrase, options: [.caseInsensitive], locale: nil) {
+                attr[range].font = .system(.body, design: .default).bold()
+                searchRange = range.upperBound..<attr.endIndex
+            }
+        }
+
+        return attr
+    }
 }

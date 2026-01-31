@@ -39,6 +39,8 @@
 
 "recipe.groceryTitle" = "Boodschappenlijst";
 "recipe.stepsTitle" = "Stappen";
+"recipe.drinkTitle" = "Drankje erbij?";
+"recipe.drink.redWine" = "rode wijn";
 "grocery.optional" = "Optioneel";
 "grocery.allCollected" = "Alles verzameld!";
 
@@ -68,6 +70,7 @@
 
 /* Recept: Pasta Bolognese */
 "recipe.it.bolognese.name" = "Pasta Bolognese";
+"recipe.it.bolognese.drink.body" = "Traditioneel drink je bij pasta bolognese een rode wijn met frisse zuren, zoals Sangiovese of Barbera. Die sluit mooi aan op de tomaat en het rijke vlees, en houdt elke hap lekker fris. Liever geen wijn? Dan is bruiswater of licht pils ook prima.";
 
 "ingredient.pasta" = "Pasta";
 "ingredient.minced_meat" = "Gehakt (rund of half-om-half)";

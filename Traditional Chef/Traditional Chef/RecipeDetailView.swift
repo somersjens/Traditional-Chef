@@ -16,6 +16,8 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: 14) {
                 header
 
+                DrinkPairingCard(recipe: recipe)
+
                 GroceryListCard(recipe: recipe)
 
                 stepsCard

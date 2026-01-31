@@ -15,13 +15,6 @@ struct RecipeRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Button(action: onToggleFavorite) {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
-                    .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
-                    .frame(width: 26, alignment: .center)
-            }
-            .buttonStyle(.plain)
-
             Text(FlagEmoji.from(countryCode: recipe.countryCode))
                 .font(.title3)
                 .frame(width: 34, alignment: .center)
@@ -33,6 +26,13 @@ struct RecipeRowView: View {
             Spacer()
 
             meta("\(recipe.approximateMinutes)", width: 44)
+
+            Button(action: onToggleFavorite) {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
+                    .frame(width: 20, alignment: .center)
+            }
+            .buttonStyle(.plain)
         }
         .padding(12)
         .background(AppTheme.searchBarBackground)

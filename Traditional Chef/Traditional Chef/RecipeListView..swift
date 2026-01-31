@@ -112,17 +112,6 @@ struct RecipeListView: View {
 
     private var headerRow: some View {
         HStack(spacing: 10) {
-            Button {
-                // Favorites only: if no favorites exist, keep showing all (rule)
-                vm.favoritesOnly.toggle()
-            } label: {
-                Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                    .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
-                    .frame(width: 26, alignment: .center)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: locale)))
-
             SortHeaderButton(
                 isActive: vm.sortKey == .country,
                 isAscending: vm.ascending,
@@ -164,6 +153,17 @@ struct RecipeListView: View {
                 vm.setSort(.time)
             }
             .frame(width: 44, alignment: .trailing)
+
+            Button {
+                // Favorites only: if no favorites exist, keep showing all (rule)
+                vm.favoritesOnly.toggle()
+            } label: {
+                Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
+                    .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
+                    .frame(width: 20, alignment: .center)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: locale)))
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue)

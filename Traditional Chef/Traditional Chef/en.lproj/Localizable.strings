@@ -39,6 +39,8 @@
 
 "recipe.groceryTitle" = "Grocery list";
 "recipe.stepsTitle" = "Steps";
+"recipe.drinkTitle" = "What to drink?";
+"recipe.drink.redWine" = "red wine";
 "grocery.optional" = "Optional";
 "grocery.allCollected" = "All collected!";
 
@@ -68,6 +70,7 @@
 
 /* Recipe: Pasta Bolognese */
 "recipe.it.bolognese.name" = "Pasta Bolognese";
+"recipe.it.bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
 
 "ingredient.pasta" = "Pasta";
 "ingredient.minced_meat" = "Minced meat (beef or mixed)";
