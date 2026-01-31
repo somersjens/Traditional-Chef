@@ -68,22 +68,26 @@ struct RecipeListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Button {
-                        hasSeenWelcome = false
-                    } label: {
-                        HStack(spacing: 10) {
-                            Text(appDisplayName)
-                                .font(.system(size: 24, weight: .semibold))
-                                .foregroundStyle(AppTheme.primaryBlue)
+                    HStack {
+                        Spacer()
+                        Button {
+                            hasSeenWelcome = false
+                        } label: {
+                            HStack(spacing: 10) {
+                                Text(appDisplayName)
+                                    .font(.system(size: 24, weight: .semibold))
+                                    .foregroundStyle(AppTheme.primaryBlue)
 
-                            Image("chef_no_background")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 29, height: 29)
+                                Image("chef_no_background")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 29, height: 29)
+                            }
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
+                        Spacer()
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     languageMenu
@@ -103,7 +107,7 @@ struct RecipeListView: View {
         if let code = vm.selectedCountryCode {
             return FlagEmoji.from(countryCode: code)
         }
-        return AppLanguage.string("recipes.allCountriesShort", locale: locale)
+        return "🌍"
     }
 
     private var headerRow: some View {
@@ -289,15 +293,10 @@ struct RecipeListView: View {
         Button {
             showLanguagePicker = true
         } label: {
-            HStack(spacing: 6) {
-                Text(AppLanguage.flag(for: appLanguage))
-                    .font(.title3)
-                Image(systemName: "chevron.down")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.8))
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            Text(AppLanguage.flag(for: appLanguage))
+                .font(.title3)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: locale)))

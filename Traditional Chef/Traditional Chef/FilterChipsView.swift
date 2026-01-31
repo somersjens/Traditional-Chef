@@ -19,7 +19,7 @@ struct FilterChipsView: View {
                 Button {
                     onCountryTap()
                 } label: {
-                    chipLabel(text: countryLabel, isSelected: isCountrySelected, availableWidth: proxy.size.width)
+                    countryFlagLabel(text: countryLabel)
                 }
                 .buttonStyle(.plain)
 
@@ -52,6 +52,14 @@ struct FilterChipsView: View {
             .overlay(
                 Capsule().stroke(AppTheme.primaryBlue.opacity(isSelected ? 0.6 : 0.18), lineWidth: isSelected ? 2 : 1)
             )
+    }
+
+    private func countryFlagLabel(text: String) -> some View {
+        Text(text)
+            .font(.title3)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
     }
 
     private func chipFont(for availableWidth: CGFloat) -> Font {
