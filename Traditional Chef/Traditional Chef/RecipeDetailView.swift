@@ -12,6 +12,7 @@ struct RecipeDetailView: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isInfoExpanded: Bool = true
+    @State private var servings: Int = 4
 
     var body: some View {
         ScrollView {
@@ -20,7 +21,9 @@ struct RecipeDetailView: View {
 
                 DrinkPairingCard(recipe: recipe)
 
-                GroceryListCard(recipe: recipe)
+                ServingsCard(servings: $servings)
+
+                GroceryListCard(recipe: recipe, servings: servings)
 
                 stepsCard
             }

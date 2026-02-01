@@ -7,6 +7,7 @@ import SwiftUI
 
 struct GroceryListCard: View {
     let recipe: Recipe
+    let servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -20,6 +21,7 @@ struct GroceryListCard: View {
     @State private var checked: Set<String> = []
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
+    private let baseServings = 4
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -113,11 +115,11 @@ struct GroceryListCard: View {
         case .useOrder:
             return recipe.ingredients.sorted { $0.useOrder < $1.useOrder }
         case .gramsDesc:
-            return recipe.ingredients.sorted { $0.grams > $1.grams }
+            return recipe.ingredients.sorted { scaledGrams($0.grams) > scaledGrams($1.grams) }
         case .supermarket:
             return recipe.ingredients.sorted {
                 if $0.aisle.rawValue != $1.aisle.rawValue { return $0.aisle.rawValue < $1.aisle.rawValue }
-                return $0.grams > $1.grams
+                return scaledGrams($0.grams) > scaledGrams($1.grams)
             }
         }
     }
@@ -149,12 +151,12 @@ struct GroceryListCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(gramsValueString(ing.grams))
+            Text(gramsValueString(scaledGrams(ing.grams)))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
                 .frame(width: 44, alignment: .trailing)
 
-            Text(gramsUnitString(ing.grams))
+            Text(gramsUnitString(scaledGrams(ing.grams)))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
                 .frame(width: 28, alignment: .leading)
@@ -187,6 +189,10 @@ struct GroceryListCard: View {
     private func gramsUnitString(_ grams: Double) -> String {
         _ = grams
         return "g"
+    }
+
+    private func scaledGrams(_ grams: Double) -> Double {
+        grams * Double(servings) / Double(baseServings)
     }
 
     private var checkedStorageKey: String {
