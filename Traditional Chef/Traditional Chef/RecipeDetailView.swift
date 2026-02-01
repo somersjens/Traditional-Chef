@@ -74,6 +74,7 @@ struct RecipeDetailView: View {
                     Image(systemName: isInfoExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: 24, height: 24, alignment: .center)
                         .accessibilityLabel(Text(isInfoExpanded ? "Collapse info" : "Expand info"))
                 }
                 .buttonStyle(.plain)
