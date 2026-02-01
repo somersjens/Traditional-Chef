@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
@@ -136,8 +137,24 @@ private struct StepRowView: View {
     let ingredients: [Ingredient]
 
     @State private var showTimer: Bool = false
+    @State private var isRunning: Bool = false
+    @State private var secondsLeft: Int
+    @State private var sessionInitialSeconds: Int
+    @State private var didRing: Bool = false
+    @State private var beepTaskRunning: Bool = false
+
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
+
+    private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    init(step: RecipeStep, ingredients: [Ingredient]) {
+        self.step = step
+        self.ingredients = ingredients
+        let initial = step.timerSeconds ?? 0
+        _secondsLeft = State(initialValue: initial)
+        _sessionInitialSeconds = State(initialValue: initial)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
@@ -151,12 +168,21 @@ private struct StepRowView: View {
 
                 Spacer()
 
-                if let seconds = step.timerSeconds {
-                    TimerBadgeView(seconds: seconds) {
-                        showTimer = true
+                if step.timerSeconds != nil {
+                    TimerBadgeView(displayText: timerDisplayText, isRunning: isRunning) {
+                        handleTimerTap()
                     }
                     .sheet(isPresented: $showTimer) {
-                        CountdownTimerView(initialSeconds: seconds)
+                        CountdownTimerView(
+                            initialSeconds: sessionInitialSeconds,
+                            liveSeconds: secondsLeft,
+                            isRunning: isRunning,
+                            onReset: { resetTimer() },
+                            onPauseToggle: { toggleRun() },
+                            onOverride: { overrideSeconds in
+                                applyOverride(overrideSeconds)
+                            }
+                        )
                     }
                 }
             }
@@ -171,5 +197,84 @@ private struct StepRowView: View {
                 .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
         }
         .padding(.vertical, 1.5)
+        .onReceive(tick) { _ in
+            guard isRunning else { return }
+
+            secondsLeft -= 1
+
+            if secondsLeft == 0 && !didRing {
+                didRing = true
+                ringForThreeSeconds()
+            }
+        }
+    }
+
+    private var timerDisplayText: String {
+        if !isRunning, secondsLeft == sessionInitialSeconds {
+            let m = sessionInitialSeconds / 60
+            return "\(m)m"
+        }
+        return timeText
+    }
+
+    private var timeText: String {
+        if secondsLeft >= 0 {
+            let m = secondsLeft / 60
+            let s = secondsLeft % 60
+            return String(format: "%d:%02d", m, s)
+        } else {
+            let over = abs(secondsLeft)
+            let m = over / 60
+            let s = over % 60
+            return String(format: "-%d:%02d", m, s)
+        }
+    }
+
+    private func handleTimerTap() {
+        if isRunning {
+            if secondsLeft > 0 {
+                showTimer = true
+            } else {
+                resetTimer()
+            }
+            return
+        }
+
+        if secondsLeft <= 0 {
+            resetTimer()
+        } else {
+            toggleRun()
+        }
+    }
+
+    private func toggleRun() {
+        isRunning.toggle()
+        if isRunning {
+            Haptics.light()
+        }
+    }
+
+    private func resetTimer() {
+        isRunning = false
+        secondsLeft = sessionInitialSeconds
+        didRing = false
+        Haptics.light()
+    }
+
+    private func applyOverride(_ overrideSeconds: Int) {
+        sessionInitialSeconds = overrideSeconds
+        secondsLeft = overrideSeconds
+        didRing = false
+        Haptics.light()
+    }
+
+    private func ringForThreeSeconds() {
+        guard !beepTaskRunning else { return }
+        beepTaskRunning = true
+        Haptics.success()
+
+        SoundPlayer.playBeepBurst(durationSeconds: 3.0) {
+            beepTaskRunning = false
+        }
     }
 }

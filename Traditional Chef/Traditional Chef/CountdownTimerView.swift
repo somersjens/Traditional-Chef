@@ -8,22 +8,25 @@ import SwiftUI
 
 struct CountdownTimerView: View {
     let initialSeconds: Int
+    let liveSeconds: Int
+    let isRunning: Bool
+    let onReset: () -> Void
+    let onPauseToggle: () -> Void
+    let onOverride: (Int) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
 
-    @State private var isRunning: Bool = false
-    @State private var secondsLeft: Int
-    @State private var startDate: Date? = nil
+    @State private var overrideMinutesText: String = ""
 
-    @State private var beepTaskRunning: Bool = false
-
-    private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-    init(initialSeconds: Int) {
+    init(initialSeconds: Int, liveSeconds: Int, isRunning: Bool, onReset: @escaping () -> Void, onPauseToggle: @escaping () -> Void, onOverride: @escaping (Int) -> Void) {
         self.initialSeconds = initialSeconds
-        _secondsLeft = State(initialValue: initialSeconds)
+        self.liveSeconds = liveSeconds
+        self.isRunning = isRunning
+        self.onReset = onReset
+        self.onPauseToggle = onPauseToggle
+        self.onOverride = onOverride
     }
 
     var body: some View {
@@ -56,7 +59,7 @@ struct CountdownTimerView: View {
 
                 HStack(spacing: 12) {
                     Button {
-                        reset()
+                        onReset()
                     } label: {
                         Text(AppLanguage.string("timer.reset", locale: locale))
                             .frame(maxWidth: .infinity)
@@ -67,7 +70,7 @@ struct CountdownTimerView: View {
                     }
 
                     Button {
-                        toggleRun()
+                        onPauseToggle()
                     } label: {
                         Text(AppLanguage.string(isRunning ? "timer.pause" : "timer.start", locale: locale))
                             .frame(maxWidth: .infinity)
@@ -76,6 +79,29 @@ struct CountdownTimerView: View {
                             .foregroundStyle(AppTheme.secondaryOffWhite)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+                }
+                .padding(.horizontal, 20)
+
+                HStack(spacing: 10) {
+                    TextField("00", text: $overrideMinutesText)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 10)
+                        .frame(width: 120)
+                        .background(AppTheme.primaryBlue.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                    Button {
+                        if let minutes = Int(overrideMinutesText), minutes > 0 {
+                            onOverride(minutes * 60)
+                            overrideMinutesText = ""
+                        }
+                    } label: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                    }
+                    .accessibilityLabel(Text("Apply override"))
                 }
                 .padding(.horizontal, 20)
 
@@ -89,64 +115,30 @@ struct CountdownTimerView: View {
                     Button(AppLanguage.string("done", locale: locale)) { dismiss() }
                 }
             }
-            .onReceive(tick) { _ in
-                guard isRunning else { return }
-
-                secondsLeft -= 1
-
-                if secondsLeft == 0 {
-                    // finished at exact zero: ring 3 seconds, then stop
-                    isRunning = false
-                    ringForThreeSeconds()
-                }
-            }
         }
     }
 
     private var isFinished: Bool {
-        secondsLeft <= 0
+        liveSeconds <= 0
     }
 
     private var progress: CGFloat {
         if initialSeconds <= 0 { return 0 }
-        let elapsed = initialSeconds - max(secondsLeft, 0)
+        let elapsed = initialSeconds - max(liveSeconds, 0)
         return CGFloat(elapsed) / CGFloat(initialSeconds)
     }
 
     private var timeText: String {
-        if secondsLeft >= 0 {
-            let m = secondsLeft / 60
-            let s = secondsLeft % 60
+        if liveSeconds >= 0 {
+            let m = liveSeconds / 60
+            let s = liveSeconds % 60
             return String(format: "%d:%02d", m, s)
         } else {
             // show negative overtime
-            let over = abs(secondsLeft)
+            let over = abs(liveSeconds)
             let m = over / 60
             let s = over % 60
             return String(format: "-%d:%02d", m, s)
-        }
-    }
-
-    private func toggleRun() {
-        isRunning.toggle()
-        if isRunning {
-            Haptics.light()
-        }
-    }
-
-    private func reset() {
-        isRunning = false
-        secondsLeft = initialSeconds
-        Haptics.light()
-    }
-
-    private func ringForThreeSeconds() {
-        guard !beepTaskRunning else { return }
-        beepTaskRunning = true
-        Haptics.success()
-
-        SoundPlayer.playBeepBurst(durationSeconds: 3.0) {
-            beepTaskRunning = false
         }
     }
 }
