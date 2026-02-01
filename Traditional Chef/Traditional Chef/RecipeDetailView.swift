@@ -87,10 +87,10 @@ struct RecipeDetailView: View {
                 Text(AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale))
                     .font(.body)
                     .foregroundStyle(AppTheme.textPrimary)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
         }
-        .animation(.easeInOut, value: isInfoExpanded)
+        .animation(.easeInOut(duration: 0.25), value: isInfoExpanded)
         .padding(12)
         .background(AppTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))

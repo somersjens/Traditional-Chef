@@ -51,10 +51,10 @@ struct DrinkPairingCard: View {
                     Text(AttributedString.boldPhrases(in: raw, phrases: boldPhrases))
                         .font(.body)
                         .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
-                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
                 }
             }
-            .animation(.easeInOut, value: isExpanded)
+            .animation(.easeInOut(duration: 0.25), value: isExpanded)
             .padding(12)
             .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 16))
