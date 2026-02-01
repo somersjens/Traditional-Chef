@@ -33,6 +33,7 @@ struct RecipeRowView: View {
                     .frame(width: 20, alignment: .center)
             }
             .buttonStyle(.plain)
+            .padding(.trailing, 4)
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 4)

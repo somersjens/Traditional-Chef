@@ -152,7 +152,7 @@ struct RecipeListView: View {
             } action: {
                 vm.setSort(.time)
             }
-            .frame(width: 44, alignment: .trailing)
+            .frame(width: 56, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
@@ -163,6 +163,7 @@ struct RecipeListView: View {
                     .frame(width: 20, alignment: .center)
             }
             .buttonStyle(.plain)
+            .padding(.trailing, 4)
             .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: locale)))
         }
         .font(.headline.weight(.semibold))
