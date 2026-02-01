@@ -9,6 +9,7 @@ struct GroceryListCard: View {
     let recipe: Recipe
     let servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    private let ingredientRowSpacing: CGFloat = 9
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     enum SortMode: String, CaseIterable {
@@ -56,7 +57,7 @@ struct GroceryListCard: View {
                 .overlay(AppTheme.hairline)
 
             if isResettingChecks {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: ingredientRowSpacing) {
                     ForEach(resetDisplayIngredients) { ing in
                         let isChecked = checked.contains(ing.id)
                         ingredientRow(ing, isChecked: isChecked)
@@ -64,7 +65,7 @@ struct GroceryListCard: View {
                     }
                 }
             } else {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: ingredientRowSpacing) {
                     ForEach(uncheckedIngredients) { ing in
                         ingredientRow(ing, isChecked: false)
                     }
@@ -73,7 +74,7 @@ struct GroceryListCard: View {
                 if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
                     Divider().overlay(AppTheme.hairline)
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
                         ForEach(checkedIngredients) { ing in
                             ingredientRow(ing, isChecked: true)
                                 .opacity(0.65)
