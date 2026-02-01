@@ -143,6 +143,7 @@ private struct StepRowView: View {
     @State private var isRunning: Bool = false
     @State private var secondsLeft: Int
     @State private var sessionInitialSeconds: Int
+    @State private var baseInitialSeconds: Int
     @State private var didRing: Bool = false
     @State private var beepTaskRunning: Bool = false
 
@@ -157,6 +158,7 @@ private struct StepRowView: View {
         let initial = step.timerSeconds ?? 0
         _secondsLeft = State(initialValue: initial)
         _sessionInitialSeconds = State(initialValue: initial)
+        _baseInitialSeconds = State(initialValue: initial)
     }
 
     var body: some View {
@@ -172,7 +174,11 @@ private struct StepRowView: View {
                 Spacer()
 
                 if step.timerSeconds != nil {
-                    TimerBadgeView(displayText: timerDisplayText, isRunning: isRunning) {
+                    TimerBadgeView(
+                        displayText: timerDisplayText,
+                        isRunning: isRunning,
+                        isOverdue: secondsLeft < 0
+                    ) {
                         handleTimerTap()
                     }
                     .sheet(isPresented: $showTimer) {
@@ -180,7 +186,7 @@ private struct StepRowView: View {
                             initialSeconds: sessionInitialSeconds,
                             liveSeconds: secondsLeft,
                             isRunning: isRunning,
-                            onReset: { resetTimer() },
+                            onReset: { resetTimer(to: sessionInitialSeconds) },
                             onPauseToggle: { toggleRun() },
                             onOverride: { overrideSeconds in
                                 applyOverride(overrideSeconds)
@@ -238,13 +244,13 @@ private struct StepRowView: View {
             if secondsLeft > 0 {
                 showTimer = true
             } else {
-                resetTimer()
+                resetTimer(to: baseInitialSeconds)
             }
             return
         }
 
         if secondsLeft <= 0 {
-            resetTimer()
+            resetTimer(to: baseInitialSeconds)
         } else {
             toggleRun()
         }
@@ -257,9 +263,10 @@ private struct StepRowView: View {
         }
     }
 
-    private func resetTimer() {
+    private func resetTimer(to seconds: Int) {
         isRunning = false
-        secondsLeft = sessionInitialSeconds
+        sessionInitialSeconds = seconds
+        secondsLeft = seconds
         didRing = false
         Haptics.light()
     }
