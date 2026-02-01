@@ -19,6 +19,7 @@ struct CountdownTimerView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     @State private var overrideMinutesText: String = ""
+    @State private var overrideSecondsText: String = ""
 
     init(initialSeconds: Int, liveSeconds: Int, isRunning: Bool, onReset: @escaping () -> Void, onPauseToggle: @escaping () -> Void, onOverride: @escaping (Int) -> Void) {
         self.initialSeconds = initialSeconds
@@ -40,18 +41,18 @@ struct CountdownTimerView: View {
 
                     Circle()
                         .trim(from: 0, to: progress)
-                        .stroke(AppTheme.primaryBlue, style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                        .stroke(timerColor, style: StrokeStyle(lineWidth: 18, lineCap: .round))
                         .rotationEffect(.degrees(-90))
 
                     VStack(spacing: 6) {
                         Text(timeText)
                             .font(.system(size: 44, weight: .bold))
                             .monospacedDigit()
-                            .foregroundStyle(AppTheme.primaryBlue)
+                            .foregroundStyle(timerColor)
 
                         Text(AppLanguage.string(isFinished ? "timer.finished" : "timer.remaining", locale: locale))
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                            .foregroundStyle(timerColor.opacity(0.75))
                     }
                 }
                 .frame(width: 260, height: 260)
@@ -83,7 +84,7 @@ struct CountdownTimerView: View {
                 .padding(.horizontal, 20)
 
                 HStack(spacing: 10) {
-                    TextField("00", text: $overrideMinutesText)
+                    TextField("Minutes", text: $overrideMinutesText)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.center)
                         .padding(.vertical, 10)
@@ -91,10 +92,27 @@ struct CountdownTimerView: View {
                         .background(AppTheme.primaryBlue.opacity(0.08))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
 
+                    Text(":")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
+
+                    TextField("Seconds", text: $overrideSecondsText)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 10)
+                        .frame(width: 90)
+                        .background(AppTheme.primaryBlue.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+
                     Button {
-                        if let minutes = Int(overrideMinutesText), minutes > 0 {
-                            onOverride(minutes * 60)
+                        let minutes = Int(overrideMinutesText) ?? 0
+                        let seconds = Int(overrideSecondsText) ?? 0
+                        let totalSeconds = (minutes * 60) + seconds
+
+                        if totalSeconds > 0 {
+                            onOverride(totalSeconds)
                             overrideMinutesText = ""
+                            overrideSecondsText = ""
                         }
                     } label: {
                         Image(systemName: "checkmark.circle.fill")
@@ -126,6 +144,10 @@ struct CountdownTimerView: View {
         if initialSeconds <= 0 { return 0 }
         let elapsed = initialSeconds - max(liveSeconds, 0)
         return CGFloat(elapsed) / CGFloat(initialSeconds)
+    }
+
+    private var timerColor: Color {
+        liveSeconds < 0 ? AppTheme.timerOverdue : AppTheme.primaryBlue
     }
 
     private var timeText: String {

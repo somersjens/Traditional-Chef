@@ -14,4 +14,5 @@ enum AppTheme {
     static let textPrimary = Color(hex: "1C263C")
     static let searchHighlight = Color(hex: "1C263C")
     static let hairline = Color(hex: "1C263C")
+    static let timerOverdue = Color(hex: "C5454F")
 }
