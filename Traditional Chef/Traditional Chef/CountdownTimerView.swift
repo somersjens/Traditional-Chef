@@ -22,7 +22,9 @@ struct CountdownTimerView: View {
     @State private var overrideSecondsText: String = ""
 
     private let controlWidth: CGFloat = 120
-    private let controlsVerticalSpacing: CGFloat = -10
+    private let controlsRowSpacing: CGFloat = 18
+    private let controlsTopPadding: CGFloat = 18
+    private let controlsRowGap: CGFloat = 0 // jens: adjust to taste
     private let checkmarkTrailingInset: CGFloat = 25 
 
     init(initialSeconds: Int, liveSeconds: Int, isRunning: Bool, onReset: @escaping () -> Void, onPauseToggle: @escaping () -> Void, onOverride: @escaping (Int) -> Void) {
@@ -62,7 +64,7 @@ struct CountdownTimerView: View {
                 .frame(width: 260, height: 260)
                 .padding(.horizontal, 20)
 
-                HStack(spacing: 12) {
+                HStack(spacing: controlsRowSpacing) {
                     Button {
                         onReset()
                     } label: {
@@ -86,11 +88,12 @@ struct CountdownTimerView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, controlsVerticalSpacing)
+                .padding(.top, controlsTopPadding)
+                .padding(.bottom, controlsRowGap)
 
                 ZStack {
                     ZStack {
-                        HStack(spacing: 10) {
+                        HStack(spacing: controlsRowSpacing) {
                             TextField("Minutes", text: $overrideMinutesText)
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.center)
