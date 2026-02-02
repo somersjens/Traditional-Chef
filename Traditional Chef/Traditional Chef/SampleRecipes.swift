@@ -17,7 +17,7 @@ enum SampleRecipes {
         category: .main,
         infoKey: "recipe.it.bolognese.info",
         approximateMinutes: 90,
-        calories: 400,
+        calories: 635,
         ingredientsCountForList: 10,
         ingredients: [
             Ingredient(id: "pasta", nameKey: "ingredient.pasta", grams: 400, isOptional: false, aisle: .pantry, useOrder: 7),
@@ -93,6 +93,16 @@ enum SampleRecipes {
             ),
         ],
         drinkPairingKey: "recipe.it.bolognese.drink.body",
-        drinkPairingBoldPhraseKeys: ["recipe.drink.redWine"]
+        drinkPairingBoldPhraseKeys: ["recipe.drink.redWine"],
+        nutrition: RecipeNutrition(
+            energyKcal: 635,
+            proteinGrams: 23,
+            carbohydratesGrams: 66,
+            sugarsGrams: 7,
+            fatGrams: 28,
+            saturatedFatGrams: 4,
+            sodiumMilligrams: 760,
+            fiberGrams: 15
+        )
     )
 }

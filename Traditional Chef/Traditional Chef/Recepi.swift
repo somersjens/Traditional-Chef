@@ -60,6 +60,9 @@ struct Recipe: Identifiable, Hashable {
 
     /// Optional localized phrase keys to render in bold within the drink pairing text.
     let drinkPairingBoldPhraseKeys: [String]
+
+    /// Optional nutrition facts (per serving).
+    let nutrition: RecipeNutrition?
 }
 
 struct Ingredient: Identifiable, Hashable {
@@ -111,4 +114,15 @@ struct RecipeStep: Identifiable, Hashable {
 
     /// Optional single timer per step (seconds)
     let timerSeconds: Int?
+}
+
+struct RecipeNutrition: Hashable {
+    let energyKcal: Int?
+    let proteinGrams: Double?
+    let carbohydratesGrams: Double?
+    let sugarsGrams: Double?
+    let fatGrams: Double?
+    let saturatedFatGrams: Double?
+    let sodiumMilligrams: Double?
+    let fiberGrams: Double?
 }

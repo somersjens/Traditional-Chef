@@ -41,6 +41,16 @@
 "recipe.stepsTitle" = "Steps";
 "recipe.drinkTitle" = "What to drink?";
 "recipe.infoTitle" = "Information";
+"recipe.nutritionTitle" = "Nutritional values";
+"recipe.nutrition.perServing" = "(per serving)";
+"recipe.nutrition.energy" = "Energy";
+"recipe.nutrition.protein" = "Protein";
+"recipe.nutrition.carbs" = "Carbohydrates";
+"recipe.nutrition.sugars" = "of which sugars";
+"recipe.nutrition.fat" = "Fat";
+"recipe.nutrition.saturated" = "of which saturated";
+"recipe.nutrition.sodium" = "Sodium";
+"recipe.nutrition.fiber" = "Fiber";
 "recipe.drink.redWine" = "red wine";
 "grocery.optional" = "Optional";
 "grocery.allCollected" = "All collected!";
