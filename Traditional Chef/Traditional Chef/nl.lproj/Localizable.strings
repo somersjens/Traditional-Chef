@@ -41,6 +41,16 @@
 "recipe.stepsTitle" = "Stappen";
 "recipe.drinkTitle" = "Drankje erbij?";
 "recipe.infoTitle" = "Informatie";
+"recipe.nutritionTitle" = "Voedingswaarden";
+"recipe.nutrition.perServing" = "(per eenpersoonsportie)";
+"recipe.nutrition.energy" = "energie";
+"recipe.nutrition.protein" = "eiwit";
+"recipe.nutrition.carbs" = "koolhydraten";
+"recipe.nutrition.sugars" = "waarvan suikers";
+"recipe.nutrition.fat" = "vet";
+"recipe.nutrition.saturated" = "waarvan verzadigd";
+"recipe.nutrition.sodium" = "natrium";
+"recipe.nutrition.fiber" = "vezels";
 "recipe.drink.redWine" = "rode wijn";
 "grocery.optional" = "Optioneel";
 "grocery.allCollected" = "Alles verzameld!";
