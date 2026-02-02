@@ -39,6 +39,7 @@ struct DrinkPairingCard: View {
                         Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                             .font(.headline)
                             .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 24, height: 24, alignment: .center)
                     }
                 }
                 .buttonStyle(.plain)
