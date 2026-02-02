@@ -56,34 +56,35 @@ struct RecipeDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "mappin")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryBlue)
+            Button {
+                withAnimation(.easeInOut) {
+                    isInfoExpanded.toggle()
+                }
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "mappin")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
 
-                Text(AppLanguage.string("recipe.infoTitle", locale: locale))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
+                    Text(AppLanguage.string("recipe.infoTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
 
-                Spacer()
+                    Spacer()
 
-                Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
-                Button {
-                    withAnimation(.easeInOut) {
-                        isInfoExpanded.toggle()
-                    }
-                } label: {
                     Image(systemName: isInfoExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
-                        .accessibilityLabel(Text(isInfoExpanded ? "Collapse info" : "Expand info"))
                 }
-                .buttonStyle(.plain)
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityLabel(Text(isInfoExpanded ? "Collapse info" : "Expand info"))
 
             if isInfoExpanded {
                 Divider()
@@ -109,34 +110,35 @@ struct RecipeDetailView: View {
         let format = AppLanguage.string("recipe.steps.summary", locale: locale)
         let summary = String(format: format, locale: locale, recipe.approximateMinutes)
         return VStack(alignment: .leading, spacing: 9) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "figure.walk")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryBlue)
+            Button {
+                withAnimation(.easeInOut) {
+                    isStepsExpanded.toggle()
+                }
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "figure.walk")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
 
-                Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
+                    Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
 
-                Spacer()
+                    Spacer()
 
-                Text(summary)
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    Text(summary)
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
-                Button {
-                    withAnimation(.easeInOut) {
-                        isStepsExpanded.toggle()
-                    }
-                } label: {
                     Image(systemName: isStepsExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
-                        .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
                 }
-                .buttonStyle(.plain)
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
 
             if isStepsExpanded {
                 Divider()

@@ -29,34 +29,35 @@ struct GroceryListCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "checkmark")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryBlue)
+            Button {
+                withAnimation(.easeInOut) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "checkmark")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
 
-                Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
+                    Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
 
-                Spacer()
+                    Spacer()
 
-                Text(grocerySummary)
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    Text(grocerySummary)
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
-                Button {
-                    withAnimation(.easeInOut) {
-                        isExpanded.toggle()
-                    }
-                } label: {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
-                        .accessibilityLabel(Text(isExpanded ? "Collapse grocery list" : "Expand grocery list"))
                 }
-                .buttonStyle(.plain)
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityLabel(Text(isExpanded ? "Collapse grocery list" : "Expand grocery list"))
 
             if isExpanded {
                 Divider()

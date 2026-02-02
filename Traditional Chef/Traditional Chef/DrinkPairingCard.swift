@@ -14,35 +14,36 @@ struct DrinkPairingCard: View {
     var body: some View {
         if let bodyKey = recipe.drinkPairingKey {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "wineglass")
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.primaryBlue)
-
-                    Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.textPrimary)
-
-                    Spacer()
-
-                    if let summaryKey = recipe.drinkPairingSummaryKey {
-                        Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
                     }
+                } label: {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Image(systemName: "wineglass")
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.primaryBlue)
 
-                    Button {
-                        withAnimation(.easeInOut) {
-                            isExpanded.toggle()
+                        Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.textPrimary)
+
+                        Spacer()
+
+                        if let summaryKey = recipe.drinkPairingSummaryKey {
+                            Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                                .font(.subheadline)
+                                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
                         }
-                    } label: {
+
                         Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                             .font(.headline)
                             .foregroundStyle(AppTheme.primaryBlue)
-                            .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
                     }
-                    .buttonStyle(.plain)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
 
                 if isExpanded {
                     Divider()

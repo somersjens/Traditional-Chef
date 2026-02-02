@@ -13,34 +13,35 @@ struct NutritionCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "leaf")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryBlue)
+            Button {
+                withAnimation(.easeInOut) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "leaf")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
 
-                Text(AppLanguage.string("recipe.nutritionTitle", locale: locale))
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
+                    Text(AppLanguage.string("recipe.nutritionTitle", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
 
-                Spacer()
+                    Spacer()
 
-                Text("\(recipe.calories) kcal")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    Text("\(recipe.calories) kcal")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
-                Button {
-                    withAnimation(.easeInOut) {
-                        isExpanded.toggle()
-                    }
-                } label: {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
-                        .accessibilityLabel(Text(isExpanded ? "Collapse nutrition" : "Expand nutrition"))
                 }
-                .buttonStyle(.plain)
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityLabel(Text(isExpanded ? "Collapse nutrition" : "Expand nutrition"))
 
             if isExpanded {
                 Divider()
