@@ -23,9 +23,7 @@ struct RecipeDetailView: View {
 
                 DrinkPairingCard(recipe: recipe)
 
-                ServingsCard(servings: $servings)
-
-                GroceryListCard(recipe: recipe, servings: servings)
+                GroceryListCard(recipe: recipe, servings: $servings)
 
                 stepsCard
             }

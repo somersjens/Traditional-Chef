@@ -7,7 +7,7 @@ import SwiftUI
 
 struct GroceryListCard: View {
     let recipe: Recipe
-    let servings: Int
+    @Binding var servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private let ingredientRowSpacing: CGFloat = 9
     private var locale: Locale { Locale(identifier: appLanguage) }
@@ -22,6 +22,9 @@ struct GroceryListCard: View {
     @State private var checked: Set<String> = []
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
+    @State private var isExpanded: Bool = true
+    private let minServings = 1
+    private let maxServings = 99
     private let baseServings = 4
 
     var body: some View {
@@ -39,46 +42,95 @@ struct GroceryListCard: View {
 
                 Spacer()
 
-                Menu {
-                    Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
-                    Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
-                    Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
-                } label: {
-                    HStack(spacing: 6) {
-                        Text(sortModeLabel)
-                            .font(.subheadline.weight(.semibold))
-                        Image(systemName: "arrow.up.arrow.down")
+                HStack(spacing: 12) {
+                    Button(action: decrementServings) {
+                        Image(systemName: "minus")
+                            .font(.title3.weight(.semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
                     }
-                    .foregroundStyle(AppTheme.primaryBlue)
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(servings <= minServings ? 0.3 : 1))
+                    .disabled(servings <= minServings)
+
+                    Text("\(servings)")
+                        .font(.title3.weight(.semibold))
+                        .frame(width: 44)
+
+                    Button(action: incrementServings) {
+                        Image(systemName: "plus")
+                            .font(.title3.weight(.semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(servings >= maxServings ? 0.3 : 1))
+                    .disabled(servings >= maxServings)
                 }
+                .foregroundStyle(AppTheme.primaryBlue)
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
+                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: 24, height: 24, alignment: .center)
+                        .accessibilityLabel(Text(isExpanded ? "Collapse grocery list" : "Expand grocery list"))
+                }
+                .buttonStyle(.plain)
             }
 
-            Divider()
-                .overlay(AppTheme.hairline)
+            if isExpanded {
+                Divider()
+                    .overlay(AppTheme.hairline)
 
-            if isResettingChecks {
-                VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                    ForEach(resetDisplayIngredients) { ing in
-                        let isChecked = checked.contains(ing.id)
-                        ingredientRow(ing, isChecked: isChecked)
-                            .opacity(isChecked ? 0.65 : 1)
-                    }
-                }
-            } else {
-                VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                    ForEach(uncheckedIngredients) { ing in
-                        ingredientRow(ing, isChecked: false)
-                    }
-                }
-
-                if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
-                    Divider().overlay(AppTheme.hairline)
-
+                if isResettingChecks {
                     VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ForEach(checkedIngredients) { ing in
-                            ingredientRow(ing, isChecked: true)
-                                .opacity(0.65)
+                        ForEach(resetDisplayIngredients) { ing in
+                            let isChecked = checked.contains(ing.id)
+                            ingredientRow(ing, isChecked: isChecked)
+                                .opacity(isChecked ? 0.65 : 1)
                         }
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
+                        ForEach(uncheckedIngredients) { ing in
+                            ingredientRow(ing, isChecked: false)
+                        }
+                    }
+
+                    if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
+                        Divider().overlay(AppTheme.hairline)
+
+                        VStack(alignment: .leading, spacing: ingredientRowSpacing) {
+                            ForEach(checkedIngredients) { ing in
+                                ingredientRow(ing, isChecked: true)
+                                    .opacity(0.65)
+                            }
+                        }
+                    }
+                }
+
+                Divider()
+                    .overlay(AppTheme.hairline)
+
+                HStack {
+                    Spacer()
+
+                    Menu {
+                        Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
+                        Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
+                        Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(sortModeLabel)
+                                .font(.subheadline.weight(.semibold))
+                            Image(systemName: "arrow.up.arrow.down")
+                        }
+                        .foregroundStyle(AppTheme.primaryBlue)
                     }
                 }
             }
@@ -101,6 +153,19 @@ struct GroceryListCard: View {
         .onAppear {
             checked = loadChecked()
         }
+    }
+
+    private func incrementServings() {
+        updateServings(to: servings + 1)
+    }
+
+    private func decrementServings() {
+        updateServings(to: servings - 1)
+    }
+
+    private func updateServings(to newValue: Int) {
+        let clamped = min(max(newValue, minServings), maxServings)
+        servings = clamped
     }
 
     private var sortModeLabel: String {
