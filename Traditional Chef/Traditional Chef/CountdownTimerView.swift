@@ -21,6 +21,10 @@ struct CountdownTimerView: View {
     @State private var overrideMinutesText: String = ""
     @State private var overrideSecondsText: String = ""
 
+    private let controlWidth: CGFloat = 120
+    private let controlsVerticalSpacing: CGFloat = -10
+    private let checkmarkTrailingInset: CGFloat = 25 
+
     init(initialSeconds: Int, liveSeconds: Int, isRunning: Bool, onReset: @escaping () -> Void, onPauseToggle: @escaping () -> Void, onOverride: @escaping (Int) -> Void) {
         self.initialSeconds = initialSeconds
         self.liveSeconds = liveSeconds
@@ -63,7 +67,7 @@ struct CountdownTimerView: View {
                         onReset()
                     } label: {
                         Text(AppLanguage.string("timer.reset", locale: locale))
-                            .frame(maxWidth: .infinity)
+                            .frame(width: controlWidth)
                             .padding(.vertical, 14)
                             .background(AppTheme.primaryBlue.opacity(0.10))
                             .foregroundStyle(AppTheme.primaryBlue)
@@ -74,7 +78,7 @@ struct CountdownTimerView: View {
                         onPauseToggle()
                     } label: {
                         Text(AppLanguage.string(isRunning ? "timer.pause" : "timer.start", locale: locale))
-                            .frame(maxWidth: .infinity)
+                            .frame(width: controlWidth)
                             .padding(.vertical, 14)
                             .background(AppTheme.primaryBlue)
                             .foregroundStyle(AppTheme.secondaryOffWhite)
@@ -82,44 +86,47 @@ struct CountdownTimerView: View {
                     }
                 }
                 .padding(.horizontal, 20)
+                .padding(.bottom, controlsVerticalSpacing)
 
-                HStack(spacing: 10) {
-                    TextField("Minutes", text: $overrideMinutesText)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 10)
-                        .frame(width: 120)
-                        .background(AppTheme.primaryBlue.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                ZStack {
+                    ZStack {
+                        HStack(spacing: 10) {
+                            TextField("Minutes", text: $overrideMinutesText)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.center)
+                                .padding(.vertical, 10)
+                                .frame(width: controlWidth)
+                                .background(AppTheme.primaryBlue.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                    Text(":")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
-
-                    TextField("Seconds", text: $overrideSecondsText)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 10)
-                        .frame(width: 90)
-                        .background(AppTheme.primaryBlue.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                    Button {
-                        let minutes = Int(overrideMinutesText) ?? 0
-                        let seconds = Int(overrideSecondsText) ?? 0
-                        let totalSeconds = (minutes * 60) + seconds
-
-                        if totalSeconds > 0 {
-                            onOverride(totalSeconds)
-                            overrideMinutesText = ""
-                            overrideSecondsText = ""
+                            TextField("Seconds", text: $overrideSecondsText)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.center)
+                                .padding(.vertical, 10)
+                                .frame(width: controlWidth)
+                                .background(AppTheme.primaryBlue.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                    } label: {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(AppTheme.primaryBlue)
+
+                        Text(":")
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
                     }
-                    .accessibilityLabel(Text("Apply override"))
+                    .frame(width: (controlWidth * 2) + 10)
+
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            applyOverrideIfNeeded()
+                        } label: {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(AppTheme.primaryBlue)
+                        }
+                        .padding(.trailing, checkmarkTrailingInset)
+                        .accessibilityLabel(Text("Apply override"))
+                    }
                 }
                 .padding(.horizontal, 20)
 
@@ -130,9 +137,15 @@ struct CountdownTimerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(AppLanguage.string("done", locale: locale)) { dismiss() }
+                    Button(AppLanguage.string("done", locale: locale)) {
+                        applyOverrideIfNeeded()
+                        dismiss()
+                    }
                 }
             }
+        }
+        .onDisappear {
+            applyOverrideIfNeeded()
         }
     }
 
@@ -161,6 +174,18 @@ struct CountdownTimerView: View {
             let m = over / 60
             let s = over % 60
             return String(format: "-%d:%02d", m, s)
+        }
+    }
+
+    private func applyOverrideIfNeeded() {
+        let minutes = Int(overrideMinutesText) ?? 0
+        let seconds = Int(overrideSecondsText) ?? 0
+        let totalSeconds = (minutes * 60) + seconds
+
+        if totalSeconds > 0 {
+            onOverride(totalSeconds)
+            overrideMinutesText = ""
+            overrideSecondsText = ""
         }
     }
 }
