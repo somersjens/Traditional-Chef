@@ -29,45 +29,20 @@ struct GroceryListCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "checkmark")
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.primaryBlue)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: "checkmark")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
 
-                    Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.textPrimary)
-                }
+                Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.textPrimary)
 
                 Spacer()
 
-                HStack(spacing: 12) {
-                    Button(action: decrementServings) {
-                        Image(systemName: "minus")
-                            .font(.title3.weight(.semibold))
-                            .frame(width: 32, height: 32)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(servings <= minServings ? 0.3 : 1))
-                    .disabled(servings <= minServings)
-
-                    Text("\(servings)")
-                        .font(.title3.weight(.semibold))
-                        .frame(width: 44)
-
-                    Button(action: incrementServings) {
-                        Image(systemName: "plus")
-                            .font(.title3.weight(.semibold))
-                            .frame(width: 32, height: 32)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(servings >= maxServings ? 0.3 : 1))
-                    .disabled(servings >= maxServings)
-                }
-                .foregroundStyle(AppTheme.primaryBlue)
+                Text(grocerySummary)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
                 Button {
                     withAnimation(.easeInOut) {
@@ -84,6 +59,45 @@ struct GroceryListCard: View {
             }
 
             if isExpanded {
+                Divider()
+                    .overlay(AppTheme.hairline)
+
+                HStack(alignment: .center, spacing: 12) {
+                    Text(AppLanguage.string("grocery.servings", locale: locale))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.textPrimary)
+
+                    Spacer()
+
+                    HStack(spacing: 10) {
+                        Button(action: decrementServings) {
+                            Image(systemName: "minus")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(width: 26, height: 26)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(servings <= minServings ? 0.3 : 1))
+                        .disabled(servings <= minServings)
+
+                        Text("\(servings)")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(width: 32)
+
+                        Button(action: incrementServings) {
+                            Image(systemName: "plus")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(width: 26, height: 26)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(servings >= maxServings ? 0.3 : 1))
+                        .disabled(servings >= maxServings)
+                    }
+                    .foregroundStyle(AppTheme.primaryBlue)
+                }
+                .padding(.vertical, 2)
+
                 Divider()
                     .overlay(AppTheme.hairline)
 
@@ -259,6 +273,11 @@ struct GroceryListCard: View {
 
     private func scaledGrams(_ grams: Double) -> Double {
         grams * Double(servings) / Double(baseServings)
+    }
+
+    private var grocerySummary: String {
+        let format = AppLanguage.string("recipe.grocery.summary", locale: locale)
+        return String(format: format, locale: locale, recipe.ingredients.count)
     }
 
     private var checkedStorageKey: String {

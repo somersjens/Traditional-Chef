@@ -25,6 +25,12 @@ struct DrinkPairingCard: View {
 
                     Spacer()
 
+                    if let summaryKey = recipe.drinkPairingSummaryKey {
+                        Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    }
+
                     Button {
                         withAnimation(.easeInOut) {
                             isExpanded.toggle()

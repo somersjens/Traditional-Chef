@@ -72,7 +72,11 @@
 /* Recept: Pasta Bolognese */
 "recipe.it.bolognese.name" = "Pasta Bolognese";
 "recipe.it.bolognese.info" = "Komt oorspronkelijk uit Bologna (Noord Italie), waar de saus bekendstaat als ragu alla bolognese en vooral draait om langzaam gegaard vlees met een beetje tomaat. Hij wordt traditioneel geserveerd met tagliatelle, omdat die brede, platte linten de dikke, vlezig saus veel beter vasthouden dan dunne spaghetti.";
+"recipe.it.bolognese.info.summary" = "Bologna (stad)";
 "recipe.it.bolognese.drink.body" = "Traditioneel drink je bij pasta bolognese een rode wijn met frisse zuren, zoals Sangiovese of Barbera. Die sluit mooi aan op de tomaat en het rijke vlees, en houdt elke hap lekker fris. Liever geen wijn? Dan is bruiswater of licht pils ook prima.";
+"recipe.it.bolognese.drink.summary" = "Rode wijn (Sangiovese)";
+"recipe.grocery.summary" = "%d ingredienten";
+"recipe.steps.summary" = "%d minuten";
 
 "ingredient.pasta" = "Pasta";
 "ingredient.minced_meat" = "Gehakt (rund of half-om-half)";

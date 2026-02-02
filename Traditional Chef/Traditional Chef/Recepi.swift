@@ -43,6 +43,7 @@ struct Recipe: Identifiable, Hashable {
 
     /// Localized recipe information key.
     let infoKey: String
+    let infoSummaryKey: String
 
     /// List view metadata
     let approximateMinutes: Int
@@ -57,6 +58,7 @@ struct Recipe: Identifiable, Hashable {
 
     /// Optional drink pairing description key.
     let drinkPairingKey: String?
+    let drinkPairingSummaryKey: String?
 
     /// Optional localized phrase keys to render in bold within the drink pairing text.
     let drinkPairingBoldPhraseKeys: [String]

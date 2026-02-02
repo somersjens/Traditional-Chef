@@ -16,6 +16,7 @@ enum SampleRecipes {
         nameKey: "recipe.it.bolognese.name",
         category: .main,
         infoKey: "recipe.it.bolognese.info",
+        infoSummaryKey: "recipe.it.bolognese.info.summary",
         approximateMinutes: 90,
         calories: 635,
         ingredientsCountForList: 10,
@@ -93,6 +94,7 @@ enum SampleRecipes {
             ),
         ],
         drinkPairingKey: "recipe.it.bolognese.drink.body",
+        drinkPairingSummaryKey: "recipe.it.bolognese.drink.summary",
         drinkPairingBoldPhraseKeys: ["recipe.drink.redWine"],
         nutrition: RecipeNutrition(
             energyKcal: 635,

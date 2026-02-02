@@ -12,6 +12,7 @@ struct RecipeDetailView: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isInfoExpanded: Bool = true
+    @State private var isStepsExpanded: Bool = true
     @State private var servings: Int = 4
 
     var body: some View {
@@ -66,7 +67,7 @@ struct RecipeDetailView: View {
 
                 Spacer()
 
-                Text("\(recipe.approximateMinutes) min • \(recipe.calories) kcal")
+                Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
                     .font(.subheadline)
                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
@@ -105,7 +106,9 @@ struct RecipeDetailView: View {
     }
 
     private var stepsCard: some View {
-        VStack(alignment: .leading, spacing: 9) {
+        let format = AppLanguage.string("recipe.steps.summary", locale: locale)
+        let summary = String(format: format, locale: locale, recipe.approximateMinutes)
+        return VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Image(systemName: "figure.walk")
                     .font(.headline)
@@ -114,18 +117,40 @@ struct RecipeDetailView: View {
                 Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
+
+                Spacer()
+
+                Text(summary)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isStepsExpanded.toggle()
+                    }
+                } label: {
+                    Image(systemName: isStepsExpanded ? "chevron.down" : "chevron.right")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: 24, height: 24, alignment: .center)
+                        .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
+                }
+                .buttonStyle(.plain)
             }
 
-            Divider()
-                .overlay(AppTheme.hairline)
+            if isStepsExpanded {
+                Divider()
+                    .overlay(AppTheme.hairline)
 
-            ForEach(recipe.steps) { step in
-                StepRowView(step: step, ingredients: recipe.ingredients)
-                if step.id != recipe.steps.last?.id {
-                    Divider().overlay(AppTheme.hairline)
+                ForEach(recipe.steps) { step in
+                    StepRowView(step: step, ingredients: recipe.ingredients)
+                    if step.id != recipe.steps.last?.id {
+                        Divider().overlay(AppTheme.hairline)
+                    }
                 }
             }
         }
+        .animation(.easeInOut(duration: 0.25), value: isStepsExpanded)
         .padding(12)
         .background(AppTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
