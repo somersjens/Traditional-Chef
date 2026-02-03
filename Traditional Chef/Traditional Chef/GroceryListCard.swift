@@ -28,6 +28,7 @@ struct GroceryListCard: View {
     private let minServings = 1
     private let maxServings = 99
     private let baseServings = 4
+    private let headerRowHeight: CGFloat = 34
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -56,6 +57,7 @@ struct GroceryListCard: View {
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
+                .frame(minHeight: headerRowHeight)
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
@@ -99,7 +101,7 @@ struct GroceryListCard: View {
                     }
                     .foregroundStyle(AppTheme.primaryBlue)
                 }
-                .padding(.vertical, 2)
+                .frame(minHeight: headerRowHeight)
 
                 Divider()
                     .overlay(AppTheme.hairline)
@@ -119,8 +121,9 @@ struct GroceryListCard: View {
 
                     Spacer()
 
-                    sortMenu
+                    sortButton
                 }
+                .frame(minHeight: headerRowHeight)
 
                 Divider()
                     .overlay(AppTheme.hairline)
@@ -143,8 +146,6 @@ struct GroceryListCard: View {
                     }
                 }
 
-                Divider()
-                    .overlay(AppTheme.hairline)
             }
         }
         .padding(12)
@@ -167,19 +168,28 @@ struct GroceryListCard: View {
         }
     }
 
-    private var sortMenu: some View {
-        Menu {
-            Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
-            Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
-            Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
-        } label: {
+    private var sortButton: some View {
+        Button(action: advanceSortMode) {
             HStack(spacing: 6) {
                 Text(sortModeLabel)
                     .font(.subheadline.weight(.semibold))
-                Image(systemName: "arrow.up.arrow.down")
+                Text("\(sortModeIndex)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule().fill(AppTheme.primaryBlue.opacity(0.12))
+                    )
             }
             .foregroundStyle(AppTheme.primaryBlue)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                Capsule().stroke(AppTheme.primaryBlue, lineWidth: 1)
+            )
         }
+        .buttonStyle(.plain)
     }
 
     private func optionToggle(titleKey: String, isOn: Bool, action: @escaping () -> Void) -> some View {
@@ -187,20 +197,16 @@ struct GroceryListCard: View {
             HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(titleKey), locale: locale))
                     .font(.caption.weight(.semibold))
-                Text(isOn
-                     ? AppLanguage.string("grocery.option.on", locale: locale)
-                     : AppLanguage.string("grocery.option.off", locale: locale))
-                    .font(.caption2.weight(.semibold))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(AppTheme.primaryBlue.opacity(isOn ? 0.2 : 0.08))
-                    .clipShape(Capsule())
             }
-            .foregroundStyle(AppTheme.primaryBlue)
+            .foregroundStyle(isOn ? Color.white : AppTheme.primaryBlue)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(AppTheme.primaryBlue.opacity(isOn ? 0.12 : 0.05))
-            .clipShape(Capsule())
+            .background(
+                Capsule().fill(isOn ? AppTheme.primaryBlue : Color.clear)
+            )
+            .overlay(
+                Capsule().stroke(AppTheme.primaryBlue, lineWidth: isOn ? 0 : 1)
+            )
         }
         .buttonStyle(.plain)
     }
@@ -216,6 +222,25 @@ struct GroceryListCard: View {
     private func updateServings(to newValue: Int) {
         let clamped = min(max(newValue, minServings), maxServings)
         servings = clamped
+    }
+
+    private func advanceSortMode() {
+        switch sortMode {
+        case .useOrder:
+            sortMode = .gramsDesc
+        case .gramsDesc:
+            sortMode = .supermarket
+        case .supermarket:
+            sortMode = .useOrder
+        }
+    }
+
+    private var sortModeIndex: Int {
+        switch sortMode {
+        case .useOrder: return 1
+        case .gramsDesc: return 2
+        case .supermarket: return 3
+        }
     }
 
     private var sortModeLabel: String {
