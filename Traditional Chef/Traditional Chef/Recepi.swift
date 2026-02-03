@@ -81,12 +81,29 @@ struct Ingredient: Identifiable, Hashable {
     let nameKey: String
     let grams: Double
     let isOptional: Bool
+    let group: IngredientGroup
 
     /// Used for “supermarket logic”
     let aisle: GroceryAisle
 
     /// Used for “use order” sorting
     let useOrder: Int
+}
+
+enum IngredientGroup: String, CaseIterable, Identifiable {
+    case sauce
+    case pasta
+    case finishing
+
+    var id: String { rawValue }
+
+    func localizedName(in locale: Locale) -> String {
+        switch self {
+        case .sauce: return AppLanguage.string("grocery.group.sauce", locale: locale)
+        case .pasta: return AppLanguage.string("grocery.group.pasta", locale: locale)
+        case .finishing: return AppLanguage.string("grocery.group.finishing", locale: locale)
+        }
+    }
 }
 
 enum GroceryAisle: Int, CaseIterable {

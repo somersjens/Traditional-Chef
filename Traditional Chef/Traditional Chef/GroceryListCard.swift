@@ -23,6 +23,8 @@ struct GroceryListCard: View {
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
     @State private var isExpanded: Bool = true
+    @State private var showAllGrams: Bool = true
+    @State private var groupByDishPart: Bool = false
     private let minServings = 1
     private let maxServings = 99
     private let baseServings = 4
@@ -102,52 +104,47 @@ struct GroceryListCard: View {
                 Divider()
                     .overlay(AppTheme.hairline)
 
+                HStack(alignment: .center, spacing: 10) {
+                    optionToggle(
+                        titleKey: "grocery.option.allGrams",
+                        isOn: showAllGrams,
+                        action: { showAllGrams.toggle() }
+                    )
+
+                    optionToggle(
+                        titleKey: "grocery.option.partOfDish",
+                        isOn: groupByDishPart,
+                        action: { groupByDishPart.toggle() }
+                    )
+
+                    Spacer()
+
+                    sortMenu
+                }
+
+                Divider()
+                    .overlay(AppTheme.hairline)
+
                 if isResettingChecks {
                     VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ForEach(resetDisplayIngredients) { ing in
-                            let isChecked = checked.contains(ing.id)
-                            ingredientRow(ing, isChecked: isChecked)
-                                .opacity(isChecked ? 0.65 : 1)
-                        }
+                        ingredientList(resetDisplayIngredients, checkedState: checked, isCheckedSection: false, dimChecked: true)
                     }
                 } else {
                     VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ForEach(uncheckedIngredients) { ing in
-                            ingredientRow(ing, isChecked: false)
-                        }
+                        ingredientList(uncheckedIngredients, checkedState: [], isCheckedSection: false, dimChecked: false)
                     }
 
                     if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
                         Divider().overlay(AppTheme.hairline)
 
                         VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                            ForEach(checkedIngredients) { ing in
-                                ingredientRow(ing, isChecked: true)
-                                    .opacity(0.65)
-                            }
+                            ingredientList(checkedIngredients, checkedState: checked, isCheckedSection: true, dimChecked: true)
                         }
                     }
                 }
 
                 Divider()
                     .overlay(AppTheme.hairline)
-
-                HStack {
-                    Spacer()
-
-                    Menu {
-                        Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
-                        Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
-                        Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text(sortModeLabel)
-                                .font(.subheadline.weight(.semibold))
-                            Image(systemName: "arrow.up.arrow.down")
-                        }
-                        .foregroundStyle(AppTheme.primaryBlue)
-                    }
-                }
             }
         }
         .padding(12)
@@ -168,6 +165,44 @@ struct GroceryListCard: View {
         .onAppear {
             checked = loadChecked()
         }
+    }
+
+    private var sortMenu: some View {
+        Menu {
+            Button(AppLanguage.string("grocery.sort.useOrder", locale: locale)) { sortMode = .useOrder }
+            Button(AppLanguage.string("grocery.sort.grams", locale: locale)) { sortMode = .gramsDesc }
+            Button(AppLanguage.string("grocery.sort.supermarket", locale: locale)) { sortMode = .supermarket }
+        } label: {
+            HStack(spacing: 6) {
+                Text(sortModeLabel)
+                    .font(.subheadline.weight(.semibold))
+                Image(systemName: "arrow.up.arrow.down")
+            }
+            .foregroundStyle(AppTheme.primaryBlue)
+        }
+    }
+
+    private func optionToggle(titleKey: String, isOn: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Text(AppLanguage.string(String.LocalizationValue(titleKey), locale: locale))
+                    .font(.caption.weight(.semibold))
+                Text(isOn
+                     ? AppLanguage.string("grocery.option.on", locale: locale)
+                     : AppLanguage.string("grocery.option.off", locale: locale))
+                    .font(.caption2.weight(.semibold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(AppTheme.primaryBlue.opacity(isOn ? 0.2 : 0.08))
+                    .clipShape(Capsule())
+            }
+            .foregroundStyle(AppTheme.primaryBlue)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(AppTheme.primaryBlue.opacity(isOn ? 0.12 : 0.05))
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 
     private func incrementServings() {
@@ -213,6 +248,42 @@ struct GroceryListCard: View {
         sortedAll.filter { checked.contains($0.id) }
     }
 
+    private func ingredientList(
+        _ ingredients: [Ingredient],
+        checkedState: Set<String>,
+        isCheckedSection: Bool,
+        dimChecked: Bool
+    ) -> some View {
+        Group {
+            if groupByDishPart {
+                ForEach(groupedIngredients(ingredients), id: \.group) { group in
+                    if !group.items.isEmpty {
+                        Text(group.group.localizedName(in: locale))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(AppTheme.textPrimary.opacity(0.7))
+                            .padding(.top, 6)
+
+                        ForEach(group.items) { ing in
+                            ingredientRow(ing, isChecked: checkedState.contains(ing.id) || isCheckedSection)
+                                .opacity(dimChecked && checkedState.contains(ing.id) ? 0.65 : 1)
+                        }
+                    }
+                }
+            } else {
+                ForEach(ingredients) { ing in
+                    ingredientRow(ing, isChecked: checkedState.contains(ing.id) || isCheckedSection)
+                        .opacity(dimChecked && checkedState.contains(ing.id) ? 0.65 : 1)
+                }
+            }
+        }
+    }
+
+    private func groupedIngredients(_ ingredients: [Ingredient]) -> [(group: IngredientGroup, items: [Ingredient])] {
+        IngredientGroup.allCases.map { group in
+            (group: group, items: ingredients.filter { $0.group == group })
+        }
+    }
+
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {
         HStack(spacing: 8) {
             HStack(spacing: 6) {
@@ -232,15 +303,20 @@ struct GroceryListCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(gramsValueString(scaledGrams(ing.grams)))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 44, alignment: .trailing)
+            if showAllGrams {
+                Text(gramsValueString(scaledGrams(ing.grams)))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 44, alignment: .trailing)
 
-            Text(gramsUnitString(scaledGrams(ing.grams)))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 28, alignment: .leading)
+                Text(gramsUnitString(scaledGrams(ing.grams)))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 28, alignment: .leading)
+            } else {
+                Spacer()
+                    .frame(width: 72, alignment: .leading)
+            }
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))

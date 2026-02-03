@@ -56,6 +56,13 @@
 "grocery.optional" = "Optioneel";
 "grocery.allCollected" = "Alles verzameld!";
 "grocery.servings" = "Aantal personen";
+"grocery.option.allGrams" = "Alles gram";
+"grocery.option.partOfDish" = "Onderdeel";
+"grocery.option.on" = "Aan";
+"grocery.option.off" = "Uit";
+"grocery.group.sauce" = "Saus";
+"grocery.group.pasta" = "Pasta";
+"grocery.group.finishing" = "Afwerking";
 
 "grocery.sortLabel.useOrder" = "Volgorde";
 "grocery.sortLabel.grams" = "Meeste gram";
