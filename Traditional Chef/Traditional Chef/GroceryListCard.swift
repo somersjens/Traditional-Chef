@@ -58,7 +58,6 @@ struct GroceryListCard: View {
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
-                .frame(minHeight: headerRowHeight)
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
