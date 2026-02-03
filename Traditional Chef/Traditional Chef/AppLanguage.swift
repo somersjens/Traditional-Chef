@@ -47,6 +47,8 @@ enum AppLanguage {
         Locale(identifier: currentCode)
     }
 
+    private static var bundleCache: [String: Bundle] = [:]
+
     private static func languageCode(from locale: Locale) -> String? {
         if #available(iOS 16, *) {
             return locale.language.languageCode?.identifier
@@ -58,11 +60,17 @@ enum AppLanguage {
     }
 
     private static func bundle(for locale: Locale) -> Bundle {
-        guard let languageCode = languageCode(from: locale),
-              let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
+        guard let languageCode = languageCode(from: locale) else {
+            return .main
+        }
+        if let cached = bundleCache[languageCode] {
+            return cached
+        }
+        guard let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
               let bundle = Bundle(path: path) else {
             return .main
         }
+        bundleCache[languageCode] = bundle
         return bundle
     }
 
