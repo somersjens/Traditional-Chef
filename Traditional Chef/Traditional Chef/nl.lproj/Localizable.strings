@@ -37,7 +37,7 @@
 "category.main" = "Hoofd";
 "category.dessert" = "Na";
 
-"recipe.groceryTitle" = "Boodschappenlijst";
+"recipe.groceryTitle" = "Boodschappen";
 "recipe.stepsTitle" = "Stappen";
 "recipe.drinkTitle" = "Drankje erbij?";
 "recipe.infoTitle" = "Informatie";
@@ -54,6 +54,7 @@
 "recipe.drink.redWine" = "rode wijn";
 "grocery.optional" = "Optioneel";
 "grocery.allCollected" = "Alles verzameld!";
+"grocery.servings" = "Aantal personen";
 
 "grocery.sortLabel.useOrder" = "Volgorde";
 "grocery.sortLabel.grams" = "Meeste gram";
