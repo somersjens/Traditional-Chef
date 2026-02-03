@@ -175,9 +175,11 @@ private struct StepRowView: View {
     @State private var baseInitialSeconds: Int
     @State private var didRing: Bool = false
     @State private var beepTaskRunning: Bool = false
+    @State private var endDate: Date? = nil
 
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
+    @Environment(\.scenePhase) private var scenePhase
 
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -236,13 +238,11 @@ private struct StepRowView: View {
         }
         .padding(.vertical, 1.5)
         .onReceive(tick) { _ in
-            guard isRunning else { return }
-
-            secondsLeft -= 1
-
-            if secondsLeft == 0 && !didRing {
-                didRing = true
-                ringForThreeSeconds()
+            updateRemainingFromEndDate()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                updateRemainingFromEndDate()
             }
         }
     }
@@ -286,8 +286,13 @@ private struct StepRowView: View {
     }
 
     private func toggleRun() {
-        isRunning.toggle()
         if isRunning {
+            updateRemainingFromEndDate()
+            isRunning = false
+            endDate = nil
+        } else {
+            endDate = Date().addingTimeInterval(TimeInterval(secondsLeft))
+            isRunning = true
             Haptics.light()
         }
     }
@@ -297,6 +302,7 @@ private struct StepRowView: View {
         sessionInitialSeconds = seconds
         secondsLeft = seconds
         didRing = false
+        endDate = nil
         Haptics.light()
     }
 
@@ -304,6 +310,7 @@ private struct StepRowView: View {
         sessionInitialSeconds = overrideSeconds
         secondsLeft = overrideSeconds
         didRing = false
+        endDate = isRunning ? Date().addingTimeInterval(TimeInterval(overrideSeconds)) : nil
         Haptics.light()
     }
 
@@ -314,6 +321,18 @@ private struct StepRowView: View {
 
         SoundPlayer.playBeepBurst(durationSeconds: 3.0) {
             beepTaskRunning = false
+        }
+    }
+
+    private func updateRemainingFromEndDate() {
+        guard isRunning, let endDate else { return }
+        let remaining = Int(ceil(endDate.timeIntervalSinceNow))
+        if remaining != secondsLeft {
+            secondsLeft = remaining
+        }
+        if remaining <= 0 && !didRing {
+            didRing = true
+            ringForThreeSeconds()
         }
     }
 }

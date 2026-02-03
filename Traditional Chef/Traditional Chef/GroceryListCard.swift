@@ -171,6 +171,8 @@ struct GroceryListCard: View {
             HStack(spacing: 6) {
                 Text(sortModeLabel)
                     .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
                 Text("\(sortModeIndex)")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(AppTheme.primaryBlue)
@@ -181,6 +183,7 @@ struct GroceryListCard: View {
                     )
             }
             .foregroundStyle(AppTheme.primaryBlue)
+            .frame(maxWidth: .infinity, minHeight: optionRowHeight)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(
@@ -188,7 +191,6 @@ struct GroceryListCard: View {
             )
         }
         .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
     }
 
     private func optionToggle(titleKey: String, isOn: Bool, action: @escaping () -> Void) -> some View {
@@ -196,8 +198,11 @@ struct GroceryListCard: View {
             HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(titleKey), locale: locale))
                     .font(.caption.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
             .foregroundStyle(isOn ? Color.white : AppTheme.primaryBlue)
+            .frame(maxWidth: .infinity, minHeight: optionRowHeight)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(
@@ -208,7 +213,6 @@ struct GroceryListCard: View {
             )
         }
         .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
     }
 
     private func incrementServings() {
