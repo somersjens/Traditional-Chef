@@ -29,7 +29,9 @@ struct GroceryListCard: View {
     private let maxServings = 99
     private let baseServings = 4
     private let headerRowHeight: CGFloat = 28
-    private let optionRowHeight: CGFloat = 28
+    private let optionRowHeight: CGFloat = 22.4
+    private let optionRowVerticalPadding: CGFloat = 4.8
+    private let optionButtonFont: Font = .subheadline.weight(.semibold)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -106,20 +108,29 @@ struct GroceryListCard: View {
                 Divider()
                     .overlay(AppTheme.hairline)
 
-                HStack(alignment: .center, spacing: 8) {
-                    optionToggle(
-                        titleKey: "grocery.option.allGrams",
-                        isOn: showAllGrams,
-                        action: { showAllGrams.toggle() }
-                    )
+                GeometryReader { geometry in
+                    let availableWidth = geometry.size.width - 16
+                    let smallButtonWidth = availableWidth * 0.3
+                    let largeButtonWidth = availableWidth * 0.4
 
-                    optionToggle(
-                        titleKey: "grocery.option.partOfDish",
-                        isOn: groupByDishPart,
-                        action: { groupByDishPart.toggle() }
-                    )
+                    HStack(alignment: .center, spacing: 8) {
+                        optionToggle(
+                            titleKey: "grocery.option.allGrams",
+                            isOn: showAllGrams,
+                            action: { showAllGrams.toggle() }
+                        )
+                        .frame(width: smallButtonWidth)
 
-                    sortButton
+                        optionToggle(
+                            titleKey: "grocery.option.partOfDish",
+                            isOn: groupByDishPart,
+                            action: { groupByDishPart.toggle() }
+                        )
+                        .frame(width: smallButtonWidth)
+
+                        sortButton
+                            .frame(width: largeButtonWidth)
+                    }
                 }
                 .frame(minHeight: headerRowHeight)
 
@@ -170,7 +181,7 @@ struct GroceryListCard: View {
         Button(action: advanceSortMode) {
             HStack(spacing: 6) {
                 Text(sortModeLabel)
-                    .font(.subheadline.weight(.semibold))
+                    .font(optionButtonFont)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                 Text("\(sortModeIndex)")
@@ -185,7 +196,7 @@ struct GroceryListCard: View {
             .foregroundStyle(AppTheme.primaryBlue)
             .frame(maxWidth: .infinity, minHeight: optionRowHeight)
             .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.vertical, optionRowVerticalPadding)
             .background(
                 Capsule().stroke(AppTheme.primaryBlue, lineWidth: 1)
             )
@@ -197,14 +208,14 @@ struct GroceryListCard: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(titleKey), locale: locale))
-                    .font(.caption.weight(.semibold))
+                    .font(optionButtonFont)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
             }
             .foregroundStyle(isOn ? Color.white : AppTheme.primaryBlue)
             .frame(maxWidth: .infinity, minHeight: optionRowHeight)
             .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.vertical, optionRowVerticalPadding)
             .background(
                 Capsule().fill(isOn ? AppTheme.primaryBlue : Color.clear)
             )
