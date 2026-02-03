@@ -240,7 +240,7 @@ private struct StepRowView: View {
         .onReceive(tick) { _ in
             updateRemainingFromEndDate()
         }
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 updateRemainingFromEndDate()
             }
