@@ -175,7 +175,9 @@ private struct StepRowView: View {
     @State private var baseInitialSeconds: Int
     @State private var didRing: Bool = false
     @State private var beepTaskRunning: Bool = false
-    @State private var endDate: Date? = nil
+    @State private var startDate: Date? = nil
+    @State private var startSeconds: Int
+    @State private var startToken: UUID = UUID()
 
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
@@ -190,6 +192,7 @@ private struct StepRowView: View {
         _secondsLeft = State(initialValue: initial)
         _sessionInitialSeconds = State(initialValue: initial)
         _baseInitialSeconds = State(initialValue: initial)
+        _startSeconds = State(initialValue: initial)
     }
 
     var body: some View {
@@ -289,11 +292,20 @@ private struct StepRowView: View {
         if isRunning {
             updateRemainingFromEndDate()
             isRunning = false
-            endDate = nil
+            startDate = nil
+            startToken = UUID()
         } else {
-            endDate = Date().addingTimeInterval(TimeInterval(secondsLeft))
+            let now = Date()
+            startDate = now
+            startSeconds = secondsLeft
+            let token = UUID()
+            startToken = token
             isRunning = true
             Haptics.light()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                guard isRunning, startToken == token else { return }
+                updateRemainingFromEndDate()
+            }
         }
     }
 
@@ -302,7 +314,9 @@ private struct StepRowView: View {
         sessionInitialSeconds = seconds
         secondsLeft = seconds
         didRing = false
-        endDate = nil
+        startDate = nil
+        startSeconds = seconds
+        startToken = UUID()
         Haptics.light()
     }
 
@@ -310,7 +324,21 @@ private struct StepRowView: View {
         sessionInitialSeconds = overrideSeconds
         secondsLeft = overrideSeconds
         didRing = false
-        endDate = isRunning ? Date().addingTimeInterval(TimeInterval(overrideSeconds)) : nil
+        if isRunning {
+            let now = Date()
+            startDate = now
+            startSeconds = overrideSeconds
+            let token = UUID()
+            startToken = token
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                guard isRunning, startToken == token else { return }
+                updateRemainingFromEndDate()
+            }
+        } else {
+            startDate = nil
+            startSeconds = overrideSeconds
+            startToken = UUID()
+        }
         Haptics.light()
     }
 
@@ -325,8 +353,9 @@ private struct StepRowView: View {
     }
 
     private func updateRemainingFromEndDate() {
-        guard isRunning, let endDate else { return }
-        let remaining = Int(ceil(endDate.timeIntervalSinceNow))
+        guard isRunning, let startDate else { return }
+        let elapsed = Int(Date().timeIntervalSince(startDate).rounded(.down))
+        let remaining = startSeconds - elapsed
         if remaining != secondsLeft {
             secondsLeft = remaining
         }
