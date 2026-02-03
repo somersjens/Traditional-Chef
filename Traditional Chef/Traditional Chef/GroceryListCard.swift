@@ -28,7 +28,8 @@ struct GroceryListCard: View {
     private let minServings = 1
     private let maxServings = 99
     private let baseServings = 4
-    private let headerRowHeight: CGFloat = 34
+    private let headerRowHeight: CGFloat = 28
+    private let optionRowHeight: CGFloat = 28
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -106,7 +107,7 @@ struct GroceryListCard: View {
                 Divider()
                     .overlay(AppTheme.hairline)
 
-                HStack(alignment: .center, spacing: 10) {
+                HStack(alignment: .center, spacing: 8) {
                     optionToggle(
                         titleKey: "grocery.option.allGrams",
                         isOn: showAllGrams,
@@ -118,8 +119,6 @@ struct GroceryListCard: View {
                         isOn: groupByDishPart,
                         action: { groupByDishPart.toggle() }
                     )
-
-                    Spacer()
 
                     sortButton
                 }
@@ -190,6 +189,7 @@ struct GroceryListCard: View {
             )
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
     }
 
     private func optionToggle(titleKey: String, isOn: Bool, action: @escaping () -> Void) -> some View {
@@ -209,6 +209,7 @@ struct GroceryListCard: View {
             )
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
     }
 
     private func incrementServings() {
@@ -284,8 +285,8 @@ struct GroceryListCard: View {
                 ForEach(groupedIngredients(ingredients), id: \.group) { group in
                     if !group.items.isEmpty {
                         Text(group.group.localizedName(in: locale))
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(AppTheme.textPrimary.opacity(0.7))
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(AppTheme.textPrimary)
                             .padding(.top, 6)
 
                         ForEach(group.items) { ing in
