@@ -53,6 +53,9 @@ struct Recipe: Identifiable, Hashable {
     /// Ingredients (localized per ingredient)
     let ingredients: [Ingredient]
 
+    /// Required and optional kitchen tools.
+    let tools: [RecipeTool]
+
     /// Steps (localized per step)
     let steps: [RecipeStep]
 
@@ -65,6 +68,12 @@ struct Recipe: Identifiable, Hashable {
 
     /// Optional nutrition facts (per serving).
     let nutrition: RecipeNutrition?
+}
+
+struct RecipeTool: Identifiable, Hashable {
+    let id: String
+    let nameKey: String
+    let isOptional: Bool
 }
 
 struct Ingredient: Identifiable, Hashable {

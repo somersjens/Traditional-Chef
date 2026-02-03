@@ -42,6 +42,16 @@ enum SampleRecipes {
             Ingredient(id: "butter", nameKey: "ingredient.butter_optional", grams: 14, isOptional: true, aisle: .dairy, useOrder: 8),
             Ingredient(id: "parmesan", nameKey: "ingredient.parmesan_to_serve", grams: 60, isOptional: false, aisle: .dairy, useOrder: 8),
         ],
+        tools: [
+            RecipeTool(id: "large_pot", nameKey: "recipe.it.bolognese.tool.large_pot", isOptional: false),
+            RecipeTool(id: "pasta_pot", nameKey: "recipe.it.bolognese.tool.pasta_pot", isOptional: false),
+            RecipeTool(id: "wooden_spoon", nameKey: "recipe.it.bolognese.tool.wooden_spoon", isOptional: false),
+            RecipeTool(id: "cutting_board", nameKey: "recipe.it.bolognese.tool.cutting_board", isOptional: false),
+            RecipeTool(id: "sharp_knife", nameKey: "recipe.it.bolognese.tool.sharp_knife", isOptional: false),
+            RecipeTool(id: "colander", nameKey: "recipe.it.bolognese.tool.colander", isOptional: false),
+            RecipeTool(id: "measuring_cup", nameKey: "recipe.it.bolognese.tool.measuring_cup", isOptional: false),
+            RecipeTool(id: "cheese_grater", nameKey: "recipe.it.bolognese.tool.cheese_grater", isOptional: true),
+        ],
         steps: [
             RecipeStep(
                 id: "s1", stepNumber: 1,

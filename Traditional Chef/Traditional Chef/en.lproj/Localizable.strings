@@ -40,6 +40,7 @@
 "recipe.groceryTitle" = "Groceries";
 "recipe.stepsTitle" = "Steps";
 "recipe.drinkTitle" = "What to drink?";
+"recipe.toolsTitle" = "Kitchen Tools";
 "recipe.infoTitle" = "Information";
 "recipe.nutritionTitle" = "Nutritional values";
 "recipe.nutrition.perServing" = "(per serving)";
@@ -86,6 +87,7 @@
 "recipe.it.bolognese.info.summary" = "Bologna (city)";
 "recipe.it.bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
 "recipe.it.bolognese.drink.summary" = "Red Wine (Sangiovese)";
+"recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredients";
 "recipe.steps.summary" = "%d minutes";
 
@@ -130,3 +132,11 @@
 
 "recipe.it.bolognese.step8.title" = "Finish & serve";
 "recipe.it.bolognese.step8.body"  = "Remove bay leaf. Taste and adjust salt/pepper. Stir in butter if using. Serve with Parmesan.";
+"recipe.it.bolognese.tool.large_pot" = "Large pot or Dutch oven with a heavy base";
+"recipe.it.bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
+"recipe.it.bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";
+"recipe.it.bolognese.tool.cutting_board" = "Cutting board";
+"recipe.it.bolognese.tool.sharp_knife" = "Sharp knife";
+"recipe.it.bolognese.tool.colander" = "Colander";
+"recipe.it.bolognese.tool.measuring_cup" = "Measuring cup and or kitchen scale (handy)";
+"recipe.it.bolognese.tool.cheese_grater" = "Cheese grater";

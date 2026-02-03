@@ -40,6 +40,7 @@
 "recipe.groceryTitle" = "Boodschappen";
 "recipe.stepsTitle" = "Stappen";
 "recipe.drinkTitle" = "Drankje erbij?";
+"recipe.toolsTitle" = "Benodigdheden";
 "recipe.infoTitle" = "Informatie";
 "recipe.nutritionTitle" = "Voedingswaarden";
 "recipe.nutrition.perServing" = "(per eenpersoonsportie)";
@@ -86,6 +87,7 @@
 "recipe.it.bolognese.info.summary" = "Bologna (stad)";
 "recipe.it.bolognese.drink.body" = "Traditioneel drink je bij pasta bolognese een rode wijn met frisse zuren, zoals Sangiovese of Barbera. Die sluit mooi aan op de tomaat en het rijke vlees, en houdt elke hap lekker fris. Liever geen wijn? Dan is bruiswater of licht pils ook prima.";
 "recipe.it.bolognese.drink.summary" = "Rode wijn (Sangiovese)";
+"recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredienten";
 "recipe.steps.summary" = "%d minuten";
 
@@ -130,3 +132,11 @@
 
 "recipe.it.bolognese.step8.title" = "Afmaken & serveren";
 "recipe.it.bolognese.step8.body"  = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
+"recipe.it.bolognese.tool.large_pot" = "Grote pan of braadpan met dikke bodem";
+"recipe.it.bolognese.tool.pasta_pot" = "Kookpan voor de pasta";
+"recipe.it.bolognese.tool.wooden_spoon" = "Houten lepel of spatel";
+"recipe.it.bolognese.tool.cutting_board" = "Snijplank";
+"recipe.it.bolognese.tool.sharp_knife" = "Scherp mes";
+"recipe.it.bolognese.tool.colander" = "Vergiet";
+"recipe.it.bolognese.tool.measuring_cup" = "Maatbeker en of weegschaal (handig)";
+"recipe.it.bolognese.tool.cheese_grater" = "Kaasrasp";
