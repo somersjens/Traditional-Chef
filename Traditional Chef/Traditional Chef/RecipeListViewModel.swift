@@ -13,6 +13,7 @@ final class RecipeListViewModel: ObservableObject {
 
     @Published var selectedCategories: Set<RecipeCategory> = []
     @Published var selectedCountryCode: String? = nil // nil = all countries
+    @Published var selectedContinent: Continent? = nil
     @Published var favoritesOnly: Bool = false
 
     enum SortKey: String {

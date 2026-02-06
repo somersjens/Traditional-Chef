@@ -118,7 +118,7 @@ struct RecipeDetailView: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "figure.walk")
+                    Image(systemName: "frying.pan")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 

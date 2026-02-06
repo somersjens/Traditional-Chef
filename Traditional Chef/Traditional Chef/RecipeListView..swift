@@ -29,7 +29,7 @@ struct RecipeListView: View {
                             vm.toggleCategory(cat)
                         },
                         countryLabel: countryChipLabel,
-                        isCountrySelected: vm.selectedCountryCode != nil,
+                        isCountrySelected: vm.selectedCountryCode != nil || vm.selectedContinent != nil,
                         onCountryTap: { showCountryPicker = true },
                         locale: locale
                     )
@@ -97,7 +97,11 @@ struct RecipeListView: View {
                 CountryPickerView(
                     allCountryCodes: allCountryCodes,
                     selected: vm.selectedCountryCode,
-                    onSelect: { vm.selectedCountryCode = $0 }
+                    selectedContinent: vm.selectedContinent,
+                    onSelect: { countryCode, continent in
+                        vm.selectedCountryCode = countryCode
+                        vm.selectedContinent = continent
+                    }
                 )
             }
         }
@@ -106,6 +110,9 @@ struct RecipeListView: View {
     private var countryChipLabel: String {
         if let code = vm.selectedCountryCode {
             return FlagEmoji.from(countryCode: code)
+        }
+        if let continent = vm.selectedContinent {
+            return continent.emoji
         }
         return "🌍"
     }
@@ -247,6 +254,11 @@ struct RecipeListView: View {
         // Category filter
         if !vm.selectedCategories.isEmpty {
             list = list.filter { vm.selectedCategories.contains($0.category) }
+        }
+
+        // Continent filter
+        if let continent = vm.selectedContinent {
+            list = list.filter { continent.contains(countryCode: $0.countryCode) }
         }
 
         // Country filter

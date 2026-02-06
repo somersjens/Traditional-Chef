@@ -8,7 +8,8 @@ import SwiftUI
 struct CountryPickerView: View {
     let allCountryCodes: [String]
     let selected: String?
-    let onSelect: (String?) -> Void
+    let selectedContinent: Continent?
+    let onSelect: (String?, Continent?) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
@@ -18,21 +19,40 @@ struct CountryPickerView: View {
         NavigationStack {
             List {
                 Button {
-                    onSelect(nil)
+                    onSelect(nil, nil)
                     dismiss()
                 } label: {
                     HStack {
                         Text(AppLanguage.string("recipes.allCountries", locale: locale))
                         Spacer()
-                        if selected == nil { Image(systemName: "checkmark") }
+                        if selected == nil && selectedContinent == nil { Image(systemName: "checkmark") }
                     }
                 }
                 .listRowBackground(AppTheme.searchBarBackground)
 
+                if !availableContinents.isEmpty {
+                    Section(AppLanguage.string("recipes.pickContinent", locale: locale)) {
+                        ForEach(availableContinents) { continent in
+                            Button {
+                                onSelect(nil, continent)
+                                dismiss()
+                            } label: {
+                                HStack {
+                                    Text("\(continent.emoji) \(AppLanguage.string(continent.nameKey, locale: locale))")
+                                    Spacer()
+                                    if selectedContinent == continent { Image(systemName: "checkmark") }
+                                }
+                            }
+                            .listRowBackground(AppTheme.searchBarBackground)
+                        }
+                    }
+                    .listRowBackground(AppTheme.searchBarBackground)
+                }
+
                 Section(AppLanguage.string("recipes.pickCountry", locale: locale)) {
                     ForEach(allCountryCodes, id: \.self) { code in
                         Button {
-                            onSelect(code)
+                            onSelect(code, nil)
                             dismiss()
                         } label: {
                             HStack {
@@ -76,5 +96,11 @@ struct CountryPickerView: View {
 
     private func countryName(for code: String) -> String {
         locale.localizedString(forRegionCode: code) ?? code
+    }
+
+    private var availableContinents: [Continent] {
+        Continent.allCases.filter { continent in
+            allCountryCodes.contains { continent.contains(countryCode: $0) }
+        }
     }
 }

@@ -19,9 +19,17 @@
 "recipes.allCountries" = "Alle landen inbegrepen";
 "recipes.allCountriesShort" = "Alle 🌍";
 "recipes.countryOnly" = "Landfilter";
+"recipes.pickContinent" = "Kies een continent";
 "recipes.pickCountry" = "Kies een land";
 "recipes.countryFilterTitle" = "Landen";
 "recipes.favoritesOnly" = "Alleen favorieten";
+
+"continent.africa" = "Afrika";
+"continent.asia" = "Azië";
+"continent.europe" = "Europa";
+"continent.northAmerica" = "Noord-Amerika";
+"continent.southAmerica" = "Zuid-Amerika";
+"continent.oceania" = "Oceanië";
 
 "recipes.column.name" = "Recept";
 "recipes.column.time" = "Tijd";

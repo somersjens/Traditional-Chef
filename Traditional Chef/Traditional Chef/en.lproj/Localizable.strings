@@ -19,9 +19,17 @@
 "recipes.allCountries" = "All countries included";
 "recipes.allCountriesShort" = "All 🌍";
 "recipes.countryOnly" = "Country filter";
+"recipes.pickContinent" = "Pick a continent";
 "recipes.pickCountry" = "Pick a country";
 "recipes.countryFilterTitle" = "Countries";
 "recipes.favoritesOnly" = "Favorites only";
+
+"continent.africa" = "Africa";
+"continent.asia" = "Asia";
+"continent.europe" = "Europe";
+"continent.northAmerica" = "North America";
+"continent.southAmerica" = "South America";
+"continent.oceania" = "Oceania";
 
 "recipes.column.name" = "Recipe";
 "recipes.column.time" = "Time";
