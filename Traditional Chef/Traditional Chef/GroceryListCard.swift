@@ -184,14 +184,9 @@ struct GroceryListCard: View {
                     .font(optionButtonFont)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
-                Text("\(sortModeIndex)")
+                Image(systemName: sortModeArrowSystemName)
                     .font(.caption.weight(.bold))
                     .foregroundStyle(AppTheme.primaryBlue)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(
-                        Capsule().fill(AppTheme.primaryBlue.opacity(0.12))
-                    )
             }
             .foregroundStyle(AppTheme.primaryBlue)
             .frame(maxWidth: .infinity, minHeight: optionRowHeight)
@@ -250,11 +245,11 @@ struct GroceryListCard: View {
         }
     }
 
-    private var sortModeIndex: Int {
+    private var sortModeArrowSystemName: String {
         switch sortMode {
-        case .useOrder: return 1
-        case .gramsDesc: return 2
-        case .supermarket: return 3
+        case .useOrder: return "arrow.down"
+        case .gramsDesc: return "arrow.up"
+        case .supermarket: return "arrow.down"
         }
     }
 
