@@ -252,28 +252,25 @@ struct RecipeListView: View {
 
     private var settingsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(AppLanguage.string("settings.title", locale: locale))
-                .font(.headline)
-                .foregroundStyle(AppTheme.textPrimary)
-
             HStack(spacing: 12) {
                 Text(AppLanguage.string("settings.language", locale: locale))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
                 Spacer()
                 Picker("", selection: $appLanguage) {
                     ForEach(AppLanguage.supported) { option in
-                        Text("\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: locale))")
+                        Text("\(AppLanguage.string(option.nameKey, locale: locale)) \(FlagEmoji.from(countryCode: option.regionCode))")
                             .tag(option.code)
                     }
                 }
                 .pickerStyle(.menu)
+                .tint(AppTheme.primaryBlue)
             }
 
             HStack(spacing: 12) {
                 Text(AppLanguage.string("settings.measurement", locale: locale))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
                 Spacer()
                 Picker("", selection: Binding(
                     get: { resolvedMeasurementUnit },
@@ -284,27 +281,29 @@ struct RecipeListView: View {
                             .tag(unit)
                     }
                 }
-                .pickerStyle(.segmented)
-                .frame(width: 170)
+                .pickerStyle(.menu)
+                .tint(AppTheme.primaryBlue)
             }
 
             HStack(spacing: 12) {
                 Text(AppLanguage.string("settings.servings", locale: locale))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
                 Spacer()
-                Stepper(value: $defaultServings, in: 1...12) {
-                    Text("\(defaultServings)")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
+                Picker("", selection: $defaultServings) {
+                    ForEach(1...12, id: \.self) { servings in
+                        Text("\(servings)")
+                            .tag(servings)
+                    }
                 }
-                .labelsHidden()
+                .pickerStyle(.menu)
+                .tint(AppTheme.primaryBlue)
             }
 
             Toggle(isOn: $timerAutoStop) {
                 Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
             }
             .tint(AppTheme.primaryBlue)
         }
