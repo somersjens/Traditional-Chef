@@ -51,13 +51,15 @@ struct RecipeDetailView: View {
                     .truncationMode(.tail)
                     .accessibilityLabel(Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)"))
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     recipeStore.toggleFavorite(recipe)
                 } label: {
                     Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
                         .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.primaryBlue)
                 }
+                .buttonStyle(.plain)
+                .background(Color.clear)
             }
         }
     }

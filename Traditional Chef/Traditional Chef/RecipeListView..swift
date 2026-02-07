@@ -97,7 +97,7 @@ struct RecipeListView: View {
                         Spacer()
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     settingsButton
                 }
             }
@@ -241,12 +241,12 @@ struct RecipeListView: View {
                 showSettings.toggle()
             }
         } label: {
-            Image(systemName: "heart.fill")
-                .font(.system(size: 23, weight: .semibold))
+            Image(systemName: "gearshape")
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 23, height: 23, alignment: .center)
         }
         .buttonStyle(.plain)
+        .background(Color.clear)
         .accessibilityLabel(Text(AppLanguage.string("settings.title", locale: locale)))
     }
 
