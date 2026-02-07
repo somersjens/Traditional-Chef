@@ -16,79 +16,150 @@ struct RecipeDetailView: View {
     @State private var isInfoExpanded: Bool = true
     @State private var isStepsExpanded: Bool = true
     @State private var servings: Int = 4
+    @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                heroSection
+        ZStack(alignment: .top) {
+            GeometryReader { proxy in
+                let heroSize = proxy.size.width
+                ZStack(alignment: .top) {
+                    heroSection(height: heroSize)
+                        .allowsHitTesting(false)
 
-                header
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 14) {
+                            Color.clear
+                                .frame(height: 0)
+                                .background(
+                                    GeometryReader { scrollProxy in
+                                        Color.clear
+                                            .preference(
+                                                key: ScrollOffsetKey.self,
+                                                value: scrollProxy.frame(in: .named("scroll")).minY
+                                            )
+                                    }
+                                )
 
-                NutritionCard(recipe: recipe)
+                            Color.clear
+                                .frame(height: max(0, heroSize - 12))
 
-                DrinkPairingCard(recipe: recipe)
+                            header
 
-                KitchenToolsCard(recipe: recipe)
+                            NutritionCard(recipe: recipe)
 
-                GroceryListCard(recipe: recipe, servings: $servings)
+                            DrinkPairingCard(recipe: recipe)
 
-                stepsCard
+                            KitchenToolsCard(recipe: recipe)
+
+                            GroceryListCard(recipe: recipe, servings: $servings)
+
+                            stepsCard
+                        }
+                        .padding(12)
+                    }
+                    .zIndex(1)
+                }
             }
-            .padding(12)
+
+            detailTopBar
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+                .zIndex(3)
+        }
+        .coordinateSpace(name: "scroll")
+        .onPreferenceChange(ScrollOffsetKey.self) { value in
+            scrollOffset = value
         }
         .background(AppTheme.pageBackground)
         .toolbar(.hidden, for: .navigationBar)
-        .safeAreaInset(edge: .top) {
-            detailTopBar
-        }
         .onAppear {
             servings = defaultServings
         }
     }
 
     private var detailTopBar: some View {
-        let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
         return HStack(spacing: 12) {
             Button {
                 dismiss()
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
+                    .foregroundStyle(AppTheme.pageBackground)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Back"))
 
-            Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)")
-                .font(.headline)
-                .foregroundStyle(AppTheme.textPrimary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .truncationMode(.tail)
-                .accessibilityLabel(Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)"))
-                .frame(maxWidth: .infinity)
+            Spacer()
 
             Button {
                 recipeStore.toggleFavorite(recipe)
             } label: {
                 Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
-                    .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.primaryBlue)
+                    .font(.system(size: 18, weight: .semibold))
+                    .scaleEffect(1.2)
+                    .offset(x: -6)
+                    .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.pageBackground)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Favorite"))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(AppTheme.pageBackground)
     }
 
-    private var heroSection: some View {
-        heroImage
-            .frame(height: 240)
+    private func heroSection(height: CGFloat) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            heroImage
+                .opacity(imageOpacity)
+                .overlay(imageFadeOverlay)
+                .zIndex(0)
+
+            titleOverlay
+                .padding(.leading, 16)
+                .padding(.bottom, 16)
+                .zIndex(1)
+        }
+            .frame(height: height)
             .frame(maxWidth: .infinity)
             .clipped()
             .background(AppTheme.secondaryOffWhite)
-            .padding(.horizontal, -12)
+            .ignoresSafeArea(edges: .top)
+    }
+
+    private var imageOpacity: Double {
+        let fadeStart: CGFloat = -10
+        let fadeDistance: CGFloat = 180
+        let progress = min(max((-scrollOffset - fadeStart) / fadeDistance, 0), 1)
+        return Double(1 - progress)
+    }
+
+    private var imageFadeOverlay: some View {
+        LinearGradient(
+            colors: [
+                AppTheme.pageBackground.opacity(0.0),
+                AppTheme.pageBackground.opacity(min(0.65, 1 - imageOpacity))
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    private var titleOverlay: some View {
+        let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+        return HStack(spacing: 6) {
+            Text("\(FlagEmoji.from(countryCode: recipe.countryCode))")
+            Text(title)
+        }
+        .font(.headline)
+        .foregroundStyle(AppTheme.textPrimary)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(AppTheme.cardBackground.opacity(0.9))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+        )
     }
 
     private var heroImage: some View {
@@ -238,6 +309,14 @@ struct RecipeDetailView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+    }
+}
+
+private struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
