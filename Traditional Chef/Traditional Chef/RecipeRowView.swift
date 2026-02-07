@@ -43,6 +43,9 @@ struct RecipeRowView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .task {
+            RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
+        }
     }
 
     private func meta(_ text: String, width: CGFloat) -> some View {

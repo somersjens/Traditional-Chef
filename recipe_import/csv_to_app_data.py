@@ -2,7 +2,7 @@
 """Convert recipe CSVs into app-ready JSON and Localizable.strings.
 
 Inputs (default):
-  recipe_import/recipes.csv
+  recipe_import/recipes.csv (includes optional recipe_url column)
   recipe_import/groceries.csv
   recipe_import/steps.csv
   recipe_import/tools.csv
@@ -146,6 +146,7 @@ def load_recipes(path: Path, strings: LocalizedStrings) -> Dict[str, dict]:
                 "category": row.get("category", "").strip(),
                 "infoKey": info_key,
                 "infoSummaryKey": info_summary_key,
+                "imageURL": (row.get("recipe_url") or "").strip() or None,
                 "approximateMinutes": 0,
                 "totalMinutes": 0,
                 "totalActiveMinutes": 0,

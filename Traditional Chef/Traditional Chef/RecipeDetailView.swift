@@ -18,6 +18,8 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
+                heroSection
+
                 header
 
                 NutritionCard(recipe: recipe)
@@ -54,6 +56,57 @@ struct RecipeDetailView: View {
                 }
             }
         }
+    }
+
+    private var heroSection: some View {
+        heroImage
+            .frame(height: 240)
+            .frame(maxWidth: .infinity)
+            .clipped()
+            .background(AppTheme.secondaryOffWhite)
+            .padding(.horizontal, -12)
+    }
+
+    private var heroImage: some View {
+        ZStack {
+            if let url = heroImageURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        heroPlaceholder
+                    case .empty:
+                        heroPlaceholder
+                    @unknown default:
+                        heroPlaceholder
+                    }
+                }
+            } else {
+                heroPlaceholder
+            }
+        }
+        .accessibilityLabel(Text("Recipe image"))
+    }
+
+    private var heroPlaceholder: some View {
+        ZStack {
+            AppTheme.secondaryOffWhite
+            Image(systemName: "photo")
+                .font(.system(size: 42, weight: .semibold))
+                .foregroundStyle(AppTheme.primaryBlue.opacity(0.35))
+        }
+    }
+
+    private var heroImageURL: URL? {
+        guard let imageURL = recipe.imageURL?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !imageURL.isEmpty
+        else {
+            return nil
+        }
+        return URL(string: imageURL)
     }
 
     private var header: some View {

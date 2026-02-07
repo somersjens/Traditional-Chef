@@ -55,6 +55,8 @@ struct Recipe: Identifiable, Hashable, Codable {
     /// Localized recipe information key.
     let infoKey: String
     let infoSummaryKey: String
+    /// Optional hero image URL.
+    let imageURL: String?
 
     /// List view metadata
     let approximateMinutes: Int
