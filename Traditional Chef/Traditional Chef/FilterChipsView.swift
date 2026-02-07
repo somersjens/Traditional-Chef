@@ -8,21 +8,11 @@ import SwiftUI
 struct FilterChipsView: View {
     let selected: Set<RecipeCategory>
     let onToggle: (RecipeCategory) -> Void
-    let countryLabel: String
-    let isCountrySelected: Bool
-    let onCountryTap: () -> Void
     let locale: Locale
 
     var body: some View {
         GeometryReader { proxy in
             HStack(spacing: 7) {
-                Button {
-                    onCountryTap()
-                } label: {
-                    countryFlagLabel(text: countryLabel)
-                }
-                .buttonStyle(.plain)
-
                 ForEach(RecipeCategory.filterCategories) { cat in
                     let isOn = selected.contains(cat)
                     Button {
@@ -52,14 +42,6 @@ struct FilterChipsView: View {
             .overlay(
                 Capsule().stroke(AppTheme.primaryBlue.opacity(isSelected ? 0.6 : 0.18), lineWidth: isSelected ? 2 : 1)
             )
-    }
-
-    private func countryFlagLabel(text: String) -> some View {
-        Text(text)
-            .font(.title3)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
     }
 
     private func chipFont(for availableWidth: CGFloat) -> Font {

@@ -38,9 +38,6 @@ struct RecipeListView: View {
                         onToggle: { cat in
                             vm.toggleCategory(cat)
                         },
-                        countryLabel: countryChipLabel,
-                        isCountrySelected: vm.selectedCountryCode != nil || vm.selectedContinent != nil,
-                        onCountryTap: { showCountryPicker = true },
                         locale: locale
                     )
                     .padding(.top, 10)
@@ -106,32 +103,16 @@ struct RecipeListView: View {
         }
     }
 
-    private var countryChipLabel: String {
-        if let code = vm.selectedCountryCode {
-            return FlagEmoji.from(countryCode: code)
-        }
-        if let continent = vm.selectedContinent {
-            return continent.emoji
-        }
-        return "🌍"
-    }
-
     private var headerRow: some View {
         HStack(spacing: 10) {
-            SortHeaderButton(
-                isActive: vm.sortKey == .country,
-                isAscending: vm.ascending,
-                textAlignment: .center,
-                arrowPlacement: .trailing,
-                arrowSpacing: 6,
-                arrowLayout: .overlay,
-                arrowOverlayOffset: 5
-            ) {
-                Image(systemName: "flag.fill")
-                    .font(.system(size: 14, weight: .semibold))
-            } action: {
+            Button {
                 vm.setSort(.country)
+                showCountryPicker = true
+            } label: {
+                Text("🌍")
+                    .font(.system(size: 16))
             }
+            .buttonStyle(.plain)
             .frame(width: 34, alignment: .center)
 
             SortHeaderButton(
@@ -337,10 +318,6 @@ struct RecipeListView: View {
         .padding(.top, 40)
     }
 
-    private var allCountryCodes: [String] {
-        recipeStore.countryCodes
-    }
-
     private var filteredAndSortedRecipes: [Recipe] {
         var list = recipeStore.recipes
         let localizedNames = recipeStore.localizedNames(for: locale)
@@ -407,6 +384,10 @@ struct RecipeListView: View {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
             ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
             ?? "App"
+    }
+
+    private var allCountryCodes: [String] {
+        recipeStore.countryCodes
     }
 }
 
