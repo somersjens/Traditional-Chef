@@ -8,6 +8,7 @@ import Combine
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
+    @Environment(\.dismiss) private var dismiss
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("defaultServings") private var defaultServings: Int = 4
@@ -36,32 +37,49 @@ struct RecipeDetailView: View {
             .padding(12)
         }
         .background(AppTheme.pageBackground)
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+        .safeAreaInset(edge: .top) {
+            detailTopBar
+        }
         .onAppear {
             servings = defaultServings
         }
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
-                Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.textPrimary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .truncationMode(.tail)
-                    .accessibilityLabel(Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)"))
+    }
+
+    private var detailTopBar: some View {
+        let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+        return HStack(spacing: 12) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    recipeStore.toggleFavorite(recipe)
-                } label: {
-                    Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
-                        .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.primaryBlue)
-                }
-                .buttonStyle(.plain)
-                .background(Color.clear)
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Back"))
+
+            Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)")
+                .font(.headline)
+                .foregroundStyle(AppTheme.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .truncationMode(.tail)
+                .accessibilityLabel(Text("\(FlagEmoji.from(countryCode: recipe.countryCode)) \(title)"))
+                .frame(maxWidth: .infinity)
+
+            Button {
+                recipeStore.toggleFavorite(recipe)
+            } label: {
+                Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
+                    .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.primaryBlue)
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Favorite"))
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(AppTheme.pageBackground)
     }
 
     private var heroSection: some View {

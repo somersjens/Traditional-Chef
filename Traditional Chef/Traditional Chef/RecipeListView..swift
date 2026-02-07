@@ -24,6 +24,8 @@ struct RecipeListView: View {
                 AppTheme.pageBackground.ignoresSafeArea()
 
                 VStack(spacing: 10) {
+                    topBar
+
                     if showSettings {
                         settingsCard
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -73,34 +75,7 @@ struct RecipeListView: View {
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack {
-                        Spacer()
-                        Button {
-                            hasSeenWelcome = false
-                        } label: {
-                            HStack(spacing: 10) {
-                                Text(appDisplayName)
-                                    .font(.system(size: 24, weight: .semibold))
-                                    .foregroundStyle(AppTheme.primaryBlue)
-
-                                Image("chef_no_background")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 29, height: 29)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
-                        Spacer()
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    settingsButton
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear {
                 ensureMeasurementUnit()
             }
@@ -201,6 +176,33 @@ struct RecipeListView: View {
         .foregroundStyle(AppTheme.primaryBlue)
         .padding(.horizontal, 16)
         .padding(.top, 4)
+    }
+
+    private var topBar: some View {
+        HStack(spacing: 12) {
+            Button {
+                hasSeenWelcome = false
+            } label: {
+                HStack(spacing: 10) {
+                    Text(appDisplayName)
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+
+                    Image("chef_no_background")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 29, height: 29)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
+
+            Spacer()
+
+            settingsButton
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 6)
     }
 
     private var searchBar: some View {
