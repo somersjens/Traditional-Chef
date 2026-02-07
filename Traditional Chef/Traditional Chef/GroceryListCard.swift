@@ -262,13 +262,14 @@ struct GroceryListCard: View {
     }
 
     private var sortedAll: [Ingredient] {
+        let sourceIngredients = groupByDishPart ? recipe.ingredients : mergedIngredients(recipe.ingredients)
         switch sortMode {
         case .useOrder:
-            return recipe.ingredients.sorted { $0.useOrder < $1.useOrder }
+            return sourceIngredients.sorted { $0.useOrder < $1.useOrder }
         case .gramsDesc:
-            return recipe.ingredients.sorted { scaledGrams($0.grams) > scaledGrams($1.grams) }
+            return sourceIngredients.sorted { scaledGrams($0.grams) > scaledGrams($1.grams) }
         case .supermarket:
-            return recipe.ingredients.sorted {
+            return sourceIngredients.sorted {
                 if $0.aisle.rawValue != $1.aisle.rawValue { return $0.aisle.rawValue < $1.aisle.rawValue }
                 return scaledGrams($0.grams) > scaledGrams($1.grams)
             }
@@ -314,9 +315,54 @@ struct GroceryListCard: View {
     }
 
     private func groupedIngredients(_ ingredients: [Ingredient]) -> [(group: IngredientGroup, items: [Ingredient])] {
-        IngredientGroup.allCases.map { group in
+        let groups = Array(Set(ingredients.map { $0.group })).sorted { lhs, rhs in
+            let leftId = ingredients.first { $0.group == lhs }?.groupId ?? 0
+            let rightId = ingredients.first { $0.group == rhs }?.groupId ?? 0
+            if leftId != rightId {
+                return leftId < rightId
+            }
+            return lhs.id < rhs.id
+        }
+        return groups.map { group in
             (group: group, items: ingredients.filter { $0.group == group })
         }
+    }
+
+    private func mergedIngredients(_ ingredients: [Ingredient]) -> [Ingredient] {
+        var byId: [String: Ingredient] = [:]
+        for ingredient in ingredients {
+            if var existing = byId[ingredient.id] {
+                existing = Ingredient(
+                    id: existing.id,
+                    nameKey: existing.nameKey,
+                    grams: existing.grams + ingredient.grams,
+                    ounces: existing.ounces + ingredient.ounces,
+                    isOptional: false,
+                    group: existing.group,
+                    groupId: existing.groupId,
+                    aisle: existing.aisle,
+                    useOrder: min(existing.useOrder, ingredient.useOrder),
+                    customAmountValue: nil,
+                    customAmountLabelKey: nil
+                )
+                byId[ingredient.id] = existing
+            } else {
+                byId[ingredient.id] = Ingredient(
+                    id: ingredient.id,
+                    nameKey: ingredient.nameKey,
+                    grams: ingredient.grams,
+                    ounces: ingredient.ounces,
+                    isOptional: false,
+                    group: ingredient.group,
+                    groupId: ingredient.groupId,
+                    aisle: ingredient.aisle,
+                    useOrder: ingredient.useOrder,
+                    customAmountValue: ingredient.customAmountValue,
+                    customAmountLabelKey: ingredient.customAmountLabelKey
+                )
+            }
+        }
+        return Array(byId.values)
     }
 
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {

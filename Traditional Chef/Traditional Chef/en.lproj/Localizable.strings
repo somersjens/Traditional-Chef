@@ -96,62 +96,56 @@
 "aisle.spices" = "Spices";
 "aisle.other" = "Other";
 
-/* Recipe: Pasta Bolognese */
-"recipe.it.bolognese.name" = "Pasta Bolognese";
-"recipe.it.bolognese.info" = "It originated in Bologna (Northern Italy), where the sauce is known as ragu alla bolognese and is mainly built around slow-cooked meat with a little tomato. It is traditionally served with tagliatelle because those wide, flat ribbons hold on to the thick, meaty sauce far better than thin spaghetti.";
-"recipe.it.bolognese.info.summary" = "Bologna (city)";
-"recipe.it.bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
-"recipe.it.bolognese.drink.summary" = "Red Wine (Sangiovese)";
 "recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredients";
 "recipe.steps.summary" = "%d minutes";
 
-"ingredient.pasta" = "Pasta";
-"ingredient.minced_meat" = "Minced meat (beef or mixed)";
-"ingredient.onion" = "Onion";
+// === AUTO-GENERATED RECIPES BELOW ===
+"ingredient.bay_leaf" = "Bay leaf";
+"ingredient.beef_stock" = "Beef stock";
+"ingredient.black_pepper" = "Black pepper";
+"ingredient.butter_optional" = "Butter";
+"ingredient.canned_tomatoes" = "Canned chopped tomatoes";
 "ingredient.carrot" = "Carrot";
 "ingredient.celery" = "Celery";
 "ingredient.garlic_optional" = "Garlic";
-"ingredient.canned_tomatoes" = "Canned chopped tomatoes";
-"ingredient.tomato_paste" = "Tomato paste";
-"ingredient.beef_stock" = "Beef stock";
-"ingredient.red_wine_optional" = "Red wine";
+"ingredient.minced_meat" = "Minced meat (beef or mixed)";
 "ingredient.olive_oil" = "Olive oil";
-"ingredient.bay_leaf" = "Bay leaf";
+"ingredient.onion" = "Onion";
 "ingredient.oregano" = "Dried oregano";
-"ingredient.salt_total" = "Salt (total)";
-"ingredient.black_pepper" = "Black pepper";
-"ingredient.butter_optional" = "Butter";
 "ingredient.parmesan_to_serve" = "Parmesan (to serve)";
-
-"recipe.it.bolognese.step1.title" = "Prep the vegetables";
-"recipe.it.bolognese.step1.body"  = "Chop onion, carrot, celery (and garlic if using).";
-
-"recipe.it.bolognese.step2.title" = "Cook the veg";
-"recipe.it.bolognese.step2.body"  = "Heat olive oil in a large pan. Add onion, carrot, celery. Cook until softened.";
-
-"recipe.it.bolognese.step3.title" = "Brown the meat";
-"recipe.it.bolognese.step3.body"  = "Add minced meat. Cook, breaking it up, until nicely browned.";
-
-"recipe.it.bolognese.step4.title" = "Add tomato paste";
-"recipe.it.bolognese.step4.body"  = "Stir in tomato paste and cook for 2 minutes.";
-
-"recipe.it.bolognese.step5.title" = "Deglaze";
-"recipe.it.bolognese.step5.body"  = "Pour in red wine (or a splash of beef stock). Stir and let it bubble for a couple minutes.";
-
-"recipe.it.bolognese.step6.title" = "Simmer the sauce";
-"recipe.it.bolognese.step6.body"  = "Add canned chopped tomatoes, beef stock, bay leaf, dried oregano, salt, and black pepper. Simmer gently with the lid slightly open, stirring now and then.";
-
-"recipe.it.bolognese.step7.title" = "Cook the pasta";
-"recipe.it.bolognese.step7.body"  = "Boil water, add salt, cook pasta until al dente. Drain.";
-
-"recipe.it.bolognese.step8.title" = "Finish & serve";
-"recipe.it.bolognese.step8.body"  = "Remove bay leaf. Taste and adjust salt/pepper. Stir in butter if using. Serve with Parmesan.";
-"recipe.it.bolognese.tool.large_pot" = "Large pot or Dutch oven with a heavy base";
-"recipe.it.bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
-"recipe.it.bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";
-"recipe.it.bolognese.tool.cutting_board" = "Cutting board";
-"recipe.it.bolognese.tool.sharp_knife" = "Sharp knife";
-"recipe.it.bolognese.tool.colander" = "Colander";
-"recipe.it.bolognese.tool.measuring_cup" = "Measuring cup and or kitchen scale (handy)";
-"recipe.it.bolognese.tool.cheese_grater" = "Cheese grater";
+"ingredient.pasta" = "Pasta";
+"ingredient.pasta.amount.custom" = "gram";
+"ingredient.red_wine_optional" = "Red wine";
+"ingredient.salt_total" = "Salt (total)";
+"ingredient.tomato_paste" = "Tomato paste";
+"recipe.it_pasta_bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
+"recipe.it_pasta_bolognese.drink.summary" = "Red Wine (Sangiovese)";
+"recipe.it_pasta_bolognese.info" = "It originated in Bologna (Northern Italy), where the sauce is known as ragu alla bolognese and is mainly built around slow-cooked meat with a little tomato. It is traditionally served with tagliatelle because those wide, flat ribbons hold on to the thick, meaty sauce far better than thin spaghetti.";
+"recipe.it_pasta_bolognese.info.summary" = "Bologna (city)";
+"recipe.it_pasta_bolognese.name" = "Pasta Bolognese";
+"recipe.it_pasta_bolognese.step1.body" = "Chop onion, carrot, celery (and garlic if using).";
+"recipe.it_pasta_bolognese.step1.title" = "Prep the vegetables";
+"recipe.it_pasta_bolognese.step2.body" = "Heat olive oil in a large pan. Add onion, carrot, celery. Cook until softened.";
+"recipe.it_pasta_bolognese.step2.title" = "Cook the veg";
+"recipe.it_pasta_bolognese.step3.body" = "Add minced meat. Cook, breaking it up, until nicely browned.";
+"recipe.it_pasta_bolognese.step3.title" = "Brown the meat";
+"recipe.it_pasta_bolognese.step4.body" = "Stir in tomato paste and cook for 2 minutes.";
+"recipe.it_pasta_bolognese.step4.title" = "Add tomato paste";
+"recipe.it_pasta_bolognese.step5.body" = "Pour in red wine (or a splash of beef stock). Stir and let it bubble for a couple minutes.";
+"recipe.it_pasta_bolognese.step5.title" = "Deglaze";
+"recipe.it_pasta_bolognese.step6.body" = "Add canned chopped tomatoes, beef stock, bay leaf, dried oregano, salt, and black pepper. Simmer gently with the lid slightly open, stirring now and then.";
+"recipe.it_pasta_bolognese.step6.title" = "Simmer the sauce";
+"recipe.it_pasta_bolognese.step7.body" = "Boil water, add salt, cook pasta until al dente. Drain.";
+"recipe.it_pasta_bolognese.step7.title" = "Cook the pasta";
+"recipe.it_pasta_bolognese.step8.body" = "Remove bay leaf. Taste and adjust salt/pepper. Stir in butter if using. Serve with Parmesan.";
+"recipe.it_pasta_bolognese.step8.title" = "Finish & serve";
+"recipe.it_pasta_bolognese.tool.cheese_grater" = "Cheese grater";
+"recipe.it_pasta_bolognese.tool.cheese_grater.optional" = "Optional";
+"recipe.it_pasta_bolognese.tool.colander" = "Colander";
+"recipe.it_pasta_bolognese.tool.cutting_board" = "Cutting board";
+"recipe.it_pasta_bolognese.tool.large_pot" = "Large pot or Dutch oven with a heavy base";
+"recipe.it_pasta_bolognese.tool.measuring_cup" = "Measuring cup and or kitchen scale (handy)";
+"recipe.it_pasta_bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
+"recipe.it_pasta_bolognese.tool.sharp_knife" = "Sharp knife";
+"recipe.it_pasta_bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";

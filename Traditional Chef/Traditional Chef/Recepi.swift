@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum RecipeCategory: String, CaseIterable, Identifiable {
+enum RecipeCategory: String, CaseIterable, Identifiable, Codable {
     case breakfast, snack, starter, main, dessert
 
     var id: String { rawValue }
@@ -27,9 +27,20 @@ enum RecipeCategory: String, CaseIterable, Identifiable {
     var localizedName: String {
         localizedName(in: AppLanguage.currentLocale)
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = (try? container.decode(String.self)) ?? ""
+        self = RecipeCategory(rawValue: rawValue) ?? .main
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 }
 
-struct Recipe: Identifiable, Hashable {
+struct Recipe: Identifiable, Hashable, Codable {
     let id: String
 
     /// ISO 3166-1 alpha-2 (e.g. "IT")
@@ -47,6 +58,8 @@ struct Recipe: Identifiable, Hashable {
 
     /// List view metadata
     let approximateMinutes: Int
+    let totalMinutes: Int
+    let totalActiveMinutes: Int
     let calories: Int
     let ingredientsCountForList: Int
 
@@ -70,43 +83,63 @@ struct Recipe: Identifiable, Hashable {
     let nutrition: RecipeNutrition?
 }
 
-struct RecipeTool: Identifiable, Hashable {
+struct RecipeTool: Identifiable, Hashable, Codable {
     let id: String
     let nameKey: String
     let isOptional: Bool
+    let optionalLabelKey: String?
 }
 
-struct Ingredient: Identifiable, Hashable {
+struct Ingredient: Identifiable, Hashable, Codable {
     let id: String
     let nameKey: String
     let grams: Double
+    let ounces: Double
     let isOptional: Bool
     let group: IngredientGroup
+    let groupId: Int?
 
     /// Used for “supermarket logic”
     let aisle: GroceryAisle
 
     /// Used for “use order” sorting
     let useOrder: Int
+
+    /// Optional custom amount display
+    let customAmountValue: String?
+    let customAmountLabelKey: String?
 }
 
-enum IngredientGroup: String, CaseIterable, Identifiable {
-    case sauce
-    case pasta
-    case finishing
-
-    var id: String { rawValue }
+struct IngredientGroup: Hashable, Identifiable, Codable {
+    let id: String
 
     func localizedName(in locale: Locale) -> String {
-        switch self {
-        case .sauce: return AppLanguage.string("grocery.group.sauce", locale: locale)
-        case .pasta: return AppLanguage.string("grocery.group.pasta", locale: locale)
-        case .finishing: return AppLanguage.string("grocery.group.finishing", locale: locale)
+        let key = "grocery.group.\(id)"
+        let localized = AppLanguage.string(key, locale: locale)
+        return localized == key ? id.capitalized : localized
+    }
+
+    init(id: String) {
+        self.id = id
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let value = try? container.decode(String.self) {
+            id = value
+            return
         }
+        let decoded = try container.decode([String: String].self)
+        id = decoded["id"] ?? "other"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(id)
     }
 }
 
-enum GroceryAisle: Int, CaseIterable {
+enum GroceryAisle: Int, CaseIterable, Codable {
     case vegetables = 0
     case aromatics
     case meat
@@ -132,19 +165,48 @@ enum GroceryAisle: Int, CaseIterable {
     var localizedName: String {
         localizedName(in: AppLanguage.currentLocale)
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let stringValue = try? container.decode(String.self) {
+            self = GroceryAisle.from(stringValue)
+            return
+        }
+        let rawValue = try container.decode(Int.self)
+        self = GroceryAisle(rawValue: rawValue) ?? .other
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
+
+    private static func from(_ value: String) -> GroceryAisle {
+        switch value {
+        case "vegetables": return .vegetables
+        case "aromatics": return .aromatics
+        case "meat": return .meat
+        case "canned": return .canned
+        case "dairy": return .dairy
+        case "pantry": return .pantry
+        case "spices": return .spices
+        default: return .other
+        }
+    }
 }
 
-struct RecipeStep: Identifiable, Hashable {
+struct RecipeStep: Identifiable, Hashable, Codable {
     let id: String
     let stepNumber: Int
     let titleKey: String
     let bodyKey: String
+    let isPassive: Bool
 
     /// Optional single timer per step (seconds)
     let timerSeconds: Int?
 }
 
-struct RecipeNutrition: Hashable {
+struct RecipeNutrition: Hashable, Codable {
     let energyKcal: Int?
     let proteinGrams: Double?
     let carbohydratesGrams: Double?

@@ -83,7 +83,8 @@ struct KitchenToolsCard: View {
                 .foregroundStyle(AppTheme.textPrimary)
 
             if tool.isOptional {
-                Text(AppLanguage.string("grocery.optional", locale: locale))
+                let labelKey = tool.optionalLabelKey ?? "grocery.optional"
+                Text(AppLanguage.string(labelKey, locale: locale))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
                     .padding(.horizontal, 8)

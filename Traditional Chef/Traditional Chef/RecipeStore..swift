@@ -23,8 +23,21 @@ final class RecipeStore: ObservableObject {
     private var normalizedNameCache: [String: [String: String]] = [:]
 
     init() {
+        loadRecipes()
         rebuildCaches()
         loadFavorites()
+    }
+
+    private func loadRecipes() {
+        guard let url = Bundle.main.url(forResource: "recipes", withExtension: "json") else {
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            recipes = try JSONDecoder().decode([Recipe].self, from: data)
+        } catch {
+            print("Failed to load recipes.json: \(error)")
+        }
     }
 
     func isFavorite(_ recipe: Recipe) -> Bool {

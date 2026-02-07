@@ -96,62 +96,56 @@
 "aisle.spices" = "Kruiden";
 "aisle.other" = "Overig";
 
-/* Recept: Pasta Bolognese */
-"recipe.it.bolognese.name" = "Pasta Bolognese";
-"recipe.it.bolognese.info" = "Komt oorspronkelijk uit Bologna (Noord Italie), waar de saus bekendstaat als ragu alla bolognese en vooral draait om langzaam gegaard vlees met een beetje tomaat. Hij wordt traditioneel geserveerd met tagliatelle, omdat die brede, platte linten de dikke, vlezig saus veel beter vasthouden dan dunne spaghetti.";
-"recipe.it.bolognese.info.summary" = "Bologna (stad)";
-"recipe.it.bolognese.drink.body" = "Traditioneel drink je bij pasta bolognese een rode wijn met frisse zuren, zoals Sangiovese of Barbera. Die sluit mooi aan op de tomaat en het rijke vlees, en houdt elke hap lekker fris. Liever geen wijn? Dan is bruiswater of licht pils ook prima.";
-"recipe.it.bolognese.drink.summary" = "Rode wijn (Sangiovese)";
 "recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredienten";
 "recipe.steps.summary" = "%d minuten";
 
-"ingredient.pasta" = "Pasta";
-"ingredient.minced_meat" = "Gehakt (rund of half-om-half)";
-"ingredient.onion" = "Ui";
+// === AUTO-GENERATED RECIPES BELOW ===
+"ingredient.bay_leaf" = "Laurierblad";
+"ingredient.beef_stock" = "Runderbouillon";
+"ingredient.black_pepper" = "Zwarte peper";
+"ingredient.butter_optional" = "Boter";
+"ingredient.canned_tomatoes" = "Tomatenblokjes uit blik";
 "ingredient.carrot" = "Wortel";
 "ingredient.celery" = "Bleekselderij";
 "ingredient.garlic_optional" = "Knoflook";
-"ingredient.canned_tomatoes" = "Tomatenblokjes uit blik";
-"ingredient.tomato_paste" = "Tomatenpuree";
-"ingredient.beef_stock" = "Runderbouillon";
-"ingredient.red_wine_optional" = "Rode wijn";
+"ingredient.minced_meat" = "Gehakt (rund of half-om-half)";
 "ingredient.olive_oil" = "Olijfolie";
-"ingredient.bay_leaf" = "Laurierblad";
+"ingredient.onion" = "Ui";
 "ingredient.oregano" = "Gedroogde oregano";
-"ingredient.salt_total" = "Zout (totaal)";
-"ingredient.black_pepper" = "Zwarte peper";
-"ingredient.butter_optional" = "Boter";
 "ingredient.parmesan_to_serve" = "Parmezaan (om te serveren)";
-
-"recipe.it.bolognese.step1.title" = "Groenten voorbereiden";
-"recipe.it.bolognese.step1.body"  = "Snijd ui, wortel, bleekselderij (en knoflook als je dat gebruikt).";
-
-"recipe.it.bolognese.step2.title" = "Groenten bakken";
-"recipe.it.bolognese.step2.body"  = "Verhit olijfolie in een grote pan. Voeg ui, wortel en bleekselderij toe. Bak tot zacht.";
-
-"recipe.it.bolognese.step3.title" = "Gehakt bakken";
-"recipe.it.bolognese.step3.body"  = "Voeg het gehakt toe. Bak rul en mooi bruin.";
-
-"recipe.it.bolognese.step4.title" = "Tomatenpuree meebakken";
-"recipe.it.bolognese.step4.body"  = "Roer tomatenpuree erdoor en bak 2 minuten mee.";
-
-"recipe.it.bolognese.step5.title" = "Blussen";
-"recipe.it.bolognese.step5.body"  = "Schenk rode wijn erbij (of een scheut runderbouillon). Roer los en laat even pruttelen.";
-
-"recipe.it.bolognese.step6.title" = "Saus laten pruttelen";
-"recipe.it.bolognese.step6.body"  = "Voeg tomatenblokjes, runderbouillon, laurier, oregano, zout en zwarte peper toe. Laat zachtjes pruttelen met deksel op een kier, af en toe roeren.";
-
-"recipe.it.bolognese.step7.title" = "Pasta koken";
-"recipe.it.bolognese.step7.body"  = "Breng water aan de kook, voeg zout toe, kook pasta al dente. Giet af.";
-
-"recipe.it.bolognese.step8.title" = "Afmaken & serveren";
-"recipe.it.bolognese.step8.body"  = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
-"recipe.it.bolognese.tool.large_pot" = "Grote pan of braadpan met dikke bodem";
-"recipe.it.bolognese.tool.pasta_pot" = "Kookpan voor de pasta";
-"recipe.it.bolognese.tool.wooden_spoon" = "Houten lepel of spatel";
-"recipe.it.bolognese.tool.cutting_board" = "Snijplank";
-"recipe.it.bolognese.tool.sharp_knife" = "Scherp mes";
-"recipe.it.bolognese.tool.colander" = "Vergiet";
-"recipe.it.bolognese.tool.measuring_cup" = "Maatbeker en of weegschaal (handig)";
-"recipe.it.bolognese.tool.cheese_grater" = "Kaasrasp";
+"ingredient.pasta" = "Pasta";
+"ingredient.pasta.amount.custom" = "gram";
+"ingredient.red_wine_optional" = "Rode wijn";
+"ingredient.salt_total" = "Zout (totaal)";
+"ingredient.tomato_paste" = "Tomatenpuree";
+"recipe.it_pasta_bolognese.drink.body" = "Traditioneel drink je bij pasta bolognese een rode wijn met frisse zuren, zoals Sangiovese of Barbera. Die sluit mooi aan op de tomaat en het rijke vlees, en houdt elke hap lekker fris. Liever geen wijn? Dan is bruiswater of licht pils ook prima.";
+"recipe.it_pasta_bolognese.drink.summary" = "Rode wijn (Sangiovese)";
+"recipe.it_pasta_bolognese.info" = "Komt oorspronkelijk uit Bologna (Noord Italie), waar de saus bekendstaat als ragu alla bolognese en vooral draait om langzaam gegaard vlees met een beetje tomaat. Hij wordt traditioneel geserveerd met tagliatelle, omdat die brede, platte linten de dikke, vlezig saus veel beter vasthouden dan dunne spaghetti.";
+"recipe.it_pasta_bolognese.info.summary" = "Bologna (stad)";
+"recipe.it_pasta_bolognese.name" = "Pasta Bolognese";
+"recipe.it_pasta_bolognese.step1.body" = "Snijd ui, wortel, bleekselderij (en knoflook als je dat gebruikt).";
+"recipe.it_pasta_bolognese.step1.title" = "Groenten voorbereiden";
+"recipe.it_pasta_bolognese.step2.body" = "Verhit olijfolie in een grote pan. Voeg ui, wortel en bleekselderij toe. Bak tot zacht.";
+"recipe.it_pasta_bolognese.step2.title" = "Groenten bakken";
+"recipe.it_pasta_bolognese.step3.body" = "Voeg het gehakt toe. Bak rul en mooi bruin.";
+"recipe.it_pasta_bolognese.step3.title" = "Gehakt bakken";
+"recipe.it_pasta_bolognese.step4.body" = "Roer tomatenpuree erdoor en bak 2 minuten mee.";
+"recipe.it_pasta_bolognese.step4.title" = "Tomatenpuree meebakken";
+"recipe.it_pasta_bolognese.step5.body" = "Schenk rode wijn erbij (of een scheut runderbouillon). Roer los en laat even pruttelen.";
+"recipe.it_pasta_bolognese.step5.title" = "Blussen";
+"recipe.it_pasta_bolognese.step6.body" = "Voeg tomatenblokjes, runderbouillon, laurier, oregano, zout en zwarte peper toe. Laat zachtjes pruttelen met deksel op een kier, af en toe roeren.";
+"recipe.it_pasta_bolognese.step6.title" = "Saus laten pruttelen";
+"recipe.it_pasta_bolognese.step7.body" = "Breng water aan de kook, voeg zout toe, kook pasta al dente. Giet af.";
+"recipe.it_pasta_bolognese.step7.title" = "Pasta koken";
+"recipe.it_pasta_bolognese.step8.body" = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
+"recipe.it_pasta_bolognese.step8.title" = "Afmaken & serveren";
+"recipe.it_pasta_bolognese.tool.cheese_grater" = "Kaasrasp";
+"recipe.it_pasta_bolognese.tool.cheese_grater.optional" = "Optioneel";
+"recipe.it_pasta_bolognese.tool.colander" = "Vergiet";
+"recipe.it_pasta_bolognese.tool.cutting_board" = "Snijplank";
+"recipe.it_pasta_bolognese.tool.large_pot" = "Grote pan of braadpan met dikke bodem";
+"recipe.it_pasta_bolognese.tool.measuring_cup" = "Maatbeker en of weegschaal (handig)";
+"recipe.it_pasta_bolognese.tool.pasta_pot" = "Kookpan voor de pasta";
+"recipe.it_pasta_bolognese.tool.sharp_knife" = "Scherp mes";
+"recipe.it_pasta_bolognese.tool.wooden_spoon" = "Houten lepel of spatel";
