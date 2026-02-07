@@ -10,6 +10,7 @@ struct GroceryListCard: View {
     @Binding var servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
+    @AppStorage("groceryAllMeasurements") private var showAllMeasurements: Bool = true
     private let ingredientRowSpacing: CGFloat = 9
     private var locale: Locale { Locale(identifier: appLanguage) }
     private var measurementUnit: MeasurementUnit {
@@ -117,7 +118,7 @@ struct GroceryListCard: View {
                     let largeButtonWidth = availableWidth * 0.4
 
                     HStack(alignment: .center, spacing: 8) {
-                        measurementIndicator
+                        measurementToggle
                         .frame(width: smallButtonWidth)
 
                         optionToggle(
@@ -220,20 +221,26 @@ struct GroceryListCard: View {
         .buttonStyle(.plain)
     }
 
-    private var measurementIndicator: some View {
-        HStack(spacing: 6) {
-            Text(AppLanguage.string(String.LocalizationValue(measurementUnit.groceryOptionKey), locale: locale))
-                .font(optionButtonFont)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
+    private var measurementToggle: some View {
+        Button(action: { showAllMeasurements.toggle() }) {
+            HStack(spacing: 6) {
+                Text(AppLanguage.string(String.LocalizationValue(measurementUnit.groceryOptionKey), locale: locale))
+                    .font(optionButtonFont)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+            .foregroundStyle(showAllMeasurements ? Color.white : AppTheme.primaryBlue)
+            .frame(maxWidth: .infinity, minHeight: optionRowHeight)
+            .padding(.horizontal, 10)
+            .padding(.vertical, optionRowVerticalPadding)
+            .background(
+                Capsule().fill(showAllMeasurements ? AppTheme.primaryBlue : Color.clear)
+            )
+            .overlay(
+                Capsule().stroke(AppTheme.primaryBlue, lineWidth: showAllMeasurements ? 0 : 1)
+            )
         }
-        .foregroundStyle(Color.white)
-        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
-        .padding(.horizontal, 10)
-        .padding(.vertical, optionRowVerticalPadding)
-        .background(
-            Capsule().fill(AppTheme.primaryBlue)
-        )
+        .buttonStyle(.plain)
     }
 
     private func incrementServings() {
@@ -399,7 +406,20 @@ struct GroceryListCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if measurementUnit == .grams {
+            if !showAllMeasurements,
+               let customValue = ing.customAmountValue,
+               let customLabelKey = ing.customAmountLabelKey {
+                Text(customValue)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 44, alignment: .trailing)
+
+                Text(AppLanguage.string(String.LocalizationValue(customLabelKey), locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .lineLimit(1)
+                    .frame(minWidth: 28, alignment: .leading)
+            } else if measurementUnit == .grams {
                 Text(gramsValueString(scaledGrams(ing.grams)))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
