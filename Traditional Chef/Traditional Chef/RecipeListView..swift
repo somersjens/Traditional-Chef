@@ -160,7 +160,7 @@ struct RecipeListView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 12) {
+        ZStack {
             Button {
                 hasSeenWelcome = false
             } label: {
@@ -178,9 +178,10 @@ struct RecipeListView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
 
-            Spacer()
-
-            settingsButton
+            HStack {
+                Spacer()
+                settingsButton
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 6)
@@ -224,8 +225,8 @@ struct RecipeListView: View {
                 showSettings.toggle()
             }
         } label: {
-            Image(systemName: "gearshape")
-                .font(.system(size: 20, weight: .semibold))
+            Image(systemName: "gearshape.fill")
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
         }
         .buttonStyle(.plain)
