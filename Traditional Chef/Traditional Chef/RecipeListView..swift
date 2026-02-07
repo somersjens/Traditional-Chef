@@ -10,9 +10,12 @@ struct RecipeListView: View {
     @StateObject private var vm = RecipeListViewModel()
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
+    @AppStorage("defaultServings") private var defaultServings: Int = 4
+    @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
 
     @State private var showCountryPicker: Bool = false
-    @State private var showLanguagePicker: Bool = false
+    @State private var showSettings: Bool = false
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
@@ -21,6 +24,11 @@ struct RecipeListView: View {
                 AppTheme.pageBackground.ignoresSafeArea()
 
                 VStack(spacing: 10) {
+                    if showSettings {
+                        settingsCard
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
                     searchBar
 
                     FilterChipsView(
@@ -90,8 +98,14 @@ struct RecipeListView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    languageMenu
+                    settingsButton
                 }
+            }
+            .onAppear {
+                ensureMeasurementUnit()
+            }
+            .onChange(of: appLanguage) { _, _ in
+                ensureMeasurementUnit()
             }
             .sheet(isPresented: $showCountryPicker) {
                 CountryPickerView(
@@ -104,6 +118,16 @@ struct RecipeListView: View {
                     }
                 )
             }
+        }
+    }
+
+    private var resolvedMeasurementUnit: MeasurementUnit {
+        MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
+    }
+
+    private func ensureMeasurementUnit() {
+        if MeasurementUnit(rawValue: measurementUnitRaw) == nil {
+            measurementUnitRaw = MeasurementUnit.default(for: appLanguage).rawValue
         }
     }
 
@@ -211,6 +235,88 @@ struct RecipeListView: View {
         .padding(.horizontal, 16)
     }
 
+    private var settingsButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showSettings.toggle()
+            }
+        } label: {
+            Image(systemName: "heart.fill")
+                .font(.system(size: 23, weight: .semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 23, height: 23, alignment: .center)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(AppLanguage.string("settings.title", locale: locale)))
+    }
+
+    private var settingsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(AppLanguage.string("settings.title", locale: locale))
+                .font(.headline)
+                .foregroundStyle(AppTheme.textPrimary)
+
+            HStack(spacing: 12) {
+                Text(AppLanguage.string("settings.language", locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.textPrimary)
+                Spacer()
+                Picker("", selection: $appLanguage) {
+                    ForEach(AppLanguage.supported) { option in
+                        Text("\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: locale))")
+                            .tag(option.code)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+
+            HStack(spacing: 12) {
+                Text(AppLanguage.string("settings.measurement", locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.textPrimary)
+                Spacer()
+                Picker("", selection: Binding(
+                    get: { resolvedMeasurementUnit },
+                    set: { measurementUnitRaw = $0.rawValue }
+                )) {
+                    ForEach(MeasurementUnit.allCases) { unit in
+                        Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
+                            .tag(unit)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 170)
+            }
+
+            HStack(spacing: 12) {
+                Text(AppLanguage.string("settings.servings", locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.textPrimary)
+                Spacer()
+                Stepper(value: $defaultServings, in: 1...12) {
+                    Text("\(defaultServings)")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                }
+                .labelsHidden()
+            }
+
+            Toggle(isOn: $timerAutoStop) {
+                Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.textPrimary)
+            }
+            .tint(AppTheme.primaryBlue)
+        }
+        .padding(12)
+        .background(AppTheme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
+    }
+
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
@@ -300,34 +406,6 @@ struct RecipeListView: View {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
             ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
             ?? "App"
-    }
-
-    private var languageMenu: some View {
-        Button {
-            showLanguagePicker = true
-        } label: {
-            Text(AppLanguage.flag(for: appLanguage))
-                .font(.title3)
-                .padding(.horizontal, 4)
-                .padding(.vertical, 2)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(AppLanguage.string("language.selector", locale: locale)))
-        .confirmationDialog(
-            AppLanguage.string("language.selector", locale: locale),
-            isPresented: $showLanguagePicker,
-            titleVisibility: .visible
-        ) {
-            ForEach(AppLanguage.supported) { option in
-                let label = "\(FlagEmoji.from(countryCode: option.regionCode)) \(AppLanguage.string(option.nameKey, locale: locale))"
-                let isCurrent = appLanguage == option.code
-                Button(isCurrent ? "\(label) ✓" : label) {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        appLanguage = option.code
-                    }
-                }
-            }
-        }
     }
 }
 

@@ -23,4 +23,22 @@ enum SoundPlayer {
             }
         }
     }
+
+    static func startContinuousBeep(interval: TimeInterval = 0.35) -> UUID {
+        let soundID: SystemSoundID = 1005
+        let id = UUID()
+        let timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            AudioServicesPlaySystemSound(soundID)
+        }
+        activeTimers[id] = timer
+        return id
+    }
+
+    static func stopBeep(id: UUID?) {
+        guard let id, let timer = activeTimers[id] else { return }
+        timer.invalidate()
+        activeTimers[id] = nil
+    }
+
+    private static var activeTimers: [UUID: Timer] = [:]
 }

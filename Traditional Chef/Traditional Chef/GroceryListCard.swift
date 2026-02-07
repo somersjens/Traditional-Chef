@@ -9,8 +9,12 @@ struct GroceryListCard: View {
     let recipe: Recipe
     @Binding var servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     private let ingredientRowSpacing: CGFloat = 9
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var measurementUnit: MeasurementUnit {
+        MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
+    }
 
     enum SortMode: String, CaseIterable {
         case useOrder
@@ -23,7 +27,6 @@ struct GroceryListCard: View {
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
     @State private var isExpanded: Bool = true
-    @State private var showAllGrams: Bool = true
     @State private var groupByDishPart: Bool = false
     private let minServings = 1
     private let maxServings = 99
@@ -114,11 +117,7 @@ struct GroceryListCard: View {
                     let largeButtonWidth = availableWidth * 0.4
 
                     HStack(alignment: .center, spacing: 8) {
-                        optionToggle(
-                            titleKey: "grocery.option.allGrams",
-                            isOn: showAllGrams,
-                            action: { showAllGrams.toggle() }
-                        )
+                        measurementIndicator
                         .frame(width: smallButtonWidth)
 
                         optionToggle(
@@ -219,6 +218,22 @@ struct GroceryListCard: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    private var measurementIndicator: some View {
+        HStack(spacing: 6) {
+            Text(AppLanguage.string(String.LocalizationValue(measurementUnit.groceryOptionKey), locale: locale))
+                .font(optionButtonFont)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+        }
+        .foregroundStyle(Color.white)
+        .frame(maxWidth: .infinity, minHeight: optionRowHeight)
+        .padding(.horizontal, 10)
+        .padding(.vertical, optionRowVerticalPadding)
+        .background(
+            Capsule().fill(AppTheme.primaryBlue)
+        )
     }
 
     private func incrementServings() {
@@ -384,7 +399,7 @@ struct GroceryListCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if showAllGrams {
+            if measurementUnit == .grams {
                 Text(gramsValueString(scaledGrams(ing.grams)))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
@@ -395,8 +410,15 @@ struct GroceryListCard: View {
                     .foregroundStyle(AppTheme.primaryBlue)
                     .frame(width: 28, alignment: .leading)
             } else {
-                Spacer()
-                    .frame(width: 72, alignment: .leading)
+                Text(ouncesValueString(scaledOunces(ing.ounces)))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 44, alignment: .trailing)
+
+                Text(ouncesUnitString(scaledOunces(ing.ounces)))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 28, alignment: .leading)
             }
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
@@ -431,6 +453,25 @@ struct GroceryListCard: View {
 
     private func scaledGrams(_ grams: Double) -> Double {
         grams * Double(servings) / Double(baseServings)
+    }
+
+    private func ouncesValueString(_ ounces: Double) -> String {
+        if ounces < 1 {
+            return String(format: "%.1f", ounces)
+        }
+        if ounces.rounded(.down) == ounces {
+            return "\(Int(ounces))"
+        }
+        return String(format: "%.0f", ounces)
+    }
+
+    private func ouncesUnitString(_ ounces: Double) -> String {
+        _ = ounces
+        return "oz"
+    }
+
+    private func scaledOunces(_ ounces: Double) -> Double {
+        ounces * Double(servings) / Double(baseServings)
     }
 
     private var grocerySummary: String {

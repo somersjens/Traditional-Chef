@@ -10,6 +10,7 @@ struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("defaultServings") private var defaultServings: Int = 4
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isInfoExpanded: Bool = true
     @State private var isStepsExpanded: Bool = true
@@ -36,6 +37,9 @@ struct RecipeDetailView: View {
         }
         .background(AppTheme.pageBackground)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            servings = defaultServings
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
@@ -228,11 +232,13 @@ private struct StepRowView: View {
     @State private var baseInitialSeconds: Int
     @State private var didRing: Bool = false
     @State private var beepTaskRunning: Bool = false
+    @State private var continuousBeepID: UUID? = nil
     @State private var startDate: Date? = nil
     @State private var startSeconds: Int
     @State private var startToken: UUID = UUID()
 
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
     private var locale: Locale { Locale(identifier: appLanguage) }
     @Environment(\.scenePhase) private var scenePhase
 
@@ -345,6 +351,7 @@ private struct StepRowView: View {
         if isRunning {
             updateRemainingFromEndDate()
             isRunning = false
+            stopContinuousBeep()
             startDate = nil
             startToken = UUID()
         } else {
@@ -367,6 +374,7 @@ private struct StepRowView: View {
         sessionInitialSeconds = seconds
         secondsLeft = seconds
         didRing = false
+        stopContinuousBeep()
         startDate = nil
         startSeconds = seconds
         startToken = UUID()
@@ -377,6 +385,7 @@ private struct StepRowView: View {
         sessionInitialSeconds = overrideSeconds
         secondsLeft = overrideSeconds
         didRing = false
+        stopContinuousBeep()
         if isRunning {
             let now = Date()
             startDate = now
@@ -405,6 +414,17 @@ private struct StepRowView: View {
         }
     }
 
+    private func startContinuousBeep() {
+        guard continuousBeepID == nil else { return }
+        Haptics.success()
+        continuousBeepID = SoundPlayer.startContinuousBeep()
+    }
+
+    private func stopContinuousBeep() {
+        SoundPlayer.stopBeep(id: continuousBeepID)
+        continuousBeepID = nil
+    }
+
     private func updateRemainingFromEndDate() {
         guard isRunning, let startDate else { return }
         let elapsed = Int(Date().timeIntervalSince(startDate).rounded(.down))
@@ -414,7 +434,11 @@ private struct StepRowView: View {
         }
         if remaining <= 0 && !didRing {
             didRing = true
-            ringForThreeSeconds()
+            if timerAutoStop {
+                ringForThreeSeconds()
+            } else {
+                startContinuousBeep()
+            }
         }
     }
 }
