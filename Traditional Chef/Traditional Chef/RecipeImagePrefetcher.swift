@@ -14,13 +14,19 @@ enum RecipeImagePrefetcher {
             return
         }
 
-        if let cachedResponse = URLCache.shared.cachedResponse(for: URLRequest(url: url)),
+        let request = URLRequest(
+            url: url,
+            cachePolicy: .returnCacheDataElseLoad,
+            timeoutInterval: 30
+        )
+
+        if let cachedResponse = URLCache.shared.cachedResponse(for: request),
            !cachedResponse.data.isEmpty {
             return
         }
 
-        let task = URLSession.shared.dataTask(with: url) { _, _, _ in }
-        task.priority = URLSessionTask.lowPriority
+        let task = URLSession.shared.dataTask(with: request) { _, _, _ in }
+        task.priority = URLSessionTask.highPriority
         task.resume()
     }
 }
