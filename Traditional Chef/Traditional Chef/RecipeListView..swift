@@ -109,7 +109,7 @@ struct RecipeListView: View {
                 vm.setSort(.country)
                 showCountryPicker = true
             } label: {
-                Text("🌍")
+                Text(countryFilterEmoji)
                     .font(.system(size: 16))
             }
             .buttonStyle(.plain)
@@ -389,6 +389,16 @@ struct RecipeListView: View {
 
     private var allCountryCodes: [String] {
         recipeStore.countryCodes
+    }
+
+    private var countryFilterEmoji: String {
+        if let countryCode = vm.selectedCountryCode {
+            return FlagEmoji.from(countryCode: countryCode)
+        }
+        if let continent = vm.selectedContinent {
+            return continent.emoji
+        }
+        return "🌍"
     }
 }
 
