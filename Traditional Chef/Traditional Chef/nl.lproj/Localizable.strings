@@ -75,13 +75,13 @@
 "grocery.option.on" = "Aan";
 "grocery.option.off" = "Uit";
 "settings.title" = "Instellingen";
-"settings.language" = "Taal";
-"settings.measurement" = "Maat";
+"settings.language" = "Taal voor recepten";
+"settings.measurement" = "Standaard Maat";
 "settings.measurement.grams" = "Gram";
 "settings.measurement.ounces" = "Ons";
-"settings.servings" = "Personen";
+"settings.servings" = "Aantal personen";
 "settings.listViewValue" = "Waarde in overzicht";
-"settings.timerAutoStop" = "Timer automatisch stoppen";
+"settings.timerAutoStop" = "Timer stop automatisch";
 "grocery.group.sauce" = "Saus";
 "grocery.group.pasta" = "Pasta";
 "grocery.group.finishing" = "Afwerking";
