@@ -28,11 +28,11 @@ struct RecipeDetailView: View {
         ZStack(alignment: .top) {
             GeometryReader { proxy in
                 let heroSize = proxy.size.width
-                let heroPixelSize = heroSize * displayScale
+                let heroHeight = heroSize
+                let heroPixelSize = max(heroSize, heroHeight) * displayScale
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
-                        heroSection(height: heroSize + proxy.safeAreaInsets.top, targetPixelSize: heroPixelSize)
-                            .padding(.top, -proxy.safeAreaInsets.top)
+                        heroSection(height: heroHeight, targetPixelSize: heroPixelSize)
 
                         VStack(alignment: .leading, spacing: 14) {
                             header
@@ -115,7 +115,7 @@ struct RecipeDetailView: View {
         LinearGradient(
             colors: [
                 AppTheme.pageBackground.opacity(0.0),
-                AppTheme.pageBackground.opacity(0.35)
+                AppTheme.pageBackground.opacity(0.2)
             ],
             startPoint: .top,
             endPoint: .bottom
@@ -145,7 +145,7 @@ struct RecipeDetailView: View {
             if let image = heroUIImage {
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             } else {
                 heroPlaceholder
             }
@@ -273,7 +273,8 @@ struct RecipeDetailView: View {
         let format = AppLanguage.string("recipe.steps.summary", locale: locale)
         let summary = String(format: format, locale: locale, recipe.approximateMinutes)
         let headerText = stepsHeaderText(summary: summary)
-        return VStack(alignment: .leading, spacing: 9) {
+        let contentSpacing: CGFloat = isStepsExpanded ? 9 : 0
+        return VStack(alignment: .leading, spacing: contentSpacing) {
             Button {
                 withAnimation(.easeInOut) {
                     isStepsExpanded.toggle()
