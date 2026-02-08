@@ -5,10 +5,13 @@
 
 import SwiftUI
 import Combine
+import ImageIO
+import UIKit
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.displayScale) private var displayScale
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("defaultServings") private var defaultServings: Int = 4
@@ -17,14 +20,18 @@ struct RecipeDetailView: View {
     @State private var isStepsExpanded: Bool = true
     @State private var servings: Int = 4
     @State private var stepTimerSnapshots: [String: StepTimerSnapshot] = [:]
+    @State private var heroUIImage: UIImage?
+    @State private var heroImageFailed = false
+    @State private var heroTargetPixelSize: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .top) {
             GeometryReader { proxy in
                 let heroSize = proxy.size.width
+                let heroPixelSize = heroSize * displayScale
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
-                        heroSection(height: heroSize + proxy.safeAreaInsets.top)
+                        heroSection(height: heroSize + proxy.safeAreaInsets.top, targetPixelSize: heroPixelSize)
                             .padding(.top, -proxy.safeAreaInsets.top)
 
                         VStack(alignment: .leading, spacing: 14) {
@@ -89,19 +96,16 @@ struct RecipeDetailView: View {
         .padding(.vertical, 8)
     }
 
-    private func heroSection(height: CGFloat) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            heroImage
-                .overlay(imageFadeOverlay)
-                .zIndex(0)
-
-            titleOverlay
-                .padding(.leading, 16)
-                .padding(.bottom, 16)
-                .zIndex(1)
-        }
+    private func heroSection(height: CGFloat, targetPixelSize: CGFloat) -> some View {
+        heroImage(targetPixelSize: targetPixelSize)
             .frame(height: height)
             .frame(maxWidth: .infinity)
+            .overlay(imageFadeOverlay)
+            .overlay(alignment: .bottomLeading) {
+                titleOverlay
+                    .padding(.leading, 16)
+                    .padding(.bottom, 16)
+            }
             .clipped()
             .background(AppTheme.secondaryOffWhite)
             .ignoresSafeArea(edges: .top)
@@ -136,28 +140,21 @@ struct RecipeDetailView: View {
         )
     }
 
-    private var heroImage: some View {
+    private func heroImage(targetPixelSize: CGFloat) -> some View {
         ZStack {
-            if let url = heroImageURL {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        heroPlaceholder
-                    case .empty:
-                        heroPlaceholder
-                    @unknown default:
-                        heroPlaceholder
-                    }
-                }
+            if let image = heroUIImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
             } else {
                 heroPlaceholder
             }
         }
         .accessibilityLabel(Text("Recipe image"))
+        .task {
+            RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
+            await loadHeroImage(targetPixelSize: targetPixelSize)
+        }
     }
 
     private var heroPlaceholder: some View {
@@ -176,6 +173,48 @@ struct RecipeDetailView: View {
             return nil
         }
         return URL(string: imageURL)
+    }
+
+    @MainActor
+    private func loadHeroImage(targetPixelSize: CGFloat) async {
+        guard heroUIImage == nil, !heroImageFailed, let url = heroImageURL else {
+            return
+        }
+
+        let targetPixelSize = max(targetPixelSize, 1)
+        if heroTargetPixelSize == targetPixelSize {
+            return
+        }
+
+        let request = URLRequest(
+            url: url,
+            cachePolicy: .returnCacheDataElseLoad,
+            timeoutInterval: 30
+        )
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+                heroImageFailed = true
+                return
+            }
+
+            let options: [CFString: Any] = [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceShouldCacheImmediately: true,
+                kCGImageSourceThumbnailMaxPixelSize: targetPixelSize
+            ]
+
+            if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) {
+                heroUIImage = UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
+                heroTargetPixelSize = targetPixelSize
+            } else {
+                heroImageFailed = true
+            }
+        } catch {
+            heroImageFailed = true
+        }
     }
 
     private var header: some View {
