@@ -36,7 +36,7 @@
 "recipes.column.prepTime" = "Preparing time";
 "recipes.column.ingredients" = "Ingredients";
 "recipes.column.calories" = "Calories";
-"recipes.column.ingredientsShort" = "Ingredients";
+"recipes.column.ingredientsShort" = "#";
 "recipes.column.caloriesShort" = "Kcal";
 "recipes.column.cal" = "Kcal";
 "recipes.column.ing" = "#";

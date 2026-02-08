@@ -36,8 +36,8 @@
 "recipes.column.prepTime" = "Bereidingstijd";
 "recipes.column.ingredients" = "Ingredienten";
 "recipes.column.calories" = "Calorieën";
-"recipes.column.ingredientsShort" = "Ingredienten";
-"recipes.column.caloriesShort" = "Calorieën";
+"recipes.column.ingredientsShort" = "#";
+"recipes.column.caloriesShort" = "Kcal";
 "recipes.column.cal" = "Kcal";
 "recipes.column.ing" = "#";
 
