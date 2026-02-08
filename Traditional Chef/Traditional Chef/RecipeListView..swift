@@ -28,7 +28,7 @@ struct RecipeListView: View {
 
                     if showSettings {
                         settingsCard
-                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .transition(.opacity)
                     }
 
                     searchBar
@@ -40,7 +40,6 @@ struct RecipeListView: View {
                         },
                         locale: locale
                     )
-                    .padding(.top, 10)
 
                     headerRow
 
@@ -166,13 +165,13 @@ struct RecipeListView: View {
             } label: {
                 HStack(spacing: 10) {
                     Text(appDisplayName)
-                        .font(.system(size: 24, weight: .semibold))
+                        .font(.system(size: 26.4, weight: .semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
 
                     Image("chef_no_background")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 29, height: 29)
+                        .frame(width: 32, height: 32)
                 }
             }
             .buttonStyle(.plain)
@@ -231,6 +230,7 @@ struct RecipeListView: View {
         }
         .buttonStyle(.plain)
         .background(Color.clear)
+        .padding(.trailing, 4)
         .accessibilityLabel(Text(AppLanguage.string("settings.title", locale: locale)))
     }
 
