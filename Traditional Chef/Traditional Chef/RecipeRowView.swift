@@ -29,6 +29,7 @@ struct RecipeRowView: View {
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
                     .frame(width: 20, alignment: .center)
             }

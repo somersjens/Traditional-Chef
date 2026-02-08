@@ -145,6 +145,7 @@ struct RecipeListView: View {
                 vm.favoritesOnly.toggle()
             } label: {
                 Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
                     .frame(width: 20, alignment: .center)
             }
