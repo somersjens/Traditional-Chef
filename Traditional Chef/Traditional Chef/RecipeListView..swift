@@ -12,6 +12,7 @@ struct RecipeListView: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage("defaultServings") private var defaultServings: Int = 4
+    @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.totalTime.rawValue
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
 
     @State private var showCountryPicker: Bool = false
@@ -52,6 +53,7 @@ struct RecipeListView: View {
                                     NavigationLink(value: recipe) {
                                         RecipeRowView(
                                             recipe: recipe,
+                                            listViewValue: listViewValue,
                                             isFavorite: recipeStore.isFavorite(recipe),
                                             onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                             searchText: vm.searchText
@@ -96,6 +98,10 @@ struct RecipeListView: View {
         MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
     }
 
+    private var listViewValue: RecipeListValue {
+        RecipeListValue(rawValue: listViewValueRaw) ?? .totalTime
+    }
+
     private func ensureMeasurementUnit() {
         if MeasurementUnit(rawValue: measurementUnitRaw) == nil {
             measurementUnitRaw = MeasurementUnit.default(for: appLanguage).rawValue
@@ -128,17 +134,19 @@ struct RecipeListView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             SortHeaderButton(
-                isActive: vm.sortKey == .time,
+                isActive: vm.sortKey == listViewValue.sortKey,
                 isAscending: vm.ascending,
                 textAlignment: .trailing,
                 arrowPlacement: .leading,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.time", locale: locale))
+                Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.trailing)
             } action: {
-                vm.setSort(.time)
+                vm.setSort(listViewValue.sortKey)
             }
-            .frame(width: 56, alignment: .trailing)
+            .frame(width: 78, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
@@ -285,6 +293,27 @@ struct RecipeListView: View {
                 .tint(AppTheme.primaryBlue)
             }
 
+            HStack(spacing: 12) {
+                Text(AppLanguage.string("settings.listViewValue", locale: locale))
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                Spacer()
+                Picker("", selection: Binding(
+                    get: { listViewValue },
+                    set: { newValue in
+                        listViewValueRaw = newValue.rawValue
+                        vm.setSort(newValue.sortKey)
+                    }
+                )) {
+                    ForEach(RecipeListValue.allCases) { option in
+                        Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                            .tag(option)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(AppTheme.primaryBlue)
+            }
+
             Toggle(isOn: $timerAutoStop) {
                 Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
                     .font(.headline.weight(.semibold))
@@ -369,8 +398,10 @@ struct RecipeListView: View {
                 let bn = localizedNames[b.id]
                     ?? AppLanguage.string(String.LocalizationValue(b.nameKey), locale: locale)
                 result = an.localizedCaseInsensitiveCompare(bn) == .orderedAscending
-            case .time:
-                result = a.approximateMinutes < b.approximateMinutes
+            case .totalTime:
+                result = a.totalMinutes < b.totalMinutes
+            case .prepTime:
+                result = a.totalActiveMinutes < b.totalActiveMinutes
             case .calories:
                 result = a.calories < b.calories
             case .ingredients:

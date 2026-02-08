@@ -32,7 +32,12 @@
 "continent.oceania" = "Oceanië";
 
 "recipes.column.name" = "Recept";
-"recipes.column.time" = "Tijd";
+"recipes.column.time" = "Totale tijd";
+"recipes.column.prepTime" = "Bereidingstijd";
+"recipes.column.ingredients" = "Ingredienten";
+"recipes.column.calories" = "Kaloriën";
+"recipes.column.ingredientsShort" = "Ing";
+"recipes.column.caloriesShort" = "Cal";
 "recipes.column.cal" = "Cal";
 "recipes.column.ing" = "Ing";
 
@@ -75,6 +80,7 @@
 "settings.measurement.grams" = "Gram";
 "settings.measurement.ounces" = "Ons";
 "settings.servings" = "Personen";
+"settings.listViewValue" = "Waarde in overzicht";
 "settings.timerAutoStop" = "Timer automatisch stoppen";
 "grocery.group.sauce" = "Saus";
 "grocery.group.pasta" = "Pasta";

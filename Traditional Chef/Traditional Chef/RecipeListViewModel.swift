@@ -17,7 +17,7 @@ final class RecipeListViewModel: ObservableObject {
     @Published var favoritesOnly: Bool = false
 
     enum SortKey: String {
-        case country, name, time, calories, ingredients
+        case country, name, totalTime, prepTime, calories, ingredients
     }
 
     @Published var sortKey: SortKey = .country
@@ -42,6 +42,54 @@ final class RecipeListViewModel: ObservableObject {
         } else {
             sortKey = key
             ascending = true
+        }
+    }
+}
+
+enum RecipeListValue: String, CaseIterable, Identifiable {
+    case totalTime
+    case prepTime
+    case ingredients
+    case calories
+
+    var id: String { rawValue }
+
+    var settingsLabelKey: String {
+        switch self {
+        case .totalTime:
+            return "recipes.column.time"
+        case .prepTime:
+            return "recipes.column.prepTime"
+        case .ingredients:
+            return "recipes.column.ingredients"
+        case .calories:
+            return "recipes.column.calories"
+        }
+    }
+
+    var columnLabelKey: String {
+        switch self {
+        case .totalTime:
+            return "recipes.column.time"
+        case .prepTime:
+            return "recipes.column.prepTime"
+        case .ingredients:
+            return "recipes.column.ingredientsShort"
+        case .calories:
+            return "recipes.column.caloriesShort"
+        }
+    }
+
+    var sortKey: RecipeListViewModel.SortKey {
+        switch self {
+        case .totalTime:
+            return .totalTime
+        case .prepTime:
+            return .prepTime
+        case .ingredients:
+            return .ingredients
+        case .calories:
+            return .calories
         }
     }
 }

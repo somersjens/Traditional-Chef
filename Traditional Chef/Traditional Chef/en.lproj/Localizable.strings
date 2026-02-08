@@ -32,7 +32,12 @@
 "continent.oceania" = "Oceania";
 
 "recipes.column.name" = "Recipe";
-"recipes.column.time" = "Time";
+"recipes.column.time" = "Total time";
+"recipes.column.prepTime" = "Preparing time";
+"recipes.column.ingredients" = "Ingredients";
+"recipes.column.calories" = "Calories";
+"recipes.column.ingredientsShort" = "Ing";
+"recipes.column.caloriesShort" = "Cal";
 "recipes.column.cal" = "Cal";
 "recipes.column.ing" = "Ing";
 
@@ -75,6 +80,7 @@
 "settings.measurement.grams" = "Gram";
 "settings.measurement.ounces" = "Ounce";
 "settings.servings" = "People";
+"settings.listViewValue" = "Value in listview";
 "settings.timerAutoStop" = "Timer auto stop";
 "grocery.group.sauce" = "Sauce";
 "grocery.group.pasta" = "Pasta";

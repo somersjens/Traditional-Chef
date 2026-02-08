@@ -7,6 +7,7 @@ import SwiftUI
 
 struct RecipeRowView: View {
     let recipe: Recipe
+    let listViewValue: RecipeListValue
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
@@ -25,7 +26,7 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            meta("\(recipe.approximateMinutes)", width: 44)
+            meta(listValueText, width: 52)
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
@@ -54,6 +55,19 @@ struct RecipeRowView: View {
             .font(.headline.weight(.semibold))
             .foregroundStyle(AppTheme.primaryBlue)
             .frame(width: width, alignment: .trailing)
+    }
+
+    private var listValueText: String {
+        switch listViewValue {
+        case .totalTime:
+            return "\(recipe.totalMinutes)"
+        case .prepTime:
+            return "\(recipe.totalActiveMinutes)"
+        case .ingredients:
+            return "\(recipe.ingredientsCountForList)"
+        case .calories:
+            return "\(recipe.calories)"
+        }
     }
 
     private var highlightedName: AttributedString {
