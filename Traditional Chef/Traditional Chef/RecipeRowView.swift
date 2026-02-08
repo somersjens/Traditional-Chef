@@ -26,7 +26,7 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            meta(listValueText, width: 52)
+            meta(listValueText, width: 140)
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")

@@ -141,12 +141,12 @@ struct RecipeListView: View {
                 arrowSpacing: 4
             ) {
                 Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
-                    .lineLimit(2)
+                    .lineLimit(1)
                     .multilineTextAlignment(.trailing)
             } action: {
                 vm.setSort(listViewValue.sortKey)
             }
-            .frame(width: 78, alignment: .trailing)
+            .frame(width: 140, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
