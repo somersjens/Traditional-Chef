@@ -16,33 +16,17 @@ struct RecipeDetailView: View {
     @State private var isInfoExpanded: Bool = true
     @State private var isStepsExpanded: Bool = true
     @State private var servings: Int = 4
-    @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .top) {
             GeometryReader { proxy in
                 let heroSize = proxy.size.width
-                ZStack(alignment: .top) {
-                    heroSection(height: heroSize)
-                        .allowsHitTesting(false)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        heroSection(height: heroSize + proxy.safeAreaInsets.top)
+                            .padding(.top, -proxy.safeAreaInsets.top)
 
-                    ScrollView {
                         VStack(alignment: .leading, spacing: 14) {
-                            Color.clear
-                                .frame(height: 0)
-                                .background(
-                                    GeometryReader { scrollProxy in
-                                        Color.clear
-                                            .preference(
-                                                key: ScrollOffsetKey.self,
-                                                value: scrollProxy.frame(in: .named("scroll")).minY
-                                            )
-                                    }
-                                )
-
-                            Color.clear
-                                .frame(height: max(0, heroSize - 12))
-
                             header
 
                             NutritionCard(recipe: recipe)
@@ -55,20 +39,17 @@ struct RecipeDetailView: View {
 
                             stepsCard
                         }
-                        .padding(12)
+                        .padding(.horizontal, 12)
                     }
-                    .zIndex(1)
+                    .padding(.bottom, 12)
                 }
+                .ignoresSafeArea(edges: .top)
             }
 
             detailTopBar
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .zIndex(3)
-        }
-        .coordinateSpace(name: "scroll")
-        .onPreferenceChange(ScrollOffsetKey.self) { value in
-            scrollOffset = value
         }
         .background(AppTheme.pageBackground)
         .toolbar(.hidden, for: .navigationBar)
@@ -110,7 +91,6 @@ struct RecipeDetailView: View {
     private func heroSection(height: CGFloat) -> some View {
         ZStack(alignment: .bottomLeading) {
             heroImage
-                .opacity(imageOpacity)
                 .overlay(imageFadeOverlay)
                 .zIndex(0)
 
@@ -126,18 +106,11 @@ struct RecipeDetailView: View {
             .ignoresSafeArea(edges: .top)
     }
 
-    private var imageOpacity: Double {
-        let fadeStart: CGFloat = -10
-        let fadeDistance: CGFloat = 180
-        let progress = min(max((-scrollOffset - fadeStart) / fadeDistance, 0), 1)
-        return Double(1 - progress)
-    }
-
     private var imageFadeOverlay: some View {
         LinearGradient(
             colors: [
                 AppTheme.pageBackground.opacity(0.0),
-                AppTheme.pageBackground.opacity(min(0.65, 1 - imageOpacity))
+                AppTheme.pageBackground.opacity(0.35)
             ],
             startPoint: .top,
             endPoint: .bottom
@@ -309,14 +282,6 @@ struct RecipeDetailView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
-    }
-}
-
-private struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 
