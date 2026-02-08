@@ -37,8 +37,8 @@
 "recipes.column.ingredients" = "Ingredients";
 "recipes.column.calories" = "Calories";
 "recipes.column.ingredientsShort" = "#";
-"recipes.column.caloriesShort" = "Kcal";
-"recipes.column.cal" = "Kcal";
+"recipes.column.caloriesShort" = "kcal";
+"recipes.column.cal" = "kcal";
 "recipes.column.ing" = "#";
 
 "recipes.noResults" = "No results";

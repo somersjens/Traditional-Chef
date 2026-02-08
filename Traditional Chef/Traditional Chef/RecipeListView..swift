@@ -109,7 +109,7 @@ struct RecipeListView: View {
     }
 
     private var headerRow: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             Button {
                 vm.setSort(.country)
                 showCountryPicker = true
@@ -153,7 +153,7 @@ struct RecipeListView: View {
                 vm.favoritesOnly.toggle()
             } label: {
                 Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
                     .frame(width: 20, alignment: .center)
             }

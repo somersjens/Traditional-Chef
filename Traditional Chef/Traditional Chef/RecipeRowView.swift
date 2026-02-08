@@ -15,7 +15,7 @@ struct RecipeRowView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             Text(FlagEmoji.from(countryCode: recipe.countryCode))
                 .font(.title3)
                 .frame(width: 34, alignment: .center)
@@ -30,7 +30,7 @@ struct RecipeRowView: View {
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
                     .frame(width: 20, alignment: .center)
             }
