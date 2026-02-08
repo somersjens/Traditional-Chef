@@ -37,9 +37,9 @@
 "recipes.column.ingredients" = "Ingredients";
 "recipes.column.calories" = "Calories";
 "recipes.column.ingredientsShort" = "Ingredients";
-"recipes.column.caloriesShort" = "Calories";
-"recipes.column.cal" = "Calories";
-"recipes.column.ing" = "Ingredients";
+"recipes.column.caloriesShort" = "Kcal";
+"recipes.column.cal" = "Kcal";
+"recipes.column.ing" = "#";
 
 "recipes.noResults" = "No results";
 "recipes.noResultsHint" = "Remove a filter to get results, or try a different search.";
