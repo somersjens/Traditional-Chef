@@ -16,6 +16,7 @@ struct RecipeDetailView: View {
     @State private var isInfoExpanded: Bool = true
     @State private var isStepsExpanded: Bool = true
     @State private var servings: Int = 4
+    @State private var stepTimerSnapshots: [String: StepTimerSnapshot] = [:]
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -232,6 +233,7 @@ struct RecipeDetailView: View {
     private var stepsCard: some View {
         let format = AppLanguage.string("recipe.steps.summary", locale: locale)
         let summary = String(format: format, locale: locale, recipe.approximateMinutes)
+        let headerText = stepsHeaderText(summary: summary)
         return VStack(alignment: .leading, spacing: 9) {
             Button {
                 withAnimation(.easeInOut) {
@@ -249,7 +251,7 @@ struct RecipeDetailView: View {
 
                     Spacer()
 
-                    Text(summary)
+                    Text(headerText)
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
 
@@ -263,17 +265,27 @@ struct RecipeDetailView: View {
             .contentShape(Rectangle())
             .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
 
-            if isStepsExpanded {
+            VStack(spacing: 9) {
                 Divider()
                     .overlay(AppTheme.hairline)
 
                 ForEach(recipe.steps) { step in
-                    StepRowView(step: step, ingredients: recipe.ingredients)
+                    StepRowView(
+                        step: step,
+                        ingredients: recipe.ingredients,
+                        onTimerUpdate: { snapshot in
+                            stepTimerSnapshots[snapshot.id] = snapshot
+                        }
+                    )
                     if step.id != recipe.steps.last?.id {
                         Divider().overlay(AppTheme.hairline)
                     }
                 }
             }
+            .opacity(isStepsExpanded ? 1 : 0)
+            .frame(maxHeight: isStepsExpanded ? .infinity : 0)
+            .clipped()
+            .accessibilityHidden(!isStepsExpanded)
         }
         .animation(.easeInOut(duration: 0.25), value: isStepsExpanded)
         .padding(12)
@@ -283,11 +295,44 @@ struct RecipeDetailView: View {
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
     }
+
+    private func stepsHeaderText(summary: String) -> String {
+        guard !isStepsExpanded,
+              let shortestRunning = stepTimerSnapshots.values
+                .filter({ $0.isRunning })
+                .map(\.secondsLeft)
+                .min()
+        else {
+            return summary
+        }
+        return formatTimerText(seconds: shortestRunning)
+    }
+
+    private func formatTimerText(seconds: Int) -> String {
+        if seconds >= 0 {
+            let m = seconds / 60
+            let s = seconds % 60
+            return String(format: "%d:%02d", m, s)
+        } else {
+            let over = abs(seconds)
+            let m = over / 60
+            let s = over % 60
+            return String(format: "-%d:%02d", m, s)
+        }
+    }
+}
+
+private struct StepTimerSnapshot {
+    let id: String
+    let isRunning: Bool
+    let secondsLeft: Int
+    let sessionInitialSeconds: Int
 }
 
 private struct StepRowView: View {
     let step: RecipeStep
     let ingredients: [Ingredient]
+    let onTimerUpdate: (StepTimerSnapshot) -> Void
 
     @State private var showTimer: Bool = false
     @State private var isRunning: Bool = false
@@ -308,9 +353,10 @@ private struct StepRowView: View {
 
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    init(step: RecipeStep, ingredients: [Ingredient]) {
+    init(step: RecipeStep, ingredients: [Ingredient], onTimerUpdate: @escaping (StepTimerSnapshot) -> Void) {
         self.step = step
         self.ingredients = ingredients
+        self.onTimerUpdate = onTimerUpdate
         let initial = step.timerSeconds ?? 0
         _secondsLeft = State(initialValue: initial)
         _sessionInitialSeconds = State(initialValue: initial)
@@ -370,6 +416,18 @@ private struct StepRowView: View {
             if newPhase == .active {
                 updateRemainingFromEndDate()
             }
+        }
+        .onAppear {
+            notifyTimerUpdate()
+        }
+        .onChange(of: isRunning) { _, _ in
+            notifyTimerUpdate()
+        }
+        .onChange(of: secondsLeft) { _, _ in
+            notifyTimerUpdate()
+        }
+        .onChange(of: sessionInitialSeconds) { _, _ in
+            notifyTimerUpdate()
         }
     }
 
@@ -504,5 +562,14 @@ private struct StepRowView: View {
                 startContinuousBeep()
             }
         }
+    }
+
+    private func notifyTimerUpdate() {
+        onTimerUpdate(StepTimerSnapshot(
+            id: step.id,
+            isRunning: isRunning,
+            secondsLeft: secondsLeft,
+            sessionInitialSeconds: sessionInitialSeconds
+        ))
     }
 }
