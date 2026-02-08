@@ -36,10 +36,10 @@
 "recipes.column.prepTime" = "Preparing time";
 "recipes.column.ingredients" = "Ingredients";
 "recipes.column.calories" = "Calories";
-"recipes.column.ingredientsShort" = "Ing";
-"recipes.column.caloriesShort" = "Cal";
-"recipes.column.cal" = "Cal";
-"recipes.column.ing" = "Ing";
+"recipes.column.ingredientsShort" = "Ingredients";
+"recipes.column.caloriesShort" = "Calories";
+"recipes.column.cal" = "Calories";
+"recipes.column.ing" = "Ingredients";
 
 "recipes.noResults" = "No results";
 "recipes.noResultsHint" = "Remove a filter to get results, or try a different search.";

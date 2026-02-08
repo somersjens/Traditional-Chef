@@ -35,11 +35,11 @@
 "recipes.column.time" = "Totale tijd";
 "recipes.column.prepTime" = "Bereidingstijd";
 "recipes.column.ingredients" = "Ingredienten";
-"recipes.column.calories" = "Kaloriën";
-"recipes.column.ingredientsShort" = "Ing";
-"recipes.column.caloriesShort" = "Cal";
-"recipes.column.cal" = "Cal";
-"recipes.column.ing" = "Ing";
+"recipes.column.calories" = "Caloriën";
+"recipes.column.ingredientsShort" = "Ingredienten";
+"recipes.column.caloriesShort" = "Caloriën";
+"recipes.column.cal" = "Caloriën";
+"recipes.column.ing" = "Ingredienten";
 
 "recipes.noResults" = "Geen resultaten";
 "recipes.noResultsHint" = "Verwijder een filter om resultaten te krijgen, of probeer een andere zoekopdracht.";
