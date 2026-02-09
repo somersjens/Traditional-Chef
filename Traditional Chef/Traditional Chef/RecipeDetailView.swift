@@ -95,6 +95,14 @@ struct RecipeDetailView: View {
 
             Spacer()
 
+            ShareLink(item: shareRecipeURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
+                Image(systemName: "arrowshape.turn.up.right")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(iconColor)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Share"))
+
             Button {
                 recipeStore.toggleFavorite(recipe)
             } label: {
@@ -108,6 +116,18 @@ struct RecipeDetailView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+    }
+
+    private var shareRecipeURL: URL {
+        URL(string: "https://traditionalchef.app/recipes/\(recipe.id)") ?? URL(string: "https://traditionalchef.app")!
+    }
+
+    private var shareRecipeTitle: String {
+        AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+    }
+
+    private var shareRecipeMessage: String {
+        "Try this recipe in Traditional Chef."
     }
 
     private func heroSection(height: CGFloat, targetPixelSize: CGFloat) -> some View {
