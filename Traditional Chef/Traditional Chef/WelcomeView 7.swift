@@ -89,7 +89,7 @@ private extension WelcomeView {
         + reverseFrames
         + [(name: "11", duration: 0.5)]
         + [(name: "10", duration: 0.25)]
-        + [(name: "11", duration: 1.0)]
+        + [(name: "11", duration: 0.25)]
 
         while !Task.isCancelled {
             for frame in sequence {
