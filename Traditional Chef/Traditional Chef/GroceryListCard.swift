@@ -77,7 +77,7 @@ struct GroceryListCard: View {
 
                 HStack(alignment: .center, spacing: 12) {
                     Text(AppLanguage.string("grocery.servings", locale: locale))
-                        .font(.subheadline.weight(.semibold))
+                        .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
 
                     Spacer()
