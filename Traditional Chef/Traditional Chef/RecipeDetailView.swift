@@ -25,6 +25,7 @@ struct RecipeDetailView: View {
     @State private var heroTargetPixelSize: CGFloat = 0
     @State private var isTopBarHidden = false
     @State private var scrollOffset: CGFloat = 0
+    @State private var isHeroImageDark: Bool = false
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -80,13 +81,14 @@ struct RecipeDetailView: View {
     }
 
     private var detailTopBar: some View {
+        let iconColor = isHeroImageDark ? AppTheme.pageBackground : AppTheme.primaryBlue
         return HStack(spacing: 12) {
             Button {
                 dismiss()
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(AppTheme.pageBackground)
+                    .foregroundStyle(iconColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Back"))
@@ -99,7 +101,7 @@ struct RecipeDetailView: View {
                 Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
                     .font(.system(size: 18, weight: .semibold))
                     .offset(x: -6)
-                    .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.pageBackground)
+                    .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : iconColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Favorite"))
@@ -221,12 +223,39 @@ struct RecipeDetailView: View {
             if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) {
                 heroUIImage = UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
                 heroTargetPixelSize = targetPixelSize
+                isHeroImageDark = isImageDark(cgImage)
             } else {
                 heroImageFailed = true
             }
         } catch {
             heroImageFailed = true
         }
+    }
+
+    private func isImageDark(_ image: CGImage) -> Bool {
+        let width = 1
+        let height = 1
+        let bytesPerPixel = 4
+        var pixelData = [UInt8](repeating: 0, count: bytesPerPixel)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+        guard let context = CGContext(
+            data: &pixelData,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: bytesPerPixel * width,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo
+        ) else {
+            return false
+        }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let red = CGFloat(pixelData[0]) / 255
+        let green = CGFloat(pixelData[1]) / 255
+        let blue = CGFloat(pixelData[2]) / 255
+        let luminance = (0.2126 * red) + (0.7152 * green) + (0.0722 * blue)
+        return luminance < 0.5
     }
 
     private var header: some View {
