@@ -13,8 +13,9 @@ struct NutritionCard: View {
     private let baseServings = 4
     private let valueColumnWidth: CGFloat = 86
     private let columnPadding: CGFloat = 8
-    private let headerVerticalPadding: CGFloat = 1
-    private let rowVerticalPadding: CGFloat = 3
+    private let headerVerticalPadding: CGFloat = 4
+    private let rowVerticalPadding: CGFloat = 4
+    private let tableTopPadding: CGFloat = 4
     private let tableFont: Font = .body
 
     var body: some View {
@@ -50,61 +51,67 @@ struct NutritionCard: View {
             .accessibilityLabel(Text(isExpanded ? "Collapse nutrition" : "Expand nutrition"))
 
             if isExpanded {
-                Divider()
-                    .overlay(AppTheme.hairline)
-                    .transition(.opacity)
-
-                nutritionHeader
-                dividerRow
-
                 VStack(spacing: 0) {
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.energy",
-                        perServing: kcalText(recipe.nutrition?.energyKcal),
-                        per100g: kcalText(recipe.nutrition?.energyKcal, multiplier: per100gMultiplier)
-                    )
+                    Divider()
+                        .overlay(AppTheme.hairline)
+                        .transition(.opacity)
+
+                    Spacer()
+                        .frame(height: rowVerticalPadding * 2)
+
+                    nutritionHeader
+                        .padding(.top, tableTopPadding)
                     dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.protein",
-                        perServing: gramsText(recipe.nutrition?.proteinGrams),
-                        per100g: gramsText(recipe.nutrition?.proteinGrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.carbs",
-                        perServing: gramsText(recipe.nutrition?.carbohydratesGrams),
-                        per100g: gramsText(recipe.nutrition?.carbohydratesGrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.sugars",
-                        perServing: gramsText(recipe.nutrition?.sugarsGrams),
-                        per100g: gramsText(recipe.nutrition?.sugarsGrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.fat",
-                        perServing: gramsText(recipe.nutrition?.fatGrams),
-                        per100g: gramsText(recipe.nutrition?.fatGrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.saturated",
-                        perServing: gramsText(recipe.nutrition?.saturatedFatGrams),
-                        per100g: gramsText(recipe.nutrition?.saturatedFatGrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.sodium",
-                        perServing: milligramsText(recipe.nutrition?.sodiumMilligrams),
-                        per100g: milligramsText(recipe.nutrition?.sodiumMilligrams, multiplier: per100gMultiplier)
-                    )
-                    dividerRow
-                    nutritionRow(
-                        labelKey: "recipe.nutrition.fiber",
-                        perServing: gramsText(recipe.nutrition?.fiberGrams),
-                        per100g: gramsText(recipe.nutrition?.fiberGrams, multiplier: per100gMultiplier)
-                    )
+
+                    VStack(spacing: 0) {
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.energy",
+                            perServing: kcalText(recipe.nutrition?.energyKcal),
+                            per100g: kcalText(recipe.nutrition?.energyKcal, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.protein",
+                            perServing: gramsText(recipe.nutrition?.proteinGrams),
+                            per100g: gramsText(recipe.nutrition?.proteinGrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.carbs",
+                            perServing: gramsText(recipe.nutrition?.carbohydratesGrams),
+                            per100g: gramsText(recipe.nutrition?.carbohydratesGrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.sugars",
+                            perServing: gramsText(recipe.nutrition?.sugarsGrams),
+                            per100g: gramsText(recipe.nutrition?.sugarsGrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.fat",
+                            perServing: gramsText(recipe.nutrition?.fatGrams),
+                            per100g: gramsText(recipe.nutrition?.fatGrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.saturated",
+                            perServing: gramsText(recipe.nutrition?.saturatedFatGrams),
+                            per100g: gramsText(recipe.nutrition?.saturatedFatGrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.sodium",
+                            perServing: milligramsText(recipe.nutrition?.sodiumMilligrams),
+                            per100g: milligramsText(recipe.nutrition?.sodiumMilligrams, multiplier: per100gMultiplier)
+                        )
+                        dividerRow
+                        nutritionRow(
+                            labelKey: "recipe.nutrition.fiber",
+                            perServing: gramsText(recipe.nutrition?.fiberGrams),
+                            per100g: gramsText(recipe.nutrition?.fiberGrams, multiplier: per100gMultiplier)
+                        )
+                    }
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
