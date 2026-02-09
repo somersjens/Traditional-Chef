@@ -207,8 +207,10 @@ struct RecipeListView: View {
                 prompt: Text(AppLanguage.string("recipes.search", locale: locale))
                     .foregroundStyle(AppTheme.searchPlaceholder)
             )
+                .textFieldStyle(.plain)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+                .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
 
             if !vm.searchText.isEmpty {
@@ -224,6 +226,7 @@ struct RecipeListView: View {
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
+        .frame(minHeight: 44)
         .background(AppTheme.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
@@ -411,11 +414,11 @@ struct RecipeListView: View {
             }
             .padding(.vertical, 4) // jens
             .padding(.horizontal, 14)
-            .background(AppTheme.pageBackground)
+            .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .padding(12)
-        .background(AppTheme.cardBackground)
+        .background(AppTheme.pageBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
