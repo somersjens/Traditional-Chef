@@ -11,6 +11,16 @@ struct WelcomeView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var currentFrameName: String = "11"
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var sponsorMessage: AttributedString {
+        var message = AttributedString(AppLanguage.string("welcome.sponsorMessage", locale: locale))
+        if let range = message.range(of: "Hakketjak") {
+            message[range].link = URL(string: "https://www.hakketjak.nl")
+            message[range].font = .system(size: 18, weight: .bold)
+            message[range].underlineStyle = .single
+            message[range].foregroundColor = AppTheme.textPrimary
+        }
+        return message
+    }
 
     var body: some View {
         ZStack {
@@ -46,11 +56,12 @@ struct WelcomeView: View {
                     .padding(.horizontal, 22)
                     .padding(.top, verticalSizeClass == .compact ? 0 : 6)
 
-                    Text(AppLanguage.string("welcome.sponsorMessage", locale: locale))
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 22)
+                    Text(sponsorMessage)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(1.8)
+                        .padding(.horizontal, 22)
                 }
                 .offset(y: verticalSizeClass == .compact ? -40 : -180)
 
