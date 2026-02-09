@@ -244,12 +244,20 @@ struct RecipeListView: View {
     }
 
     private var settingsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(AppLanguage.string("settings.title", locale: locale))
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
-                .padding(.vertical, 2)
-                .padding(.horizontal, 14)
+        let selectedLanguage = AppLanguage.supported.first(where: { $0.code == appLanguage })
+        let controlFont = Font.subheadline.weight(.semibold)
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(AppLanguage.string("settings.title", locale: locale))
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                Spacer()
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+            }
+            .padding(.vertical, 2)
+            .padding(.horizontal, 14)
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {
@@ -257,76 +265,117 @@ struct RecipeListView: View {
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     Spacer()
-                    Picker("", selection: $appLanguage) {
+                    Menu {
                         ForEach(AppLanguage.supported) { option in
-                            Text("\(AppLanguage.string(option.nameKey, locale: locale)) \(FlagEmoji.from(countryCode: option.regionCode))")
-                                .tag(option.code)
+                            Button {
+                                appLanguage = option.code
+                            } label: {
+                                Text("\(AppLanguage.string(option.nameKey, locale: locale)) \(FlagEmoji.from(countryCode: option.regionCode))")
+                            }
                         }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text("\(AppLanguage.string(selectedLanguage?.nameKey ?? "settings.language", locale: locale)) \(FlagEmoji.from(countryCode: selectedLanguage?.regionCode ?? ""))")
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .pickerStyle(.menu)
-                    .tint(AppTheme.primaryBlue)
+                    .menuIndicator(.hidden)
                 }
+                .padding(.vertical, 4)
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.measurement", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     Spacer()
-                    Picker("", selection: Binding(
-                        get: { resolvedMeasurementUnit },
-                        set: { measurementUnitRaw = $0.rawValue }
-                    )) {
+                    Menu {
                         ForEach(MeasurementUnit.allCases) { unit in
-                            Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
-                                .tag(unit)
+                            Button {
+                                measurementUnitRaw = unit.rawValue
+                            } label: {
+                                Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
+                            }
                         }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(AppLanguage.string(resolvedMeasurementUnit.settingsLabelKey, locale: locale))
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .pickerStyle(.menu)
-                    .tint(AppTheme.primaryBlue)
+                    .menuIndicator(.hidden)
                 }
+                .padding(.vertical, 4)
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.servings", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     Spacer()
-                    Picker("", selection: $defaultServings) {
+                    Menu {
                         ForEach(1...12, id: \.self) { servings in
-                            Text("\(servings)")
-                                .tag(servings)
+                            Button {
+                                defaultServings = servings
+                            } label: {
+                                Text("\(servings)")
+                            }
                         }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text("\(defaultServings)")
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .pickerStyle(.menu)
-                    .tint(AppTheme.primaryBlue)
+                    .menuIndicator(.hidden)
                 }
+                .padding(.vertical, 4)
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.listViewValue", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     Spacer()
-                    Picker("", selection: Binding(
-                        get: { listViewValue },
-                        set: { newValue in
-                            listViewValueRaw = newValue.rawValue
-                            vm.setSort(newValue.sortKey)
-                        }
-                    )) {
+                    Menu {
                         ForEach(RecipeListValue.allCases) { option in
-                            Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
-                                .tag(option)
+                            Button {
+                                listViewValueRaw = option.rawValue
+                                vm.setSort(option.sortKey)
+                            } label: {
+                                Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                            }
                         }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(AppLanguage.string(listViewValue.settingsLabelKey, locale: locale))
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .pickerStyle(.menu)
-                    .tint(AppTheme.primaryBlue)
+                    .menuIndicator(.hidden)
                 }
+                .padding(.vertical, 4)
 
-                Toggle(isOn: $timerAutoStop) {
+                HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                    Spacer()
+                    Toggle("", isOn: $timerAutoStop)
+                        .labelsHidden()
+                        .tint(AppTheme.primaryBlue)
+                        .scaleEffect(0.8, anchor: .trailing)
                 }
-                .tint(AppTheme.primaryBlue)
+                .padding(.vertical, 4)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 14)
