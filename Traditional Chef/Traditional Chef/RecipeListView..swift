@@ -201,7 +201,12 @@ struct RecipeListView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
 
-            TextField(AppLanguage.string("recipes.search", locale: locale), text: $vm.searchText)
+            TextField(
+                AppLanguage.string("recipes.search", locale: locale),
+                text: $vm.searchText,
+                prompt: Text(AppLanguage.string("recipes.search", locale: locale))
+                    .foregroundStyle(AppTheme.searchPlaceholder)
+            )
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .foregroundStyle(AppTheme.textPrimary)
