@@ -567,10 +567,10 @@ private struct StepRowView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(alignment: .bottom, spacing: 0) {
                 Text("\(step.stepNumber). ")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
                 Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
 
                 Spacer()
@@ -601,13 +601,25 @@ private struct StepRowView: View {
             let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
             HStack(alignment: .top, spacing: 0) {
                 Text("\(step.stepNumber). ")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
                     .opacity(0)
                     .accessibilityHidden(true)
                 Text(raw)
-                    .font(.system(size: 15))
+                    .font(.headline)
+                    .fontWeight(.regular)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
+                Spacer(minLength: 0)
+                if step.timerSeconds != nil {
+                    TimerBadgeView(
+                        displayText: timerDisplayText,
+                        isRunning: isRunning,
+                        isOverdue: secondsLeft < 0
+                    ) {}
+                    .hidden()
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                }
             }
         }
         .padding(.vertical, 1.5)
