@@ -10,6 +10,9 @@ struct NutritionCard: View {
     @State private var isExpanded: Bool = true
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private let baseServings = 4
+    private let valueColumnWidth: CGFloat = 86
+    private let columnPadding: CGFloat = 8
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -48,26 +51,57 @@ struct NutritionCard: View {
                     .overlay(AppTheme.hairline)
                     .transition(.opacity)
 
-                Text(AppLanguage.string("recipe.nutrition.perServing", locale: locale))
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.8))
+                nutritionHeader
+                dividerRow
 
                 VStack(spacing: 0) {
-                    nutritionRow(labelKey: "recipe.nutrition.energy", value: kcalText(recipe.nutrition?.energyKcal))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.energy",
+                        perServing: kcalText(recipe.nutrition?.energyKcal),
+                        per100g: kcalText(recipe.nutrition?.energyKcal, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.protein", value: gramsText(recipe.nutrition?.proteinGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.protein",
+                        perServing: gramsText(recipe.nutrition?.proteinGrams),
+                        per100g: gramsText(recipe.nutrition?.proteinGrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.carbs", value: gramsText(recipe.nutrition?.carbohydratesGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.carbs",
+                        perServing: gramsText(recipe.nutrition?.carbohydratesGrams),
+                        per100g: gramsText(recipe.nutrition?.carbohydratesGrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.sugars", value: gramsText(recipe.nutrition?.sugarsGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.sugars",
+                        perServing: gramsText(recipe.nutrition?.sugarsGrams),
+                        per100g: gramsText(recipe.nutrition?.sugarsGrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.fat", value: gramsText(recipe.nutrition?.fatGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.fat",
+                        perServing: gramsText(recipe.nutrition?.fatGrams),
+                        per100g: gramsText(recipe.nutrition?.fatGrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.saturated", value: gramsText(recipe.nutrition?.saturatedFatGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.saturated",
+                        perServing: gramsText(recipe.nutrition?.saturatedFatGrams),
+                        per100g: gramsText(recipe.nutrition?.saturatedFatGrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.sodium", value: milligramsText(recipe.nutrition?.sodiumMilligrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.sodium",
+                        perServing: milligramsText(recipe.nutrition?.sodiumMilligrams),
+                        per100g: milligramsText(recipe.nutrition?.sodiumMilligrams, multiplier: per100gMultiplier)
+                    )
                     dividerRow
-                    nutritionRow(labelKey: "recipe.nutrition.fiber", value: gramsText(recipe.nutrition?.fiberGrams))
+                    nutritionRow(
+                        labelKey: "recipe.nutrition.fiber",
+                        perServing: gramsText(recipe.nutrition?.fiberGrams),
+                        per100g: gramsText(recipe.nutrition?.fiberGrams, multiplier: per100gMultiplier)
+                    )
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
@@ -86,34 +120,83 @@ struct NutritionCard: View {
             .overlay(AppTheme.hairline)
     }
 
-    private func nutritionRow(labelKey: String, value: String) -> some View {
-        HStack {
-            Text(AppLanguage.string(labelKey, locale: locale))
-                .font(.body)
-                .foregroundStyle(AppTheme.textPrimary)
+    private var nutritionHeader: some View {
+        HStack(spacing: 0) {
+            Text(AppLanguage.string("recipe.nutrition.columnType", locale: locale))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, columnPadding)
 
-            Spacer()
+            verticalDivider
 
-            Text(value)
-                .font(.body)
-                .foregroundStyle(AppTheme.textPrimary)
+            Text(AppLanguage.string("recipe.nutrition.columnPerServing", locale: locale))
+                .frame(width: valueColumnWidth, alignment: .trailing)
+                .padding(.horizontal, columnPadding)
+
+            verticalDivider
+
+            Text(AppLanguage.string("recipe.nutrition.columnPer100g", locale: locale))
+                .frame(width: valueColumnWidth, alignment: .trailing)
+                .padding(.leading, columnPadding)
         }
+        .font(.body.weight(.semibold))
+        .foregroundStyle(AppTheme.textPrimary.opacity(0.8))
+        .padding(.vertical, 4)
+    }
+
+    private func nutritionRow(labelKey: String, perServing: String, per100g: String) -> some View {
+        HStack(spacing: 0) {
+            Text(AppLanguage.string(labelKey, locale: locale))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, columnPadding)
+
+            verticalDivider
+
+            Text(perServing)
+                .frame(width: valueColumnWidth, alignment: .trailing)
+                .padding(.horizontal, columnPadding)
+
+            verticalDivider
+
+            Text(per100g)
+                .frame(width: valueColumnWidth, alignment: .trailing)
+                .padding(.leading, columnPadding)
+        }
+        .font(.body)
+        .foregroundStyle(AppTheme.textPrimary)
         .padding(.vertical, 6)
     }
 
-    private func kcalText(_ value: Int?) -> String {
-        guard let value else { return "x" }
-        return "\(value) kcal"
+    private var per100gMultiplier: Double? {
+        let totalGrams = recipe.ingredients.reduce(0) { $0 + $1.grams }
+        guard totalGrams > 0 else { return nil }
+        let servingGrams = totalGrams / Double(baseServings)
+        guard servingGrams > 0 else { return nil }
+        return 100.0 / servingGrams
     }
 
-    private func gramsText(_ value: Double?) -> String {
-        guard let value else { return "x" }
-        return "\(formattedNumber(value)) g"
+    private var verticalDivider: some View {
+        Rectangle()
+            .fill(AppTheme.hairline)
+            .frame(width: 1)
+            .frame(maxHeight: .infinity)
     }
 
-    private func milligramsText(_ value: Double?) -> String {
+    private func kcalText(_ value: Int?, multiplier: Double? = nil) -> String {
         guard let value else { return "x" }
-        return "\(formattedNumber(value)) mg"
+        let scaled = multiplier.map { Double(value) * $0 } ?? Double(value)
+        return "\(formattedNumber(scaled)) kcal"
+    }
+
+    private func gramsText(_ value: Double?, multiplier: Double? = nil) -> String {
+        guard let value else { return "x" }
+        let scaled = multiplier.map { value * $0 } ?? value
+        return "\(formattedNumber(scaled)) g"
+    }
+
+    private func milligramsText(_ value: Double?, multiplier: Double? = nil) -> String {
+        guard let value else { return "x" }
+        let scaled = multiplier.map { value * $0 } ?? value
+        return "\(formattedNumber(scaled)) mg"
     }
 
     private func formattedNumber(_ value: Double) -> String {

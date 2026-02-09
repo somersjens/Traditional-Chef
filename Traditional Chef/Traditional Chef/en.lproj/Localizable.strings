@@ -57,6 +57,9 @@
 "recipe.infoTitle" = "Information";
 "recipe.nutritionTitle" = "Nutritional values";
 "recipe.nutrition.perServing" = "(per serving)";
+"recipe.nutrition.columnType" = "Type";
+"recipe.nutrition.columnPerServing" = "Per serving";
+"recipe.nutrition.columnPer100g" = "Per 100g";
 "recipe.nutrition.energy" = "Energy";
 "recipe.nutrition.protein" = "Protein";
 "recipe.nutrition.carbs" = "Carbohydrates";

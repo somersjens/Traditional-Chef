@@ -57,6 +57,9 @@
 "recipe.infoTitle" = "Informatie";
 "recipe.nutritionTitle" = "Voedingswaarden";
 "recipe.nutrition.perServing" = "(per eenpersoonsportie)";
+"recipe.nutrition.columnType" = "Soort";
+"recipe.nutrition.columnPerServing" = "Per portie";
+"recipe.nutrition.columnPer100g" = "Per 100 g";
 "recipe.nutrition.energy" = "energie";
 "recipe.nutrition.protein" = "eiwit";
 "recipe.nutrition.carbs" = "koolhydraten";
