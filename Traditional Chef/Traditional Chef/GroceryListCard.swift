@@ -114,6 +114,29 @@ struct GroceryListCard: View {
                 Divider()
                     .overlay(AppTheme.hairline)
 
+                if isResettingChecks {
+                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
+                        ingredientList(resetDisplayIngredients, checkedState: checked, isCheckedSection: false, dimChecked: true)
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
+                        ingredientList(uncheckedIngredients, checkedState: [], isCheckedSection: false, dimChecked: false)
+                    }
+
+                    if !checkedIngredients.isEmpty {
+                        if !uncheckedIngredients.isEmpty {
+                            Divider().overlay(AppTheme.hairline)
+                        }
+
+                        VStack(alignment: .leading, spacing: ingredientRowSpacing) {
+                            ingredientList(checkedIngredients, checkedState: checked, isCheckedSection: true, dimChecked: true)
+                        }
+                    }
+                }
+
+                Divider()
+                    .overlay(AppTheme.hairline)
+
                 GeometryReader { geometry in
                     let availableWidth = geometry.size.width - 16
                     let smallButtonWidth = availableWidth * 0.3
@@ -121,7 +144,7 @@ struct GroceryListCard: View {
 
                     HStack(alignment: .center, spacing: 8) {
                         measurementToggle
-                        .frame(width: smallButtonWidth)
+                            .frame(width: smallButtonWidth)
 
                         optionToggle(
                             titleKey: "grocery.option.partOfDish",
@@ -135,28 +158,6 @@ struct GroceryListCard: View {
                     }
                 }
                 .frame(minHeight: headerRowHeight)
-
-                Divider()
-                    .overlay(AppTheme.hairline)
-
-                if isResettingChecks {
-                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ingredientList(resetDisplayIngredients, checkedState: checked, isCheckedSection: false, dimChecked: true)
-                    }
-                } else {
-                    VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ingredientList(uncheckedIngredients, checkedState: [], isCheckedSection: false, dimChecked: false)
-                    }
-
-                    if !checkedIngredients.isEmpty && checkedIngredients.count != recipe.ingredients.count {
-                        Divider().overlay(AppTheme.hairline)
-
-                        VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                            ingredientList(checkedIngredients, checkedState: checked, isCheckedSection: true, dimChecked: true)
-                        }
-                    }
-                }
-
             }
         }
         .padding(12)
@@ -169,7 +170,7 @@ struct GroceryListCard: View {
         .allowsHitTesting(!isResettingChecks)
         .onChange(of: checked) { _, newValue in
             saveChecked(newValue)
-            if newValue.count == recipe.ingredients.count && !isResettingChecks {
+            if newValue.count == sortedAll.count && !isResettingChecks {
                 Haptics.success()
                 startSequentialUncheck()
             }
