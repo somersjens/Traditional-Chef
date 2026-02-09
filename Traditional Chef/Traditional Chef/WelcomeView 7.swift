@@ -28,19 +28,6 @@ struct WelcomeView: View {
                         .font(.system(size: 33, weight: .semibold))
                         .foregroundStyle(AppTheme.textPrimary)
 
-                    Text(
-                        isDutch
-                            ? "Nu heb je álle traditionele\n" +
-                                "toprecepten in je broekzak"
-                            : "Now you’ve got all traditional\n" +
-                                "Recepi’s in your pocket at all time"
-                    )
-                    .font(.system(size: 22, weight: .medium))
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 22)
-                    .padding(.bottom, 6)
-
                     Button {
                         hasSeenWelcome = true
                     } label: {
@@ -48,9 +35,9 @@ struct WelcomeView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(AppTheme.primaryBlue)
+                            .background(Color(hex: "E1773A"))
                             .foregroundStyle(AppTheme.secondaryOffWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .clipShape(RoundedRectangle(cornerRadius: 26))
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 6)
