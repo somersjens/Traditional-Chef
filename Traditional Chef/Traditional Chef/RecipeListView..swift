@@ -30,7 +30,7 @@ struct RecipeListView: View {
                     if showSettings {
                         settingsCard
                             .transition(.opacity)
-                            .padding(.top, 6) // jens
+                            .padding(.top, 6)
                     }
 
                     searchBar
@@ -193,7 +193,8 @@ struct RecipeListView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 6)
+        .padding(.top, 10)
+        .padding(.bottom, 8)
     }
 
     private var searchBar: some View {
@@ -412,7 +413,7 @@ struct RecipeListView: View {
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
             }
-            .padding(.vertical, 4) // jens
+            .padding(.vertical, 4)
             .padding(.horizontal, 14)
             .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
