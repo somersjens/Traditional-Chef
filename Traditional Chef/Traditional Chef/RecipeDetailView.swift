@@ -23,6 +23,8 @@ struct RecipeDetailView: View {
     @State private var heroUIImage: UIImage?
     @State private var heroImageFailed = false
     @State private var heroTargetPixelSize: CGFloat = 0
+    @State private var isTopBarHidden = false
+    @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -50,14 +52,25 @@ struct RecipeDetailView: View {
                         .padding(.horizontal, 12)
                     }
                     .padding(.bottom, 12)
+                    .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
                 }
                 .ignoresSafeArea(edges: .top)
+                .onChange(of: scrollOffset) { _, offset in
+                    let shouldHide = offset > 20
+                    if shouldHide != isTopBarHidden {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isTopBarHidden = shouldHide
+                        }
+                    }
+                }
             }
 
             detailTopBar
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .zIndex(3)
+                .opacity(isTopBarHidden ? 0 : 1)
+                .allowsHitTesting(!isTopBarHidden)
         }
         .background(AppTheme.pageBackground)
         .toolbar(.hidden, for: .navigationBar)
@@ -358,6 +371,60 @@ struct RecipeDetailView: View {
             let s = over % 60
             return String(format: "-%d:%02d", m, s)
         }
+    }
+}
+
+private struct ScrollOffsetReader: UIViewRepresentable {
+    @Binding var offset: CGFloat
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(offset: $offset)
+    }
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        DispatchQueue.main.async {
+            context.coordinator.attach(to: view)
+        }
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        DispatchQueue.main.async {
+            context.coordinator.attach(to: uiView)
+        }
+    }
+
+    final class Coordinator {
+        private var observation: NSKeyValueObservation?
+        private var offset: Binding<CGFloat>
+
+        init(offset: Binding<CGFloat>) {
+            self.offset = offset
+        }
+
+        func attach(to view: UIView) {
+            guard observation == nil, let scrollView = view.enclosingScrollView else {
+                return
+            }
+            observation = scrollView.observe(\.contentOffset, options: [.initial, .new]) { [weak self] scrollView, _ in
+                self?.offset.wrappedValue = scrollView.contentOffset.y
+            }
+        }
+    }
+}
+
+private extension UIView {
+    var enclosingScrollView: UIScrollView? {
+        var current: UIView? = self
+        while let view = current {
+            if let scrollView = view as? UIScrollView {
+                return scrollView
+            }
+            current = view.superview
+        }
+        return nil
     }
 }
 
