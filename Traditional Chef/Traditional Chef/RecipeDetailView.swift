@@ -140,7 +140,9 @@ struct RecipeDetailView: View {
         heroImage(targetPixelSize: targetPixelSize)
             .frame(height: height)
             .frame(maxWidth: .infinity)
-            .overlay(imageFadeOverlay)
+            .overlay(alignment: .bottom) {
+                imageFadeOverlay
+            }
             .overlay(alignment: .bottomLeading) {
                 titleOverlay
                     .padding(.leading, 16)
@@ -155,11 +157,12 @@ struct RecipeDetailView: View {
         LinearGradient(
             colors: [
                 AppTheme.pageBackground.opacity(0.0),
-                AppTheme.pageBackground.opacity(0.2)
+                AppTheme.pageBackground.opacity(0.12)
             ],
-            startPoint: .top,
+            startPoint: .center,
             endPoint: .bottom
         )
+        .frame(height: 140)
     }
 
     private var titleOverlay: some View {
