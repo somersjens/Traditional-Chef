@@ -144,7 +144,7 @@ struct RecipeDetailView: View {
         .foregroundStyle(AppTheme.textPrimary)
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
-        .background(AppTheme.cardBackground.opacity(0.9))
+        .background(AppTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
