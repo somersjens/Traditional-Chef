@@ -417,9 +417,12 @@ struct RecipeListView: View {
             .padding(.horizontal, 14)
             .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12).stroke(AppTheme.primaryBlue.opacity(0.12), lineWidth: 1)
+            )
         }
         .padding(12)
-        .background(AppTheme.pageBackground)
+        .background(AppTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
