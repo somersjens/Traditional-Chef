@@ -565,12 +565,12 @@ private struct StepRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            HStack(alignment: .firstTextBaseline, spacing: 0) {
+            HStack(alignment: .bottom, spacing: 0) {
                 Text("\(step.stepNumber). ")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(AppTheme.primaryBlue)
                 Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(AppTheme.textPrimary)
 
                 Spacer()
@@ -599,13 +599,16 @@ private struct StepRowView: View {
             }
 
             let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-            Text(AttributedString.boldIngredients(
-                in: raw,
-                ingredientKeys: ingredients.map { $0.nameKey },
-                locale: locale
-            ))
-                .font(.system(size: 14))
-                .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
+            HStack(alignment: .top, spacing: 0) {
+                Text("\(step.stepNumber). ")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .opacity(0)
+                    .accessibilityHidden(true)
+                Text(raw)
+                    .font(.system(size: 15))
+                    .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
+            }
         }
         .padding(.vertical, 1.5)
         .onReceive(tick) { _ in

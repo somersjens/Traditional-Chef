@@ -93,8 +93,8 @@
 "grocery.group.pasta" = "Pasta";
 "grocery.group.finishing" = "Afwerking";
 
-"grocery.sortLabel.useOrder" = "Volgorde";
-"grocery.sortLabel.grams" = "Meeste gram";
+"grocery.sortLabel.useOrder" = "Stap volgorde";
+"grocery.sortLabel.grams" = "Hoeveelheid";
 "grocery.sortLabel.supermarket" = "Supermarkt";
 
 "grocery.sort.useOrder" = "Sorteer op gebruiksvolgorde";

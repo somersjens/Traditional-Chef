@@ -94,7 +94,7 @@
 "grocery.group.finishing" = "Finishing";
 
 "grocery.sortLabel.useOrder" = "Use order";
-"grocery.sortLabel.grams" = "Most grams";
+"grocery.sortLabel.grams" = "Amount";
 "grocery.sortLabel.supermarket" = "Supermarket";
 
 "grocery.sort.useOrder" = "Sort by use order";
