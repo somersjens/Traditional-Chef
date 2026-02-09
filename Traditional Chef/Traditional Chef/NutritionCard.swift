@@ -19,16 +19,18 @@ struct NutritionCard: View {
     private let tableFont: Font = .body
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let headerIconWidth: CGFloat = 24
+        return VStack(alignment: .leading, spacing: 8) {
             Button {
                 withAnimation(.easeInOut) {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: "chart.pie")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: headerIconWidth, alignment: .center)
 
                     Text(AppLanguage.string("recipe.nutritionTitle", locale: locale))
                         .font(.headline)

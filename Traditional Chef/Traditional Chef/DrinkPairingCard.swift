@@ -12,63 +12,67 @@ struct DrinkPairingCard: View {
     @State private var isExpanded: Bool = true
 
     var body: some View {
-        if let bodyKey = recipe.drinkPairingKey {
-            VStack(alignment: .leading, spacing: 10) {
-                Button {
-                    withAnimation(.easeInOut) {
-                        isExpanded.toggle()
+        Group {
+            if let bodyKey = recipe.drinkPairingKey {
+                let headerIconWidth: CGFloat = 24
+                VStack(alignment: .leading, spacing: 10) {
+                    Button {
+                        withAnimation(.easeInOut) {
+                            isExpanded.toggle()
+                        }
+                    } label: {
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                            Image(systemName: "wineglass")
+                                .font(.headline)
+                                .foregroundStyle(AppTheme.primaryBlue)
+                                .frame(width: headerIconWidth, alignment: .center)
+
+                            Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
+                                .font(.headline)
+                                .foregroundStyle(AppTheme.textPrimary)
+
+                            Spacer()
+
+                            if let summaryKey = recipe.drinkPairingSummaryKey {
+                                Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                                    .font(.subheadline)
+                                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                            }
+
+                            Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                                .font(.headline)
+                                .foregroundStyle(AppTheme.primaryBlue)
+                                .frame(width: 24, height: 24, alignment: .center)
+                        }
                     }
-                } label: {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Image(systemName: "wineglass")
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.primaryBlue)
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
 
-                        Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.textPrimary)
+                    if isExpanded {
+                        Divider()
+                            .overlay(AppTheme.hairline)
+                            .transition(.opacity)
 
-                        Spacer()
-
-                        if let summaryKey = recipe.drinkPairingSummaryKey {
-                            Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
-                                .font(.subheadline)
-                                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                        let raw = AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale)
+                        let boldPhrases = recipe.drinkPairingBoldPhraseKeys.map {
+                            AppLanguage.string(String.LocalizationValue($0), locale: locale)
                         }
 
-                        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 24, height: 24, alignment: .center)
+                        Text(AttributedString.boldPhrases(in: raw, phrases: boldPhrases))
+                            .font(.body)
+                            .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
+                            .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
                     }
                 }
-                .buttonStyle(.plain)
-                .contentShape(Rectangle())
-                .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
-
-                if isExpanded {
-                    Divider()
-                        .overlay(AppTheme.hairline)
-                        .transition(.opacity)
-
-                    let raw = AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale)
-                    let boldPhrases = recipe.drinkPairingBoldPhraseKeys.map {
-                        AppLanguage.string(String.LocalizationValue($0), locale: locale)
-                    }
-
-                    Text(AttributedString.boldPhrases(in: raw, phrases: boldPhrases))
-                        .font(.body)
-                        .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
-                        .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
-                }
+                .animation(.easeInOut(duration: 0.25), value: isExpanded)
+                .padding(12)
+                .background(AppTheme.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+                )
             }
-            .animation(.easeInOut(duration: 0.25), value: isExpanded)
-            .padding(12)
-            .background(AppTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
-            )
         }
     }
 }

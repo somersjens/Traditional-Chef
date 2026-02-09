@@ -285,16 +285,18 @@ struct RecipeDetailView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let headerIconWidth: CGFloat = 24
+        return VStack(alignment: .leading, spacing: 8) {
             Button {
                 withAnimation(.easeInOut) {
                     isInfoExpanded.toggle()
                 }
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: "info.circle")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: headerIconWidth, alignment: .center)
 
                     Text(AppLanguage.string("recipe.infoTitle", locale: locale))
                         .font(.headline)
@@ -341,16 +343,18 @@ struct RecipeDetailView: View {
         let summary = String(format: format, locale: locale, recipe.approximateMinutes)
         let headerText = stepsHeaderText(summary: summary)
         let contentSpacing: CGFloat = isStepsExpanded ? 9 : 0
+        let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: contentSpacing) {
             Button {
                 withAnimation(.easeInOut) {
                     isStepsExpanded.toggle()
                 }
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: "list.number")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: headerIconWidth, alignment: .center)
 
                     Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
                         .font(.headline)

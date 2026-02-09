@@ -12,16 +12,18 @@ struct KitchenToolsCard: View {
     @State private var isExpanded: Bool = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        let headerIconWidth: CGFloat = 24
+        return VStack(alignment: .leading, spacing: 10) {
             Button {
                 withAnimation(.easeInOut) {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: "wrench.and.screwdriver")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .frame(width: headerIconWidth, alignment: .center)
 
                     Text(AppLanguage.string("recipe.toolsTitle", locale: locale))
                         .font(.headline)
