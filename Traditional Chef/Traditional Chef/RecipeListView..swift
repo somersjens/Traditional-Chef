@@ -247,8 +247,8 @@ struct RecipeListView: View {
     private var settingsCard: some View {
         let selectedLanguage = AppLanguage.supported.first(where: { $0.code == appLanguage })
         let controlFont = Font.headline.weight(.regular)
-        let rowMinHeight: CGFloat = 36
-        let rowVerticalPadding: CGFloat = 6
+        let rowMinHeight: CGFloat = 44
+        let rowVerticalPadding: CGFloat = 4
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(AppLanguage.string("settings.title", locale: locale))
@@ -404,7 +404,7 @@ struct RecipeListView: View {
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 4) // jens
             .padding(.horizontal, 14)
             .background(AppTheme.pageBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
