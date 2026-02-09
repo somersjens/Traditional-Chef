@@ -30,6 +30,7 @@ struct RecipeListView: View {
                     if showSettings {
                         settingsCard
                             .transition(.opacity)
+                            .padding(.top, 6) // jens
                     }
 
                     searchBar
@@ -245,21 +246,30 @@ struct RecipeListView: View {
 
     private var settingsCard: some View {
         let selectedLanguage = AppLanguage.supported.first(where: { $0.code == appLanguage })
-        let controlFont = Font.subheadline.weight(.semibold)
+        let controlFont = Font.headline.weight(.regular)
+        let rowMinHeight: CGFloat = 36
+        let rowVerticalPadding: CGFloat = 6
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(AppLanguage.string("settings.title", locale: locale))
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
                 Spacer()
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showSettings = false
+                    }
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+                }
+                .buttonStyle(.plain)
             }
             .padding(.vertical, 2)
             .padding(.horizontal, 14)
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.language", locale: locale))
                         .font(.headline.weight(.semibold))
@@ -284,7 +294,11 @@ struct RecipeListView: View {
                     }
                     .menuIndicator(.hidden)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.measurement", locale: locale))
@@ -310,7 +324,11 @@ struct RecipeListView: View {
                     }
                     .menuIndicator(.hidden)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.servings", locale: locale))
@@ -336,7 +354,11 @@ struct RecipeListView: View {
                     }
                     .menuIndicator(.hidden)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.listViewValue", locale: locale))
@@ -363,7 +385,11 @@ struct RecipeListView: View {
                     }
                     .menuIndicator(.hidden)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
@@ -375,7 +401,8 @@ struct RecipeListView: View {
                         .tint(AppTheme.primaryBlue)
                         .scaleEffect(0.8, anchor: .trailing)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 14)
