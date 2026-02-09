@@ -409,7 +409,13 @@ private struct ScrollOffsetReader: UIViewRepresentable {
                 return
             }
             observation = scrollView.observe(\.contentOffset, options: [.initial, .new]) { [weak self] scrollView, _ in
-                self?.offset.wrappedValue = scrollView.contentOffset.y
+                let newOffset = scrollView.contentOffset.y
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    if self.offset.wrappedValue != newOffset {
+                        self.offset.wrappedValue = newOffset
+                    }
+                }
             }
         }
     }
