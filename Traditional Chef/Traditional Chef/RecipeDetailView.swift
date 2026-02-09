@@ -57,7 +57,7 @@ struct RecipeDetailView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 .onChange(of: scrollOffset) { _, offset in
-                    let shouldHide = offset > 20
+                    let shouldHide = offset > (heroHeight * 0.5)
                     if shouldHide != isTopBarHidden {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isTopBarHidden = shouldHide
@@ -82,12 +82,17 @@ struct RecipeDetailView: View {
 
     private var detailTopBar: some View {
         let iconColor = isHeroImageDark ? AppTheme.pageBackground : AppTheme.primaryBlue
-        return HStack(spacing: 12) {
+        let iconScale: CGFloat = 1.2
+        let baseIconSize: CGFloat = 17
+        let heartIconSize: CGFloat = 18
+        let iconSpacing: CGFloat = 12
+        let shareHeartSpacing: CGFloat = iconSpacing * 1.2
+        return HStack(spacing: iconSpacing) {
             Button {
                 dismiss()
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: baseIconSize * iconScale, weight: .semibold))
                     .foregroundStyle(iconColor)
             }
             .buttonStyle(.plain)
@@ -97,7 +102,7 @@ struct RecipeDetailView: View {
 
             ShareLink(item: shareRecipeURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
                 Image(systemName: "arrowshape.turn.up.right")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: baseIconSize * iconScale, weight: .semibold))
                     .foregroundStyle(iconColor)
             }
             .buttonStyle(.plain)
@@ -107,12 +112,13 @@ struct RecipeDetailView: View {
                 recipeStore.toggleFavorite(recipe)
             } label: {
                 Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: heartIconSize * iconScale, weight: .semibold))
                     .offset(x: -6)
                     .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : iconColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Favorite"))
+            .padding(.leading, shareHeartSpacing - iconSpacing)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
