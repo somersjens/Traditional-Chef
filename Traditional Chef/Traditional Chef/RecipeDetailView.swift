@@ -142,7 +142,7 @@ struct RecipeDetailView: View {
     }
 
     private var shareRecipeMessage: String {
-        "Try this recipe in Traditional Chef."
+        "Try this recipe in Famous Chef."
     }
 
     private func heroSection(
