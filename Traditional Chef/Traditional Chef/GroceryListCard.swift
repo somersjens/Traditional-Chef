@@ -149,13 +149,16 @@ struct GroceryListCard: View {
                         optionToggle(
                             titleKey: "grocery.option.partOfDish",
                             isOn: groupByDishPart,
-                            action: { groupByDishPart.toggle() }
+                            action: { withAnimation(nil) { groupByDishPart.toggle() } }
                         )
                         .frame(width: smallButtonWidth)
 
                         sortButton
                             .frame(width: largeButtonWidth)
                     }
+                }
+                .transaction { transaction in
+                    transaction.animation = nil
                 }
                 .frame(minHeight: headerRowHeight)
             }
@@ -167,10 +170,11 @@ struct GroceryListCard: View {
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .animation(nil, value: checked)
+        .animation(nil, value: groupByDishPart)
         .allowsHitTesting(!isResettingChecks)
         .onChange(of: checked) { _, newValue in
             saveChecked(newValue)
-            if newValue.count == sortedAll.count && !isResettingChecks {
+            if newValue.count == orderedIngredientIds.count && !isResettingChecks {
                 Haptics.success()
                 startSequentialUncheck()
             }
@@ -536,7 +540,7 @@ struct GroceryListCard: View {
     private func startSequentialUncheck() {
         isResettingChecks = true
         resetDisplayIngredients = sortedAll
-        let idsToClear = sortedAll.map(\.id).filter { checked.contains($0) }
+        let idsToClear = orderedIngredientIds.filter { checked.contains($0) }
         let stepDelay = 0.12
         for (index, id) in idsToClear.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + (stepDelay * Double(index))) {
@@ -547,6 +551,24 @@ struct GroceryListCard: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDelay) {
             isResettingChecks = false
             resetDisplayIngredients = []
+        }
+    }
+
+    private var orderedIngredientIds: [String] {
+        var seen: Set<String> = []
+        if groupByDishPart {
+            return groupedIngredients(sortedAll).flatMap { group in
+                group.items.compactMap { ingredient in
+                    guard !seen.contains(ingredient.id) else { return nil }
+                    seen.insert(ingredient.id)
+                    return ingredient.id
+                }
+            }
+        }
+        return sortedAll.compactMap { ingredient in
+            guard !seen.contains(ingredient.id) else { return nil }
+            seen.insert(ingredient.id)
+            return ingredient.id
         }
     }
 }
