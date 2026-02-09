@@ -541,13 +541,13 @@ struct GroceryListCard: View {
         isResettingChecks = true
         resetDisplayIngredients = sortedAll
         let idsToClear = orderedIngredientIds.filter { checked.contains($0) }
-        let stepDelay = 0.12
+        let stepDelay = 0.08
         for (index, id) in idsToClear.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + (stepDelay * Double(index))) {
                 _ = checked.remove(id)
             }
         }
-        let totalDelay = (stepDelay * Double(idsToClear.count)) + 0.2
+        let totalDelay = (stepDelay * Double(idsToClear.count)) + 0.13
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDelay) {
             isResettingChecks = false
             resetDisplayIngredients = []
