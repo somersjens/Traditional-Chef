@@ -6,7 +6,9 @@
 
 "welcome.title" = "Welcome to Famous Chef!";
 "welcome.body" = "Are you ready and for world class recepi's in your pocket with all the conveniences that a fixed grocery list or recepi book could never bring. Get yourself comfortable with all the controls, and start cooking today. App doesn't collect any data nor, are their any premium paid features. When you get a lot of compliments consider leaving a tip!";
+"welcome.greeting" = "Hey, chef!";
 "welcome.startButton" = "Make something yummy!";
+"welcome.sponsorMessage" = "100% free thanks to sharp kitchen \nknifes of our sponsor: Hakketjak";
 "welcome.alertTitle" = "Tip";
 
 "tip.notConfigured" = "Tip products aren’t configured yet in App Store Connect.";

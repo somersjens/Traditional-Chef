@@ -9,32 +9,32 @@ struct WelcomeView: View {
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @State private var currentFrameName: String = "11"
-    private var isDutch: Bool { appLanguage.lowercased().hasPrefix("nl") }
+    private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
         ZStack {
             AppTheme.pageBackground.ignoresSafeArea()
 
-            VStack(spacing: 14) {
+            VStack(spacing: 7) {
                 Image(currentFrameName)
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 690, maxHeight: 690)
                     .accessibilityHidden(true)
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 3)
 
                 VStack(spacing: 14) {
-                    Text(isDutch ? "Hey, chef!" : "Hey, chef!")
+                    Text(AppLanguage.string("welcome.greeting", locale: locale))
                         .font(.system(size: 33, weight: .semibold))
                         .foregroundStyle(AppTheme.textPrimary)
 
                     Button {
                         hasSeenWelcome = true
                     } label: {
-                        Text("start cooking")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
+                        Text(AppLanguage.string("welcome.startButton", locale: locale))
+                            .font(.system(size: 18, weight: .medium))
                             .padding(.vertical, 14)
+                            .padding(.horizontal, 24)
                             .background(Color(hex: "F57921"))
                             .foregroundStyle(AppTheme.secondaryOffWhite)
                             .clipShape(RoundedRectangle(cornerRadius: 26))
@@ -42,13 +42,7 @@ struct WelcomeView: View {
                     .padding(.horizontal, 22)
                     .padding(.top, 6)
 
-                    Text(
-                        isDutch
-                            ? "100% gratis dankzij de scherpe \n" +
-                                "keukenmessen van Hakketjak"
-                            : "100% free thanks to sharp kitchen \n" +
-                                "knifes of our sponsor: Hakketjak"
-                    )
+                    Text(AppLanguage.string("welcome.sponsorMessage", locale: locale))
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
                     .multilineTextAlignment(.center)
