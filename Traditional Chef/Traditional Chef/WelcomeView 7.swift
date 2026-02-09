@@ -20,50 +20,54 @@ struct WelcomeView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 690, maxHeight: 690)
-                    .offset(y: -140)
                     .accessibilityHidden(true)
                     .padding(.bottom, 6)
 
-                Text(isDutch ? "Hey, masterchef!" : "Hey, masterchef!")
-                    .font(.system(size: 33, weight: .semibold))
-                    .foregroundStyle(AppTheme.textPrimary)
+                VStack(spacing: 14) {
+                    Text(isDutch ? "Hey, masterchef!" : "Hey, masterchef!")
+                        .font(.system(size: 33, weight: .semibold))
+                        .foregroundStyle(AppTheme.textPrimary)
 
-                Text(
-                    isDutch
-                        ? "Nu heb je álle traditionele\n" +
-                            "toprecepten in je broekzak"
-                        : "Now you’ve got all traditional\n" +
-                            "Recepi’s in your pocket at all time"
-                )
-                .font(.body)
-                .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 6)
+                    Text(
+                        isDutch
+                            ? "Nu heb je álle traditionele\n" +
+                                "toprecepten in je broekzak"
+                            : "Now you’ve got all traditional\n" +
+                                "Recepi’s in your pocket at all time"
+                    )
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 6)
 
-                Button {
-                    hasSeenWelcome = true
-                } label: {
-                    Text("start cooking")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(AppTheme.primaryBlue)
-                        .foregroundStyle(AppTheme.secondaryOffWhite)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    Button {
+                        hasSeenWelcome = true
+                    } label: {
+                        Text("start cooking")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(AppTheme.primaryBlue)
+                            .foregroundStyle(AppTheme.secondaryOffWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                    .padding(.horizontal, 22)
+                    .padding(.top, 6)
+
+                    Text(
+                        isDutch
+                            ? "100% gratis dankzij de scherpe \n" +
+                                "keukenmessen van Hakketjak"
+                            : "100% free thanks to sharp kitchen \n" +
+                                "knifes of our sponsor: Hakketjak"
+                    )
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 22)
                 }
-                .padding(.horizontal, 22)
-                .padding(.top, 6)
-
-                Text(
-                    isDutch
-                        ? "100% gratis dankzij de scherpe \n" +
-                            "keukenmessen van Hakketjak"
-                        : "100% free thanks to sharp kitchen \n" +
-                            "knifes of our sponsor: Hakketjak"
-                )
-                .font(.footnote)
-                .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
-                .multilineTextAlignment(.center)
+                .offset(y: -120)
 
                 Spacer(minLength: 12)
             }
