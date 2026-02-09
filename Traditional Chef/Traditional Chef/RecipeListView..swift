@@ -246,8 +246,10 @@ struct RecipeListView: View {
     private var settingsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(AppLanguage.string("settings.title", locale: locale))
-                .font(.headline.weight(.semibold))
+                .font(.title3.weight(.semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
+                .padding(.vertical, 2)
+                .padding(.horizontal, 14)
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {

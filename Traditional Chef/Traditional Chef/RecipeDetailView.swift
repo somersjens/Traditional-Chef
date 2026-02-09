@@ -84,7 +84,7 @@ struct RecipeDetailView: View {
                 recipeStore.toggleFavorite(recipe)
             } label: {
                 Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .offset(x: -6)
                     .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : AppTheme.pageBackground)
             }
