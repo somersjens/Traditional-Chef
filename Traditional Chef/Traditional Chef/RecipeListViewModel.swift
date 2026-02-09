@@ -70,9 +70,9 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
     var columnLabelKey: String {
         switch self {
         case .totalTime:
-            return "recipes.column.time"
+            return "recipes.column.timeShort"
         case .prepTime:
-            return "recipes.column.prepTime"
+            return "recipes.column.prepTimeShort"
         case .ingredients:
             return "recipes.column.ingredientsShort"
         case .calories:
