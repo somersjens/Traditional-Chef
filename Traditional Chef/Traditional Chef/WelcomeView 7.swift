@@ -24,7 +24,7 @@ struct WelcomeView: View {
                     .padding(.bottom, 6)
 
                 VStack(spacing: 14) {
-                    Text(isDutch ? "Hey, masterchef!" : "Hey, masterchef!")
+                    Text(isDutch ? "Hey, chef!" : "Hey, chef!")
                         .font(.system(size: 33, weight: .semibold))
                         .foregroundStyle(AppTheme.textPrimary)
 
@@ -35,7 +35,7 @@ struct WelcomeView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(Color(hex: "E1773A"))
+                            .background(Color(hex: "F57921"))
                             .foregroundStyle(AppTheme.secondaryOffWhite)
                             .clipShape(RoundedRectangle(cornerRadius: 26))
                     }
