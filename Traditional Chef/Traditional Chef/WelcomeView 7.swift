@@ -68,7 +68,6 @@ struct WelcomeView: View {
                 Spacer(minLength: verticalSizeClass == .compact ? 0 : 12)
             }
             .padding(.top, 8)
-            .scaleEffect(verticalSizeClass == .compact ? 1.0 : 1.05, anchor: .top)
         }
         .task {
             await runAnimationLoop()

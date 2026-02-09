@@ -12,6 +12,7 @@ struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.displayScale) private var displayScale
+    @Environment(\.openURL) private var openURL
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("defaultServings") private var defaultServings: Int = 4
@@ -26,6 +27,8 @@ struct RecipeDetailView: View {
     @State private var isTopBarHidden = false
     @State private var scrollOffset: CGFloat = 0
     @State private var isHeroImageDark: Bool = false
+    @State private var highlightFooterLinks = false
+    private let footerLinksID = "footerLinksID"
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -56,6 +59,8 @@ struct RecipeDetailView: View {
                             GroceryListCard(recipe: recipe, servings: $servings)
 
                             stepsCard
+
+                            footerLinks
                         }
                         .padding(.leading, 12 + proxy.safeAreaInsets.leading)
                         .padding(.trailing, 12 + proxy.safeAreaInsets.trailing)
@@ -143,6 +148,22 @@ struct RecipeDetailView: View {
 
     private var shareRecipeMessage: String {
         "Try this recipe in Famous Chef."
+    }
+
+    private var appStoreID: String {
+        "0000000000"
+    }
+
+    private var appStoreProductURL: URL {
+        URL(string: "https://apps.apple.com/app/id\(appStoreID)")!
+    }
+
+    private var appStoreReviewURL: URL {
+        URL(string: "https://apps.apple.com/app/id\(appStoreID)?action=write-review")!
+    }
+
+    private var feedbackMailURL: URL {
+        URL(string: "mailto:hello@traditionalchef.app")!
     }
 
     private func heroSection(
@@ -458,6 +479,35 @@ struct RecipeDetailView: View {
             let s = over % 60
             return String(format: "-%d:%02d", m, s)
         }
+    }
+
+    private var footerLinks: some View {
+        VStack {
+            HStack(spacing: 6) {
+                footerLinkButton(titleKey: "footer.review", url: appStoreReviewURL)
+                Text(" | ")
+                footerLinkButton(titleKey: "footer.share", url: appStoreProductURL)
+                Text(" | ")
+                footerLinkButton(titleKey: "footer.feedback", url: feedbackMailURL)
+            }
+            .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .font(.footnote.weight(.semibold))
+        .foregroundStyle(highlightFooterLinks ? Color.orange : AppTheme.primaryBlue)
+        .animation(.easeInOut(duration: 0.2), value: highlightFooterLinks)
+        .id(footerLinksID)
+        .padding(.vertical, 8)
+    }
+
+    private func footerLinkButton(titleKey: String, url: URL) -> some View {
+        Button {
+            openURL(url)
+        } label: {
+            Text(AppLanguage.string(titleKey, locale: locale))
+                .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
     }
 }
 
