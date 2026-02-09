@@ -184,8 +184,10 @@ struct RecipeDetailView: View {
                 imageFadeOverlay
             }
             .overlay(alignment: .bottomLeading) {
+                let contentLeadingPadding = 12 + safeAreaInsets.leading
+                let titleLeadingPadding = contentLeadingPadding + (isLandscape ? safeAreaInsets.leading : 0)
                 titleOverlay
-                    .padding(.leading, 16 + safeAreaInsets.leading)
+                    .padding(.leading, titleLeadingPadding)
                     .padding(.bottom, 16)
             }
             .clipped()
@@ -493,10 +495,11 @@ struct RecipeDetailView: View {
             .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .font(.footnote.weight(.semibold))
+        .font(.footnote.weight(.medium))
         .foregroundStyle(highlightFooterLinks ? Color.orange : AppTheme.primaryBlue)
         .animation(.easeInOut(duration: 0.2), value: highlightFooterLinks)
         .id(footerLinksID)
+        .padding(.top, -7)
         .padding(.vertical, 8)
     }
 
