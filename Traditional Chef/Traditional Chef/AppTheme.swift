@@ -10,6 +10,7 @@ enum AppTheme {
     static let secondaryOffWhite = Color(hex: "FAF5F0")
     static let pageBackground = Color(hex: "FAF5F0")
     static let cardBackground = Color(hex: "FEFCFB")
+    static let settingsCardBackground = Color(hex: "F2EEEA")
     static let searchBarBackground = Color(hex: "FEFCFB")
     static let searchPlaceholder = Color(hex: "5E6678")
     static let textPrimary = Color(hex: "1C263C")
