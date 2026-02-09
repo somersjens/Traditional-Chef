@@ -100,7 +100,6 @@ struct RecipeDetailView: View {
         let baseIconSize: CGFloat = 17
         let heartIconSize: CGFloat = 18
         let iconSpacing: CGFloat = 12
-        let shareHeartSpacing: CGFloat = iconSpacing * 1.2
         return HStack(spacing: iconSpacing) {
             Button {
                 dismiss()
@@ -114,14 +113,6 @@ struct RecipeDetailView: View {
 
             Spacer()
 
-            ShareLink(item: shareRecipeURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
-                Image(systemName: "arrowshape.turn.up.right")
-                    .font(.system(size: baseIconSize * iconScale, weight: .semibold))
-                    .foregroundStyle(iconColor)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text("Share"))
-
             Button {
                 recipeStore.toggleFavorite(recipe)
             } label: {
@@ -132,7 +123,6 @@ struct RecipeDetailView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Favorite"))
-            .padding(.leading, shareHeartSpacing - iconSpacing)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -488,7 +478,7 @@ struct RecipeDetailView: View {
             HStack(spacing: 6) {
                 footerLinkButton(titleKey: "footer.review", url: appStoreReviewURL)
                 Text(" | ")
-                footerLinkButton(titleKey: "footer.share", url: appStoreProductURL)
+                footerShareLink
                 Text(" | ")
                 footerLinkButton(titleKey: "footer.feedback", url: feedbackMailURL)
             }
@@ -508,6 +498,14 @@ struct RecipeDetailView: View {
             openURL(url)
         } label: {
             Text(AppLanguage.string(titleKey, locale: locale))
+                .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var footerShareLink: some View {
+        ShareLink(item: shareRecipeURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
+            Text(AppLanguage.string("footer.share", locale: locale))
                 .padding(.vertical, 6)
         }
         .buttonStyle(.plain)
