@@ -4,124 +4,99 @@
 //
 
 import SwiftUI
-import StoreKit
 
 struct WelcomeView: View {
-    @EnvironmentObject private var tipStore: TipStore
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
-    private var locale: Locale { Locale(identifier: appLanguage) }
-
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    @State private var currentFrameName: String = "11"
+    private var isDutch: Bool { appLanguage.lowercased().hasPrefix("nl") }
 
     var body: some View {
         ZStack {
             AppTheme.pageBackground.ignoresSafeArea()
 
-            VStack(spacing: 18) {
-                Spacer()
-
-                // App icon placeholder (use your Assets AppIcon)
-                Image(systemName: "fork.knife.circle.fill")
+            VStack(spacing: 14) {
+                Image(currentFrameName)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(maxWidth: 690, maxHeight: 690)
+                    .offset(y: -140)
+                    .accessibilityHidden(true)
+                    .padding(.bottom, 6)
 
-                Text(AppLanguage.string("welcome.title", locale: locale))
-                    .font(.title2.weight(.semibold))
+                Text(isDutch ? "Hey, masterchef!" : "Hey, masterchef!")
+                    .font(.system(size: 33, weight: .semibold))
                     .foregroundStyle(AppTheme.textPrimary)
 
-                Text(AppLanguage.string("welcome.body", locale: locale))
-                    .font(.body)
-                    .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 26)
+                Text(
+                    isDutch
+                        ? "Nu heb je álle traditionele\n" +
+                            "toprecepten in je broekzak"
+                        : "Now you’ve got all traditional\n" +
+                            "Recepi’s in your pocket at all time"
+                )
+                .font(.body)
+                .foregroundStyle(AppTheme.textPrimary.opacity(0.9))
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 6)
 
-                VStack(spacing: 12) {
-                    TipButtonsRow(
-                        onTip: { productID in
-                            Task { await buyTip(productID: productID) }
-                        }
-                    )
-
-                    Button {
-                        hasSeenWelcome = true
-                    } label: {
-                        Text(AppLanguage.string("welcome.startButton", locale: locale))
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(AppTheme.primaryBlue)
-                            .foregroundStyle(AppTheme.secondaryOffWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                    .padding(.horizontal, 22)
-                    .padding(.top, 6)
+                Button {
+                    hasSeenWelcome = true
+                } label: {
+                    Text("start cooking")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(AppTheme.primaryBlue)
+                        .foregroundStyle(AppTheme.secondaryOffWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .padding(.horizontal, 22)
+                .padding(.top, 6)
 
-                Spacer()
-                Spacer()
+                Text(
+                    isDutch
+                        ? "100% gratis dankzij de scherpe \n" +
+                            "keukenmessen van Hakketjak"
+                        : "100% free thanks to sharp kitchen \n" +
+                            "knifes of our sponsor: Hakketjak"
+                )
+                .font(.footnote)
+                .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
+                .multilineTextAlignment(.center)
+
+                Spacer(minLength: 12)
+            }
+            .padding(.top, 8)
+        }
+        .task {
+            await runAnimationLoop()
+        }
+    }
+}
+
+private extension WelcomeView {
+    func runAnimationLoop() async {
+        let frameDuration = 0.04
+        let forwardFrames = (1...9).map { (name: String($0), duration: frameDuration) }
+        let reverseFrames = (1...9).reversed().map { (name: String($0), duration: frameDuration) }
+        let sequence: [(name: String, duration: Double)] = [
+            (name: "11", duration: 1.0)
+        ]
+        + forwardFrames
+        + [(name: "9", duration: 1.0)]
+        + reverseFrames
+        + [(name: "11", duration: 0.5)]
+        + [(name: "10", duration: 0.25)]
+        + [(name: "11", duration: 1.0)]
+
+        while !Task.isCancelled {
+            for frame in sequence {
+                currentFrameName = frame.name
+                let nanos = UInt64(frame.duration * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: nanos)
+                if Task.isCancelled { return }
             }
         }
-        .task { await tipStore.loadProducts() }
-        .alert(AppLanguage.string("welcome.alertTitle", locale: locale), isPresented: $showAlert) {
-            Button(AppLanguage.string("ok", locale: locale), role: .cancel) {}
-        } message: {
-            Text(alertMessage)
-        }
-    }
-
-    private func buyTip(productID: String) async {
-        guard let product = tipStore.product(for: productID) else {
-            alertMessage = AppLanguage.string("tip.notConfigured", locale: locale)
-            showAlert = true
-            return
-        }
-        let success = await tipStore.buy(product)
-        if success {
-            alertMessage = AppLanguage.string("tip.thanks", locale: locale)
-        } else if let msg = tipStore.lastErrorMessage {
-            alertMessage = msg
-        } else {
-            alertMessage = AppLanguage.string("tip.cancelled", locale: locale)
-        }
-        showAlert = true
-    }
-}
-
-private struct TipButtonsRow: View {
-    let onTip: (String) -> Void
-
-    var body: some View {
-        HStack(spacing: 16) {
-            TipCircleButton(title: "€1") { onTip("tip_1") }
-            TipCircleButton(title: "€2") { onTip("tip_2") }
-            TipCircleButton(title: "€5") { onTip("tip_5") }
-        }
-        .padding(.top, 6)
-    }
-}
-
-private struct TipCircleButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 64, height: 64)
-                .background(AppTheme.secondaryOffWhite)
-                .overlay(
-                    Circle().stroke(AppTheme.primaryBlue.opacity(0.35), lineWidth: 2)
-                )
-                .clipShape(Circle())
-                .shadow(radius: 2, y: 1)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text("Tip \(title)"))
     }
 }
