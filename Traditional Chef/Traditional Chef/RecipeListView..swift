@@ -245,81 +245,91 @@ struct RecipeListView: View {
 
     private var settingsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                Text(AppLanguage.string("settings.language", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                Spacer()
-                Picker("", selection: $appLanguage) {
-                    ForEach(AppLanguage.supported) { option in
-                        Text("\(AppLanguage.string(option.nameKey, locale: locale)) \(FlagEmoji.from(countryCode: option.regionCode))")
-                            .tag(option.code)
+            Text(AppLanguage.string("settings.title", locale: locale))
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.language", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Spacer()
+                    Picker("", selection: $appLanguage) {
+                        ForEach(AppLanguage.supported) { option in
+                            Text("\(AppLanguage.string(option.nameKey, locale: locale)) \(FlagEmoji.from(countryCode: option.regionCode))")
+                                .tag(option.code)
+                        }
                     }
+                    .pickerStyle(.menu)
+                    .tint(AppTheme.primaryBlue)
                 }
-                .pickerStyle(.menu)
+
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.measurement", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Spacer()
+                    Picker("", selection: Binding(
+                        get: { resolvedMeasurementUnit },
+                        set: { measurementUnitRaw = $0.rawValue }
+                    )) {
+                        ForEach(MeasurementUnit.allCases) { unit in
+                            Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
+                                .tag(unit)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(AppTheme.primaryBlue)
+                }
+
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.servings", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Spacer()
+                    Picker("", selection: $defaultServings) {
+                        ForEach(1...12, id: \.self) { servings in
+                            Text("\(servings)")
+                                .tag(servings)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(AppTheme.primaryBlue)
+                }
+
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.listViewValue", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    Spacer()
+                    Picker("", selection: Binding(
+                        get: { listViewValue },
+                        set: { newValue in
+                            listViewValueRaw = newValue.rawValue
+                            vm.setSort(newValue.sortKey)
+                        }
+                    )) {
+                        ForEach(RecipeListValue.allCases) { option in
+                            Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                                .tag(option)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(AppTheme.primaryBlue)
+                }
+
+                Toggle(isOn: $timerAutoStop) {
+                    Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                }
                 .tint(AppTheme.primaryBlue)
             }
-
-            HStack(spacing: 12) {
-                Text(AppLanguage.string("settings.measurement", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                Spacer()
-                Picker("", selection: Binding(
-                    get: { resolvedMeasurementUnit },
-                    set: { measurementUnitRaw = $0.rawValue }
-                )) {
-                    ForEach(MeasurementUnit.allCases) { unit in
-                        Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
-                            .tag(unit)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(AppTheme.primaryBlue)
-            }
-
-            HStack(spacing: 12) {
-                Text(AppLanguage.string("settings.servings", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                Spacer()
-                Picker("", selection: $defaultServings) {
-                    ForEach(1...12, id: \.self) { servings in
-                        Text("\(servings)")
-                            .tag(servings)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(AppTheme.primaryBlue)
-            }
-
-            HStack(spacing: 12) {
-                Text(AppLanguage.string("settings.listViewValue", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                Spacer()
-                Picker("", selection: Binding(
-                    get: { listViewValue },
-                    set: { newValue in
-                        listViewValueRaw = newValue.rawValue
-                        vm.setSort(newValue.sortKey)
-                    }
-                )) {
-                    ForEach(RecipeListValue.allCases) { option in
-                        Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
-                            .tag(option)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(AppTheme.primaryBlue)
-            }
-
-            Toggle(isOn: $timerAutoStop) {
-                Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-            }
-            .tint(AppTheme.primaryBlue)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .background(AppTheme.pageBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .padding(12)
         .background(AppTheme.cardBackground)
