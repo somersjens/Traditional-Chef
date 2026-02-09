@@ -13,6 +13,9 @@ struct NutritionCard: View {
     private let baseServings = 4
     private let valueColumnWidth: CGFloat = 86
     private let columnPadding: CGFloat = 8
+    private let headerVerticalPadding: CGFloat = 1
+    private let rowVerticalPadding: CGFloat = 3
+    private let tableFont: Font = .body
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -138,9 +141,9 @@ struct NutritionCard: View {
                 .frame(width: valueColumnWidth, alignment: .trailing)
                 .padding(.leading, columnPadding)
         }
-        .font(.body.weight(.semibold))
+        .font(tableFont.weight(.semibold))
         .foregroundStyle(AppTheme.textPrimary.opacity(0.8))
-        .padding(.vertical, 4)
+        .padding(.vertical, headerVerticalPadding)
     }
 
     private func nutritionRow(labelKey: String, perServing: String, per100g: String) -> some View {
@@ -161,9 +164,9 @@ struct NutritionCard: View {
                 .frame(width: valueColumnWidth, alignment: .trailing)
                 .padding(.leading, columnPadding)
         }
-        .font(.body)
+        .font(tableFont)
         .foregroundStyle(AppTheme.textPrimary)
-        .padding(.vertical, 6)
+        .padding(.vertical, rowVerticalPadding)
     }
 
     private var per100gMultiplier: Double? {
@@ -175,8 +178,8 @@ struct NutritionCard: View {
     }
 
     private var verticalDivider: some View {
-        Rectangle()
-            .fill(AppTheme.hairline)
+        Divider()
+            .overlay(AppTheme.hairline)
             .frame(width: 1)
             .frame(maxHeight: .infinity)
     }
