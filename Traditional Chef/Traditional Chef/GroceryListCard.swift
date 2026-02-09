@@ -289,13 +289,27 @@ struct GroceryListCard: View {
         let sourceIngredients = groupByDishPart ? recipe.ingredients : mergedIngredients(recipe.ingredients)
         switch sortMode {
         case .useOrder:
-            return sourceIngredients.sorted { $0.useOrder < $1.useOrder }
+            return sourceIngredients.sorted { lhs, rhs in
+                if lhs.useOrder != rhs.useOrder { return lhs.useOrder < rhs.useOrder }
+                if lhs.nameKey != rhs.nameKey { return lhs.nameKey < rhs.nameKey }
+                return lhs.id < rhs.id
+            }
         case .gramsDesc:
-            return sourceIngredients.sorted { scaledGrams($0.grams) > scaledGrams($1.grams) }
+            return sourceIngredients.sorted { lhs, rhs in
+                let leftGrams = scaledGrams(lhs.grams)
+                let rightGrams = scaledGrams(rhs.grams)
+                if leftGrams != rightGrams { return leftGrams > rightGrams }
+                if lhs.nameKey != rhs.nameKey { return lhs.nameKey < rhs.nameKey }
+                return lhs.id < rhs.id
+            }
         case .supermarket:
-            return sourceIngredients.sorted {
-                if $0.aisle.rawValue != $1.aisle.rawValue { return $0.aisle.rawValue < $1.aisle.rawValue }
-                return scaledGrams($0.grams) > scaledGrams($1.grams)
+            return sourceIngredients.sorted { lhs, rhs in
+                if lhs.aisle.rawValue != rhs.aisle.rawValue { return lhs.aisle.rawValue < rhs.aisle.rawValue }
+                let leftGrams = scaledGrams(lhs.grams)
+                let rightGrams = scaledGrams(rhs.grams)
+                if leftGrams != rightGrams { return leftGrams > rightGrams }
+                if lhs.nameKey != rhs.nameKey { return lhs.nameKey < rhs.nameKey }
+                return lhs.id < rhs.id
             }
         }
     }
