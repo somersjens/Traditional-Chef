@@ -292,7 +292,7 @@ struct RecipeDetailView: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "mappin")
+                    Image(systemName: "info.circle")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 
@@ -348,7 +348,7 @@ struct RecipeDetailView: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "frying.pan")
+                    Image(systemName: "list.number")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 

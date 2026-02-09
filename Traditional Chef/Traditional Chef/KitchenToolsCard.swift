@@ -19,7 +19,7 @@ struct KitchenToolsCard: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "fork.knife")
+                    Image(systemName: "wrench.and.screwdriver")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 

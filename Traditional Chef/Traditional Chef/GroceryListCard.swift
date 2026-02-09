@@ -45,7 +45,7 @@ struct GroceryListCard: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "checkmark")
+                    Image(systemName: "cart")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 

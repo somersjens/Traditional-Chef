@@ -26,7 +26,7 @@ struct NutritionCard: View {
                 }
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "leaf")
+                    Image(systemName: "chart.pie")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
 
