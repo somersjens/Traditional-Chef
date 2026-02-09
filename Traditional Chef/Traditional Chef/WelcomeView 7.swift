@@ -8,6 +8,7 @@ import SwiftUI
 struct WelcomeView: View {
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var currentFrameName: String = "11"
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -15,15 +16,18 @@ struct WelcomeView: View {
         ZStack {
             AppTheme.pageBackground.ignoresSafeArea()
 
-            VStack(spacing: 7) {
+            VStack(spacing: verticalSizeClass == .compact ? 4 : 7) {
                 Image(currentFrameName)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 690, maxHeight: 690)
+                    .frame(
+                        maxWidth: 690,
+                        maxHeight: verticalSizeClass == .compact ? 360 : 690
+                    )
                     .accessibilityHidden(true)
-                    .padding(.bottom, 3)
+                    .padding(.bottom, verticalSizeClass == .compact ? 0 : 3)
 
-                VStack(spacing: 14) {
+                VStack(spacing: verticalSizeClass == .compact ? 8 : 14) {
                     Text(AppLanguage.string("welcome.greeting", locale: locale))
                         .font(.system(size: 33, weight: .semibold))
                         .foregroundStyle(AppTheme.textPrimary)
@@ -40,7 +44,7 @@ struct WelcomeView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 26))
                     }
                     .padding(.horizontal, 22)
-                    .padding(.top, 6)
+                    .padding(.top, verticalSizeClass == .compact ? 0 : 6)
 
                     Text(AppLanguage.string("welcome.sponsorMessage", locale: locale))
                     .font(.system(size: 18, weight: .medium))
@@ -48,9 +52,9 @@ struct WelcomeView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 22)
                 }
-                .offset(y: -120)
+                .offset(y: verticalSizeClass == .compact ? -40 : -180)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: verticalSizeClass == .compact ? 0 : 12)
             }
             .padding(.top, 8)
         }
