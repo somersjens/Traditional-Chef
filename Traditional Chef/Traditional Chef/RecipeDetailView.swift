@@ -30,12 +30,19 @@ struct RecipeDetailView: View {
     var body: some View {
         ZStack(alignment: .top) {
             GeometryReader { proxy in
+                let isLandscape = proxy.size.width > proxy.size.height
                 let heroSize = proxy.size.width
-                let heroHeight = heroSize
+                let heroHeight = isLandscape ? proxy.size.height * 0.45 : heroSize
                 let heroPixelSize = max(heroSize, heroHeight) * displayScale
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
-                        heroSection(height: heroHeight, targetPixelSize: heroPixelSize)
+                        heroSection(
+                            height: heroHeight,
+                            width: proxy.size.width,
+                            safeAreaInsets: proxy.safeAreaInsets,
+                            targetPixelSize: heroPixelSize,
+                            isLandscape: isLandscape
+                        )
 
                         VStack(alignment: .leading, spacing: 14) {
                             header
@@ -50,11 +57,13 @@ struct RecipeDetailView: View {
 
                             stepsCard
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.leading, 12 + proxy.safeAreaInsets.leading)
+                        .padding(.trailing, 12 + proxy.safeAreaInsets.trailing)
                     }
                     .padding(.bottom, 12)
                     .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
                 }
+                .contentMargins(.horizontal, 0, for: .scrollContent)
                 .ignoresSafeArea(edges: .top)
                 .onChange(of: scrollOffset) { _, offset in
                     let shouldHide = offset > (heroHeight * 0.5)
@@ -136,21 +145,31 @@ struct RecipeDetailView: View {
         "Try this recipe in Traditional Chef."
     }
 
-    private func heroSection(height: CGFloat, targetPixelSize: CGFloat) -> some View {
-        heroImage(targetPixelSize: targetPixelSize)
+    private func heroSection(
+        height: CGFloat,
+        width: CGFloat,
+        safeAreaInsets: EdgeInsets,
+        targetPixelSize: CGFloat,
+        isLandscape: Bool
+    ) -> some View {
+        let horizontalInset = safeAreaInsets.leading + safeAreaInsets.trailing
+        return heroImage(targetPixelSize: targetPixelSize, isLandscape: isLandscape)
             .frame(height: height)
+            .frame(width: width + horizontalInset)
+            .padding(.leading, -safeAreaInsets.leading)
+            .padding(.trailing, -safeAreaInsets.trailing)
             .frame(maxWidth: .infinity)
             .overlay(alignment: .bottom) {
                 imageFadeOverlay
             }
             .overlay(alignment: .bottomLeading) {
                 titleOverlay
-                    .padding(.leading, 16)
+                    .padding(.leading, 16 + safeAreaInsets.leading)
                     .padding(.bottom, 16)
             }
             .clipped()
             .background(AppTheme.secondaryOffWhite)
-            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(edges: isLandscape ? [.top, .horizontal] : .top)
     }
 
     private var imageFadeOverlay: some View {
@@ -183,12 +202,18 @@ struct RecipeDetailView: View {
         )
     }
 
-    private func heroImage(targetPixelSize: CGFloat) -> some View {
+    private func heroImage(targetPixelSize: CGFloat, isLandscape: Bool) -> some View {
         ZStack {
             if let image = heroUIImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+                if isLandscape {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                }
             } else {
                 heroPlaceholder
             }
