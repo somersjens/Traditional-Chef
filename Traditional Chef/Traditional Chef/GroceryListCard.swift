@@ -94,7 +94,7 @@ struct GroceryListCard: View {
                         .disabled(servings <= minServings)
 
                         Text("\(servings)")
-                            .font(.subheadline.weight(.semibold))
+                            .font(.headline)
                             .frame(width: 32)
 
                         Button(action: incrementServings) {
@@ -439,15 +439,15 @@ struct GroceryListCard: View {
 
             let amount = formattedAmount(for: ing)
             Text(amount.value)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
+                .font(.body)
+                .foregroundStyle(AppTheme.textPrimary)
                 .frame(width: 64, alignment: .trailing)
 
             Text(amount.unit)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
+                .font(.body)
+                .foregroundStyle(AppTheme.textPrimary)
                 .lineLimit(1)
-                .frame(minWidth: 48, alignment: .leading)
+                .frame(width: 34, alignment: .leading)
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
