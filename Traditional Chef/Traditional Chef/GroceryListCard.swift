@@ -482,9 +482,32 @@ struct GroceryListCard: View {
         let grams = scaledGrams(ingredient.grams)
         switch measurementUnit {
         case .metric:
-            return DisplayAmount(value: formatNumber(grams), unit: "g/ml")
+            return metricAmount(for: ingredient, grams: grams)
         case .us, .ukImp, .auNz, .jp:
             return nonMetricAmount(for: ingredient, grams: grams, unit: measurementUnit)
+        }
+    }
+
+    private func metricAmount(for ingredient: Ingredient, grams: Double) -> DisplayAmount {
+        let mode = ingredient.displayMode ?? .weight
+        switch mode {
+        case .pcs:
+            if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
+                let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
+                return DisplayAmount(value: formatNumber(count), unit: "pcs")
+            }
+            return metricWeightAmount(grams)
+        case .liquid, .spoon:
+            if let gramsPerMl = ingredient.gramsPerMl, gramsPerMl > 0 {
+                let ml = grams / gramsPerMl
+                if ml >= 1000 {
+                    return DisplayAmount(value: formatNumber(ml / 1000), unit: "l")
+                }
+                return DisplayAmount(value: formatNumber(ml), unit: "ml")
+            }
+            return metricWeightAmount(grams)
+        case .weight:
+            return metricWeightAmount(grams)
         }
     }
 
@@ -506,8 +529,28 @@ struct GroceryListCard: View {
             let ml = grams / max(gramsPerTsp / unit.teaspoonMilliliters, 0.001)
             return volumeAmount(grams: grams, gramsPerMl: grams / max(ml, 0.001), allowCup: ingredient.allowCup ?? false, unit: unit)
         case .weight:
-            return DisplayAmount(value: formatNumber(grams), unit: "g")
+            switch unit {
+            case .us, .ukImp:
+                return imperialWeightAmount(grams)
+            case .metric, .auNz, .jp:
+                return metricWeightAmount(grams)
+            }
         }
+    }
+
+    private func metricWeightAmount(_ grams: Double) -> DisplayAmount {
+        if grams >= 1000 {
+            return DisplayAmount(value: formatNumber(grams / 1000), unit: "kg")
+        }
+        return DisplayAmount(value: formatNumber(grams), unit: "g")
+    }
+
+    private func imperialWeightAmount(_ grams: Double) -> DisplayAmount {
+        let ounces = grams / 28.349523125
+        if ounces >= 16 {
+            return DisplayAmount(value: formatNumber(ounces / 16), unit: "lb")
+        }
+        return DisplayAmount(value: formatNumber(ounces), unit: "oz")
     }
 
     private func volumeAmount(grams: Double, gramsPerMl: Double, allowCup: Bool, unit: MeasurementUnit) -> DisplayAmount {

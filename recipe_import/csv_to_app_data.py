@@ -32,6 +32,7 @@ RECIPES_JSON_PATH = APP_DIR / "recipes.json"
 
 LANGUAGES = ["nl", "en", "de"]
 LOCALIZATION_MARKER = "// === AUTO-GENERATED RECIPES BELOW ==="
+GRAMS_PER_OUNCE = 28.349523125
 
 
 @dataclass
@@ -216,16 +217,15 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             custom_value = None
             custom_label_key = None
             grams_value = parse_float(row.get("amount_g", "")) or 0.0
-            display_mode = (row.get("display_mode") or "").strip() or "weight"
+            display_mode = infer_display_mode(row)
+            ounces_value = parse_float(row.get("amount_ounces", ""))
+            if ounces_value is None:
+                ounces_value = grams_value / GRAMS_PER_OUNCE
             recipe["ingredients"].append({
                 "id": ingredient_id,
                 "nameKey": ingredient_key,
                 "grams": grams_value,
-                "ounces": (
-                    parse_float(row.get("amount_ounces", ""))
-                    or grams_value
-                    or 0.0
-                ),
+                "ounces": ounces_value,
                 "isOptional": False,
                 "group": row.get("group", "").strip(),
                 "groupId": parse_int(row.get("group_id", "")),
@@ -247,6 +247,22 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             recipe["nutrition"]["saturatedFatGrams"] += parse_float(row.get("saturated_fat", "")) or 0.0
             recipe["nutrition"]["sodiumMilligrams"] += parse_float(row.get("sodium", "")) or 0.0
             recipe["nutrition"]["fiberGrams"] += parse_float(row.get("fiber", "")) or 0.0
+
+
+def infer_display_mode(row: Dict[str, str]) -> str:
+    explicit_mode = (row.get("display_mode") or "").strip()
+    if explicit_mode:
+        return explicit_mode
+
+    grams_per_count = parse_float(row.get("g_per_count", ""))
+    grams_per_ml = parse_float(row.get("g_per_ml", ""))
+    grams_per_tsp = parse_float(row.get("g_per_tsp", ""))
+
+    if grams_per_count and grams_per_count > 0:
+        return "pcs"
+    if (grams_per_ml and grams_per_ml > 0) or (grams_per_tsp and grams_per_tsp > 0):
+        return "liquid"
+    return "weight"
 
 
 def load_steps(path: Path, recipes: Dict[str, dict], strings: LocalizedStrings) -> None:
