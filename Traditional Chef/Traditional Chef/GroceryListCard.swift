@@ -419,7 +419,8 @@ struct GroceryListCard: View {
     }
 
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {
-        HStack(spacing: 8) {
+        let columnWidths = amountColumnWidths
+        return HStack(spacing: 8) {
             HStack(spacing: 6) {
                 Text(AppLanguage.string(String.LocalizationValue(ing.nameKey), locale: locale))
                     .font(.body)
@@ -441,13 +442,13 @@ struct GroceryListCard: View {
             Text(amount.value)
                 .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
-                .frame(width: 64, alignment: .trailing)
+                .frame(width: columnWidths.value, alignment: .trailing)
 
             Text(amount.unit)
                 .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
                 .lineLimit(1)
-                .frame(width: 34, alignment: .leading)
+                .frame(width: columnWidths.unit, alignment: .leading)
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
@@ -462,6 +463,16 @@ struct GroceryListCard: View {
                 checked.insert(ing.id)
             }
         }
+    }
+
+    private var amountColumnWidths: (value: CGFloat, unit: CGFloat) {
+        let amounts = sortedAll.map(formattedAmount(for:))
+        let maxValueLength = amounts.map { $0.value.count }.max() ?? 1
+        let maxUnitLength = amounts.map { $0.unit.count }.max() ?? 1
+
+        let valueWidth = max(30, CGFloat(maxValueLength) * 11)
+        let unitWidth = max(12, CGFloat(maxUnitLength) * 9)
+        return (value: valueWidth, unit: unitWidth)
     }
 
     private func formattedAmount(for ingredient: Ingredient) -> GroceryMeasurementFormatter.DisplayAmount {
@@ -538,4 +549,3 @@ struct GroceryListCard: View {
         }
     }
 }
-
