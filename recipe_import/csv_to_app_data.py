@@ -190,9 +190,11 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                     "ingredient_id",
                     "group",
                     "group_id",
-                    "aisle",
-                    "amount_grams",
                     "use_order",
+                    "aisle",
+                    "display_mode",
+                    "amount_g",
+                    "allow_cup",
                     "name_nl",
                     "name_en",
                 ],
@@ -211,25 +213,17 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             for lang in LANGUAGES:
                 strings.add(ingredient_key, lang, row.get(f"name_{lang}"))
 
-            custom_value = (row.get("amount_custom_value") or "").strip()
+            custom_value = None
             custom_label_key = None
-            custom_labels = {
-                "nl": (row.get("amount_custom_label_nl") or "").strip(),
-                "en": (row.get("amount_custom_label_en") or "").strip(),
-                "de": (row.get("amount_custom_label_de") or "").strip(),
-            }
-            if any(custom_labels.values()):
-                custom_label_key = f"ingredient.{ingredient_id}.amount.custom"
-                for lang, label in custom_labels.items():
-                    if label:
-                        strings.add(custom_label_key, lang, label)
+            grams_value = parse_float(row.get("amount_g", "")) or 0.0
+            display_mode = (row.get("display_mode") or "").strip() or "weight"
             recipe["ingredients"].append({
                 "id": ingredient_id,
                 "nameKey": ingredient_key,
-                "grams": parse_float(row.get("amount_grams", "")) or 0.0,
+                "grams": grams_value,
                 "ounces": (
                     parse_float(row.get("amount_ounces", ""))
-                    or parse_float(row.get("amount_grams", ""))
+                    or grams_value
                     or 0.0
                 ),
                 "isOptional": False,
@@ -239,6 +233,11 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 "useOrder": parse_int(row.get("use_order", "")) or 0,
                 "customAmountValue": custom_value or None,
                 "customAmountLabelKey": custom_label_key,
+                "displayMode": display_mode,
+                "gramsPerMl": parse_float(row.get("g_per_ml", "")),
+                "gramsPerTsp": parse_float(row.get("g_per_tsp", "")),
+                "gramsPerCount": parse_float(row.get("g_per_count", "")),
+                "allowCup": parse_bool(row.get("allow_cup", "")),
             })
             recipe["nutrition"]["energyKcal"] += parse_int(row.get("kcal", "")) or 0
             recipe["nutrition"]["proteinGrams"] += parse_float(row.get("protein", "")) or 0.0
