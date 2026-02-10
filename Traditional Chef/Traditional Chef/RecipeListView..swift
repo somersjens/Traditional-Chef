@@ -7,6 +7,8 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @StateObject private var vm = RecipeListViewModel()
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
@@ -43,6 +45,8 @@ struct RecipeListView: View {
                         },
                         locale: locale
                     )
+                    .frame(maxWidth: contentMaxWidth, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
 
                     headerRow
 
@@ -50,12 +54,15 @@ struct RecipeListView: View {
                         LazyVStack(spacing: 10) {
                             if filteredAndSortedRecipes.isEmpty {
                                 emptyState
+                                    .frame(maxWidth: contentMaxWidth, alignment: .center)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                             } else {
                                 ForEach(filteredAndSortedRecipes) { recipe in
                                     NavigationLink(value: recipe) {
                                         RecipeRowView(
                                             recipe: recipe,
                                             listViewValue: listViewValue,
+                                            metricColumnWidth: rowMetricColumnWidth,
                                             isFavorite: recipeStore.isFavorite(recipe),
                                             onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                             searchText: vm.searchText
@@ -65,6 +72,8 @@ struct RecipeListView: View {
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.bottom, 16)
+                                .frame(maxWidth: contentMaxWidth, alignment: .leading)
+                                .frame(maxWidth: .infinity, alignment: .center)
                             }
                         }
                         .padding(.top, 6)
@@ -110,6 +119,17 @@ struct RecipeListView: View {
         }
     }
 
+    private var contentMaxWidth: CGFloat {
+        horizontalSizeClass == .regular ? 760 : .infinity
+    }
+
+    private var rowMetricColumnWidth: CGFloat {
+        if dynamicTypeSize.isAccessibilitySize {
+            return 100
+        }
+        return horizontalSizeClass == .regular ? 170 : 140
+    }
+
     private var headerRow: some View {
         HStack(spacing: 6) {
             Button {
@@ -148,7 +168,7 @@ struct RecipeListView: View {
             } action: {
                 vm.setSort(listViewValue.sortKey)
             }
-            .frame(width: 140, alignment: .trailing)
+            .frame(width: rowMetricColumnWidth, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
@@ -167,6 +187,8 @@ struct RecipeListView: View {
         .foregroundStyle(AppTheme.primaryBlue)
         .padding(.horizontal, 16)
         .padding(.top, 4)
+        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var topBar: some View {
@@ -178,6 +200,8 @@ struct RecipeListView: View {
                     Text(appDisplayName)
                         .font(.system(size: 26.4, weight: .semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
 
                     Image("chef_no_background")
                         .resizable()
@@ -196,6 +220,8 @@ struct RecipeListView: View {
         .padding(.horizontal, 16)
         .padding(.top, 10)
         .padding(.bottom, 8)
+        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var searchBar: some View {
@@ -237,6 +263,8 @@ struct RecipeListView: View {
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .padding(.horizontal, 16)
+        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var settingsButton: some View {
@@ -431,6 +459,8 @@ struct RecipeListView: View {
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .padding(.horizontal, 16)
+        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var emptyState: some View {

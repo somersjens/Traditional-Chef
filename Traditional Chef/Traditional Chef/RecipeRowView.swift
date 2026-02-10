@@ -8,6 +8,7 @@ import SwiftUI
 struct RecipeRowView: View {
     let recipe: Recipe
     let listViewValue: RecipeListValue
+    let metricColumnWidth: CGFloat
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
@@ -26,7 +27,7 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            meta(listValueText, width: 140)
+            meta(listValueText, width: metricColumnWidth)
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
