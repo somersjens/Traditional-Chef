@@ -18,17 +18,17 @@ enum Continent: String, CaseIterable, Identifiable {
     var emoji: String {
         switch self {
         case .africa:
-            return "🌍"
+            return "🦁"
         case .asia:
-            return "🌏"
+            return "🐼"
         case .europe:
-            return "🌍"
+            return "🦊"
         case .northAmerica:
-            return "🌎"
+            return "🦬"
         case .southAmerica:
-            return "🌎"
+            return "🦙"
         case .oceania:
-            return "🌊"
+            return "🦘"
         }
     }
 
