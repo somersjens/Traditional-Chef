@@ -15,7 +15,7 @@ struct WelcomeView: View {
         var message = AttributedString(AppLanguage.string("welcome.sponsorMessage", locale: locale))
         if let range = message.range(of: "Hakketjak") {
             message[range].link = URL(string: "https://www.hakketjak.nl")
-            message[range].font = .system(size: 18, weight: .bold)
+            message[range].font = .system(size: 17, weight: .bold)
             message[range].underlineStyle = .single
             message[range].foregroundColor = AppTheme.textPrimary
         }
@@ -46,7 +46,7 @@ struct WelcomeView: View {
                         hasSeenWelcome = true
                     } label: {
                         Text(AppLanguage.string("welcome.startButton", locale: locale))
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.system(size: 19, weight: .medium))
                             .padding(.vertical, 14)
                             .padding(.horizontal, 24)
                             .background(Color(hex: "F57921"))
@@ -57,7 +57,7 @@ struct WelcomeView: View {
                     .padding(.top, verticalSizeClass == .compact ? 0 : 6)
 
                     Text(sponsorMessage)
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .lineSpacing(1.8)
