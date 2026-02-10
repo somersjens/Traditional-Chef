@@ -76,16 +76,25 @@
 "grocery.optional" = "Optioneel";
 "grocery.allCollected" = "Alles verzameld!";
 "grocery.servings" = "Aantal personen";
-"grocery.option.allGrams" = "Alles gram";
-"grocery.option.allOunces" = "Alles ons";
+"grocery.option.allWeight" = "All gewicht";
+
 "grocery.option.partOfDish" = "Onderdeel";
 "grocery.option.on" = "Aan";
 "grocery.option.off" = "Uit";
 "settings.title" = "Instellingen";
 "settings.language" = "Taal voor recepten";
 "settings.measurement" = "Standaard Maat";
-"settings.measurement.grams" = "Gram";
-"settings.measurement.ounces" = "Ons";
+"settings.measurement.metric.short" = "Metrisch";
+"settings.measurement.metric.long" = "Metrisch: g/ml";
+"settings.measurement.us.short" = "US";
+"settings.measurement.us.long" = "US: cup 240 ml · tbsp 15 · tsp 5";
+"settings.measurement.uk.short" = "UK (imp)";
+"settings.measurement.uk.long" = "UK (imp): fl oz/pint · tbsp 15 · tsp 5";
+"settings.measurement.aunz.short" = "AU/NZ";
+"settings.measurement.aunz.long" = "AU/NZ: cup 250 ml · tbsp 20 · tsp 5";
+"settings.measurement.jp.short" = "JP";
+"settings.measurement.jp.long" = "JP: cup 200 ml · tbsp 15 · tsp 5";
+
 "settings.servings" = "Aantal personen";
 "settings.listViewValue" = "Waarde in overzicht";
 "settings.timerAutoStop" = "Stop timer automatisch";

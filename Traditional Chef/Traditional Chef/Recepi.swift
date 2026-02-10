@@ -110,6 +110,20 @@ struct Ingredient: Identifiable, Hashable, Codable {
     /// Optional custom amount display
     let customAmountValue: String?
     let customAmountLabelKey: String?
+
+    /// Conversion metadata loaded from groceries.csv (per one base serving)
+    let displayMode: IngredientDisplayMode?
+    let gramsPerMl: Double?
+    let gramsPerTsp: Double?
+    let gramsPerCount: Double?
+    let allowCup: Bool?
+}
+
+enum IngredientDisplayMode: String, Codable {
+    case weight
+    case liquid
+    case spoon
+    case pcs
 }
 
 struct IngredientGroup: Hashable, Identifiable, Codable {

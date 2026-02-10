@@ -319,7 +319,7 @@ struct RecipeListView: View {
                             Button {
                                 measurementUnitRaw = unit.rawValue
                             } label: {
-                                Text(AppLanguage.string(unit.settingsLabelKey, locale: locale))
+                                Text(AppLanguage.string(unit.settingsListLabelKey, locale: locale))
                             }
                         }
                     } label: {

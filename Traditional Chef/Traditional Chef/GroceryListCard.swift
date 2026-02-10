@@ -386,7 +386,12 @@ struct GroceryListCard: View {
                     aisle: existing.aisle,
                     useOrder: min(existing.useOrder, ingredient.useOrder),
                     customAmountValue: nil,
-                    customAmountLabelKey: nil
+                    customAmountLabelKey: nil,
+                    displayMode: existing.displayMode ?? ingredient.displayMode,
+                    gramsPerMl: existing.gramsPerMl ?? ingredient.gramsPerMl,
+                    gramsPerTsp: existing.gramsPerTsp ?? ingredient.gramsPerTsp,
+                    gramsPerCount: existing.gramsPerCount ?? ingredient.gramsPerCount,
+                    allowCup: existing.allowCup ?? ingredient.allowCup
                 )
                 byId[ingredient.id] = existing
             } else {
@@ -401,7 +406,12 @@ struct GroceryListCard: View {
                     aisle: ingredient.aisle,
                     useOrder: ingredient.useOrder,
                     customAmountValue: ingredient.customAmountValue,
-                    customAmountLabelKey: ingredient.customAmountLabelKey
+                    customAmountLabelKey: ingredient.customAmountLabelKey,
+                    displayMode: ingredient.displayMode,
+                    gramsPerMl: ingredient.gramsPerMl,
+                    gramsPerTsp: ingredient.gramsPerTsp,
+                    gramsPerCount: ingredient.gramsPerCount,
+                    allowCup: ingredient.allowCup
                 )
             }
         }
@@ -427,40 +437,17 @@ struct GroceryListCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if !showAllMeasurements,
-               let customValue = ing.customAmountValue,
-               let customLabelKey = ing.customAmountLabelKey {
-                Text(customValue)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 44, alignment: .trailing)
+            let amount = formattedAmount(for: ing)
+            Text(amount.value)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 64, alignment: .trailing)
 
-                Text(AppLanguage.string(String.LocalizationValue(customLabelKey), locale: locale))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .lineLimit(1)
-                    .frame(minWidth: 28, alignment: .leading)
-            } else if measurementUnit == .grams {
-                Text(gramsValueString(scaledGrams(ing.grams)))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 44, alignment: .trailing)
-
-                Text(gramsUnitString(scaledGrams(ing.grams)))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 28, alignment: .leading)
-            } else {
-                Text(ouncesValueString(scaledOunces(ing.ounces)))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 44, alignment: .trailing)
-
-                Text(ouncesUnitString(scaledOunces(ing.ounces)))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
-                    .frame(width: 28, alignment: .leading)
-            }
+            Text(amount.unit)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .lineLimit(1)
+                .frame(minWidth: 48, alignment: .leading)
 
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
@@ -477,42 +464,105 @@ struct GroceryListCard: View {
         }
     }
 
-    private func gramsValueString(_ grams: Double) -> String {
-        if grams < 1 {
-            return String(format: "%.1f", grams)
-        }
-        if grams.rounded(.down) == grams {
-            return "\(Int(grams))"
-        }
-        return String(format: "%.0f", grams)
+    private struct DisplayAmount {
+        let value: String
+        let unit: String
     }
 
-    private func gramsUnitString(_ grams: Double) -> String {
-        _ = grams
-        return "g"
+    private func formattedAmount(for ingredient: Ingredient) -> DisplayAmount {
+        if !showAllMeasurements,
+           let customValue = ingredient.customAmountValue,
+           let customLabelKey = ingredient.customAmountLabelKey {
+            return DisplayAmount(
+                value: customValue,
+                unit: AppLanguage.string(String.LocalizationValue(customLabelKey), locale: locale)
+            )
+        }
+
+        let grams = scaledGrams(ingredient.grams)
+        switch measurementUnit {
+        case .metric:
+            return DisplayAmount(value: formatNumber(grams), unit: "g/ml")
+        case .us, .ukImp, .auNz, .jp:
+            return nonMetricAmount(for: ingredient, grams: grams, unit: measurementUnit)
+        }
+    }
+
+    private func nonMetricAmount(for ingredient: Ingredient, grams: Double, unit: MeasurementUnit) -> DisplayAmount {
+        let mode = ingredient.displayMode ?? .weight
+        switch mode {
+        case .pcs:
+            if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
+                let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
+                return DisplayAmount(value: formatNumber(count), unit: "pcs")
+            }
+            return DisplayAmount(value: formatNumber(grams), unit: "g")
+        case .liquid:
+            let gramsPerMl = ingredient.gramsPerMl ?? 1
+            return volumeAmount(grams: grams, gramsPerMl: gramsPerMl, allowCup: ingredient.allowCup ?? false, unit: unit)
+        case .spoon:
+            let gramsPerTsp = ingredient.gramsPerTsp
+                ?? ((ingredient.gramsPerMl ?? 1) * unit.teaspoonMilliliters)
+            let ml = grams / max(gramsPerTsp / unit.teaspoonMilliliters, 0.001)
+            return volumeAmount(grams: grams, gramsPerMl: grams / max(ml, 0.001), allowCup: ingredient.allowCup ?? false, unit: unit)
+        case .weight:
+            return DisplayAmount(value: formatNumber(grams), unit: "g")
+        }
+    }
+
+    private func volumeAmount(grams: Double, gramsPerMl: Double, allowCup: Bool, unit: MeasurementUnit) -> DisplayAmount {
+        let ml = grams / max(gramsPerMl, 0.001)
+        let tsp = ml / unit.teaspoonMilliliters
+        let tbsp = ml / unit.tablespoonMilliliters
+
+        if allowCup, unit.cupMilliliters > 0 {
+            let cups = ml / unit.cupMilliliters
+            if cups >= 0.25 {
+                let roundedCups = max(0.25, cups.rounded(toNearest: 0.25))
+                return DisplayAmount(value: formatQuarterFraction(roundedCups), unit: "cup")
+            }
+        }
+
+        if tbsp >= 1 {
+            let roundedTbsp = max(1, tbsp.rounded(toNearest: 0.25))
+            return DisplayAmount(value: formatQuarterFraction(roundedTbsp), unit: "tbsp")
+        }
+
+        let roundedTsp = max(0.25, tsp.rounded(toNearest: 0.25))
+        return DisplayAmount(value: formatQuarterFraction(roundedTsp), unit: "tsp")
+    }
+
+    private func formatNumber(_ value: Double) -> String {
+        if value.rounded(.down) == value {
+            return "\(Int(value))"
+        }
+        if value < 10 {
+            return String(format: "%.1f", value)
+        }
+        return String(format: "%.0f", value)
+    }
+
+    private func formatQuarterFraction(_ value: Double) -> String {
+        let rounded = value.rounded(toNearest: 0.25)
+        let whole = Int(rounded)
+        let fraction = rounded - Double(whole)
+
+        let fractionText: String
+        switch fraction {
+        case 0.25: fractionText = "¼"
+        case 0.5: fractionText = "½"
+        case 0.75: fractionText = "¾"
+        default: fractionText = ""
+        }
+
+        if whole == 0 {
+            return fractionText.isEmpty ? formatNumber(rounded) : fractionText
+        }
+        return fractionText.isEmpty ? "\(whole)" : "\(whole) \(fractionText)"
     }
 
     private func scaledGrams(_ grams: Double) -> Double {
         grams * Double(servings) / Double(baseServings)
-    }
-
-    private func ouncesValueString(_ ounces: Double) -> String {
-        if ounces < 1 {
-            return String(format: "%.1f", ounces)
-        }
-        if ounces.rounded(.down) == ounces {
-            return "\(Int(ounces))"
-        }
-        return String(format: "%.0f", ounces)
-    }
-
-    private func ouncesUnitString(_ ounces: Double) -> String {
-        _ = ounces
-        return "oz"
-    }
-
-    private func scaledOunces(_ ounces: Double) -> Double {
-        ounces * Double(servings) / Double(baseServings)
     }
 
     private var grocerySummary: String {
@@ -570,5 +620,12 @@ struct GroceryListCard: View {
             seen.insert(ingredient.id)
             return ingredient.id
         }
+    }
+}
+
+private extension Double {
+    func rounded(toNearest step: Double) -> Double {
+        guard step > 0 else { return self }
+        return (self / step).rounded() * step
     }
 }
