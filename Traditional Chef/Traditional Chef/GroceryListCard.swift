@@ -539,9 +539,8 @@ struct GroceryListCard: View {
     }
 
     private func metricWeightAmount(_ grams: Double) -> DisplayAmount {
-        if grams >= 1000 {
-            return DisplayAmount(value: formatNumber(grams / 1000), unit: "kg")
-        }
+        // Keep metric grocery weights in grams at all ranges to avoid precision loss
+        // and maintain a single, consistent unit across settings.
         return DisplayAmount(value: formatNumber(grams), unit: "g")
     }
 
