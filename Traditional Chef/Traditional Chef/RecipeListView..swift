@@ -17,6 +17,7 @@ struct RecipeListView: View {
 
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
+    @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
@@ -209,6 +210,7 @@ struct RecipeListView: View {
                     .foregroundStyle(AppTheme.searchPlaceholder)
             )
                 .textFieldStyle(.plain)
+                .focused($isSearchFocused)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .font(.body)
@@ -239,6 +241,7 @@ struct RecipeListView: View {
 
     private var settingsButton: some View {
         Button {
+            isSearchFocused = false
             withAnimation(.easeInOut(duration: 0.2)) {
                 showSettings.toggle()
             }
