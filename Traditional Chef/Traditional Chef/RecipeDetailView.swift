@@ -417,26 +417,28 @@ struct RecipeDetailView: View {
             .contentShape(Rectangle())
             .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
 
-            if isStepsExpanded {
-                VStack(spacing: 9) {
-                    Divider()
-                        .overlay(AppTheme.hairline)
+            VStack(spacing: 9) {
+                Divider()
+                    .overlay(AppTheme.hairline)
 
-                    ForEach(recipe.steps) { step in
-                        StepRowView(
-                            step: step,
-                            ingredients: recipe.ingredients,
-                            onTimerUpdate: { snapshot in
-                                stepTimerSnapshots[snapshot.id] = snapshot
-                            }
-                        )
-                        if step.id != recipe.steps.last?.id {
-                            Divider().overlay(AppTheme.hairline)
+                ForEach(recipe.steps) { step in
+                    StepRowView(
+                        step: step,
+                        ingredients: recipe.ingredients,
+                        onTimerUpdate: { snapshot in
+                            stepTimerSnapshots[snapshot.id] = snapshot
                         }
+                    )
+                    if step.id != recipe.steps.last?.id {
+                        Divider().overlay(AppTheme.hairline)
                     }
                 }
-                .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
+            .frame(height: isStepsExpanded ? nil : 0, alignment: .top)
+            .clipped()
+            .opacity(isStepsExpanded ? 1 : 0)
+            .allowsHitTesting(isStepsExpanded)
+            .accessibilityHidden(!isStepsExpanded)
         }
         .animation(.easeInOut(duration: 0.25), value: isStepsExpanded)
         .padding(12)
