@@ -28,6 +28,7 @@ struct RecipeDetailView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var isHeroImageDark: Bool = false
     @State private var highlightFooterLinks = false
+    @State private var selectedStepID: String? = nil
     private let footerLinksID = "footerLinksID"
 
     var body: some View {
@@ -425,6 +426,16 @@ struct RecipeDetailView: View {
                     StepRowView(
                         step: step,
                         ingredients: recipe.ingredients,
+                        isDimmed: selectedStepID != nil && selectedStepID != step.id,
+                        onStepTap: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if selectedStepID == step.id {
+                                    selectedStepID = nil
+                                } else {
+                                    selectedStepID = step.id
+                                }
+                            }
+                        },
                         onTimerUpdate: { snapshot in
                             stepTimerSnapshots[snapshot.id] = snapshot
                         }
@@ -583,6 +594,8 @@ private struct StepTimerSnapshot {
 private struct StepRowView: View {
     let step: RecipeStep
     let ingredients: [Ingredient]
+    let isDimmed: Bool
+    let onStepTap: () -> Void
     let onTimerUpdate: (StepTimerSnapshot) -> Void
 
     @State private var showTimer: Bool = false
@@ -604,9 +617,17 @@ private struct StepRowView: View {
 
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    init(step: RecipeStep, ingredients: [Ingredient], onTimerUpdate: @escaping (StepTimerSnapshot) -> Void) {
+    init(
+        step: RecipeStep,
+        ingredients: [Ingredient],
+        isDimmed: Bool,
+        onStepTap: @escaping () -> Void,
+        onTimerUpdate: @escaping (StepTimerSnapshot) -> Void
+    ) {
         self.step = step
         self.ingredients = ingredients
+        self.isDimmed = isDimmed
+        self.onStepTap = onStepTap
         self.onTimerUpdate = onTimerUpdate
         let initial = step.timerSeconds ?? 0
         _secondsLeft = State(initialValue: initial)
@@ -675,6 +696,11 @@ private struct StepRowView: View {
             }
         }
         .padding(.vertical, 1.5)
+        .opacity(isDimmed ? 0.45 : 1)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onStepTap()
+        }
         .onReceive(tick) { _ in
             updateRemainingFromEndDate()
         }
