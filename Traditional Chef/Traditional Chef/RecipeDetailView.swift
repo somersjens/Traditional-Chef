@@ -364,14 +364,15 @@ struct RecipeDetailView: View {
                     )
                 )
 
-                if isInfoExpanded {
+                if isInfoExpanded && cardSpeaker.isSpeaking {
                     Button {
                         cardSpeaker.toggleRead(
                             text: AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale),
                             languageCode: locale.identifier
                         )
                     } label: {
-                        ReadAloudIcon(isSpeaking: cardSpeaker.isSpeaking)
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.subheadline)
                             .foregroundStyle(AppTheme.primaryBlue)
                             .frame(width: 18, height: 18, alignment: .center)
                     }
@@ -480,8 +481,12 @@ struct RecipeDetailView: View {
 
         HStack(alignment: .firstTextBaseline, spacing: 6) {
             Button {
-                withAnimation(.easeInOut) {
-                    isStepsExpanded.toggle()
+                if isStepsExpanded {
+                    readAllSteps()
+                } else {
+                    withAnimation(.easeInOut) {
+                        isStepsExpanded = true
+                    }
                 }
             } label: {
                 Image(systemName: "list.number")
@@ -497,7 +502,7 @@ struct RecipeDetailView: View {
             .accessibilityLabel(
                 Text(
                     AppLanguage.string(
-                        isStepsExpanded ? "recipe.detail.steps.collapse" : "recipe.detail.steps.expand",
+                        isStepsExpanded ? "recipe.steps.readAllAloud" : "recipe.detail.steps.expand",
                         locale: locale
                     )
                 )

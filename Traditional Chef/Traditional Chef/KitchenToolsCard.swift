@@ -39,11 +39,12 @@ struct KitchenToolsCard: View {
                     Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand kitchen tools")
                 )
 
-                if isExpanded {
+                if isExpanded && cardSpeaker.isSpeaking {
                     Button {
                         cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
                     } label: {
-                        ReadAloudIcon(isSpeaking: cardSpeaker.isSpeaking)
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.subheadline)
                             .foregroundStyle(AppTheme.primaryBlue)
                             .frame(width: 18, height: 18, alignment: .center)
                     }
