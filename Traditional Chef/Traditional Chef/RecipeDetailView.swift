@@ -765,14 +765,14 @@ private struct StepRowView: View {
                     Button {
                         onReadAloudTap()
                     } label: {
-                        Label(
-                            AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale),
-                            systemImage: "speaker.wave.2.fill"
-                        )
+                        Image(systemName: "speaker.wave.2.fill")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(
+                        Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
+                    )
                 }
             }
         }
