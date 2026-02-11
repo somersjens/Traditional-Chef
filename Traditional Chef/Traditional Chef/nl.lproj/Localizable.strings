@@ -56,6 +56,9 @@
 
 "recipe.groceryTitle" = "Boodschappen";
 "recipe.stepsTitle" = "Stappen";
+"recipe.steps.readAllAloud" = "Lees alle stappen hardop";
+"recipe.steps.stopReadAloud" = "Stop met voorlezen";
+"recipe.steps.readSelectedAloud" = "Lees deze stap hardop";
 "recipe.drinkTitle" = "Drankje erbij?";
 "recipe.toolsTitle" = "Benodigdheden";
 "recipe.infoTitle" = "Informatie";

@@ -7,6 +7,7 @@ import SwiftUI
 import Combine
 import ImageIO
 import UIKit
+import AVFoundation
 
 struct RecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
@@ -29,6 +30,7 @@ struct RecipeDetailView: View {
     @State private var isHeroImageDark: Bool = false
     @State private var highlightFooterLinks = false
     @State private var selectedStepID: String? = nil
+    @StateObject private var stepSpeaker = StepSpeaker()
     private let footerLinksID = "footerLinksID"
 
     var body: some View {
@@ -385,71 +387,10 @@ struct RecipeDetailView: View {
         let summary = String(format: format, locale: locale, recipe.approximateMinutes)
         let headerText = stepsHeaderText(summary: summary)
         let contentSpacing: CGFloat = isStepsExpanded ? 9 : 0
-        let headerIconWidth: CGFloat = 24
+
         return VStack(alignment: .leading, spacing: contentSpacing) {
-            Button {
-                withAnimation(.easeInOut) {
-                    isStepsExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Image(systemName: "list.number")
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(width: headerIconWidth, alignment: .center)
-
-                    Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.textPrimary)
-
-                    Spacer()
-
-                    Text(headerText)
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
-
-                    Image(systemName: isStepsExpanded ? "chevron.down" : "chevron.right")
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(width: 24, height: 24, alignment: .center)
-                }
-            }
-            .buttonStyle(.plain)
-            .contentShape(Rectangle())
-            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
-
-            VStack(spacing: 9) {
-                Divider()
-                    .overlay(AppTheme.hairline)
-
-                ForEach(recipe.steps) { step in
-                    StepRowView(
-                        step: step,
-                        ingredients: recipe.ingredients,
-                        isDimmed: selectedStepID != nil && selectedStepID != step.id,
-                        onStepTap: {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                if selectedStepID == step.id {
-                                    selectedStepID = nil
-                                } else {
-                                    selectedStepID = step.id
-                                }
-                            }
-                        },
-                        onTimerUpdate: { snapshot in
-                            stepTimerSnapshots[snapshot.id] = snapshot
-                        }
-                    )
-                    if step.id != recipe.steps.last?.id {
-                        Divider().overlay(AppTheme.hairline)
-                    }
-                }
-            }
-            .frame(height: isStepsExpanded ? nil : 0, alignment: .top)
-            .clipped()
-            .opacity(isStepsExpanded ? 1 : 0)
-            .allowsHitTesting(isStepsExpanded)
-            .accessibilityHidden(!isStepsExpanded)
+            stepsHeaderRow(headerText: headerText)
+            stepsContent
         }
         .animation(.easeInOut(duration: 0.25), value: isStepsExpanded)
         .padding(12)
@@ -458,6 +399,123 @@ struct RecipeDetailView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .onDisappear {
+            stepSpeaker.stop()
+        }
+    }
+
+    @ViewBuilder
+    private func stepsHeaderRow(headerText: String) -> some View {
+        let headerIconWidth: CGFloat = 24
+
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Button {
+                withAnimation(.easeInOut) {
+                    isStepsExpanded.toggle()
+                }
+            } label: {
+                Image(systemName: "list.number")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: headerIconWidth, alignment: .center)
+
+                Text(AppLanguage.string("recipe.stepsTitle", locale: locale))
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.textPrimary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
+
+            if isStepsExpanded {
+                Button {
+                    readAllSteps()
+                } label: {
+                    Image(systemName: stepSpeaker.isSpeakingAllSteps ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(AppLanguage.string(
+                    stepSpeaker.isSpeakingAllSteps ? "recipe.steps.stopReadAloud" : "recipe.steps.readAllAloud",
+                    locale: locale
+                )))
+            }
+
+            Spacer()
+
+            Text(headerText)
+                .font(.subheadline)
+                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+            Button {
+                withAnimation(.easeInOut) {
+                    isStepsExpanded.toggle()
+                }
+            } label: {
+                Image(systemName: isStepsExpanded ? "chevron.down" : "chevron.right")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .frame(width: 24, height: 24, alignment: .center)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
+        }
+    }
+
+    private var stepsContent: some View {
+        VStack(spacing: 9) {
+            Divider()
+                .overlay(AppTheme.hairline)
+
+            ForEach(recipe.steps) { step in
+                StepRowView(
+                    step: step,
+                    ingredients: recipe.ingredients,
+                    isDimmed: selectedStepID != nil && selectedStepID != step.id,
+                    isSelected: selectedStepID == step.id,
+                    onStepTap: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if selectedStepID == step.id {
+                                selectedStepID = nil
+                            } else {
+                                selectedStepID = step.id
+                            }
+                        }
+                    },
+                    onTimerUpdate: { snapshot in
+                        stepTimerSnapshots[snapshot.id] = snapshot
+                    },
+                    onReadAloudTap: {
+                        readStep(step)
+                    }
+                )
+                if step.id != recipe.steps.last?.id {
+                    Divider().overlay(AppTheme.hairline)
+                }
+            }
+        }
+        .frame(height: isStepsExpanded ? nil : 0, alignment: .top)
+        .clipped()
+        .opacity(isStepsExpanded ? 1 : 0)
+        .allowsHitTesting(isStepsExpanded)
+        .accessibilityHidden(!isStepsExpanded)
+    }
+
+    private func readAllSteps() {
+        if stepSpeaker.isSpeakingAllSteps {
+            stepSpeaker.stop()
+            return
+        }
+        let spokenSteps = recipe.steps.map { step in
+            let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
+            return SpokenStep(number: step.stepNumber, text: body)
+        }
+        stepSpeaker.speakSteps(spokenSteps, languageCode: locale.identifier)
+    }
+
+    private func readStep(_ step: RecipeStep) {
+        let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
+        stepSpeaker.speakStep(number: step.stepNumber, text: body, languageCode: locale.identifier)
     }
 
     private func stepsHeaderText(summary: String) -> String {
@@ -595,8 +653,10 @@ private struct StepRowView: View {
     let step: RecipeStep
     let ingredients: [Ingredient]
     let isDimmed: Bool
+    let isSelected: Bool
     let onStepTap: () -> Void
     let onTimerUpdate: (StepTimerSnapshot) -> Void
+    let onReadAloudTap: () -> Void
 
     @State private var showTimer: Bool = false
     @State private var isRunning: Bool = false
@@ -621,14 +681,18 @@ private struct StepRowView: View {
         step: RecipeStep,
         ingredients: [Ingredient],
         isDimmed: Bool,
+        isSelected: Bool,
         onStepTap: @escaping () -> Void,
-        onTimerUpdate: @escaping (StepTimerSnapshot) -> Void
+        onTimerUpdate: @escaping (StepTimerSnapshot) -> Void,
+        onReadAloudTap: @escaping () -> Void
     ) {
         self.step = step
         self.ingredients = ingredients
         self.isDimmed = isDimmed
+        self.isSelected = isSelected
         self.onStepTap = onStepTap
         self.onTimerUpdate = onTimerUpdate
+        self.onReadAloudTap = onReadAloudTap
         let initial = step.timerSeconds ?? 0
         _secondsLeft = State(initialValue: initial)
         _sessionInitialSeconds = State(initialValue: initial)
@@ -637,7 +701,7 @@ private struct StepRowView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 5) {
             HStack(alignment: .bottom, spacing: 0) {
                 Text("\(step.stepNumber). ")
                     .font(.headline)
@@ -692,6 +756,23 @@ private struct StepRowView: View {
                     .hidden()
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
+                }
+            }
+
+            if isSelected {
+                HStack {
+                    Spacer()
+                    Button {
+                        onReadAloudTap()
+                    } label: {
+                        Label(
+                            AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale),
+                            systemImage: "speaker.wave.2.fill"
+                        )
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -863,5 +944,68 @@ private struct StepRowView: View {
             secondsLeft: secondsLeft,
             sessionInitialSeconds: sessionInitialSeconds
         ))
+    }
+}
+
+private struct SpokenStep {
+    let number: Int
+    let text: String
+}
+
+private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
+    @Published private(set) var isSpeakingAllSteps = false
+
+    private let synthesizer = AVSpeechSynthesizer()
+    private var queuedUtteranceCount = 0
+
+    override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
+
+    func speakSteps(_ steps: [SpokenStep], languageCode: String) {
+        stop()
+        isSpeakingAllSteps = true
+
+        for step in steps {
+            let utterance = AVSpeechUtterance(string: "\(step.number). \(step.text)")
+            utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
+            utterance.rate = 0.48
+            utterance.postUtteranceDelay = 0.2
+            queuedUtteranceCount += 1
+            synthesizer.speak(utterance)
+        }
+    }
+
+    func speakStep(number: Int, text: String, languageCode: String) {
+        stop()
+        isSpeakingAllSteps = false
+        let utterance = AVSpeechUtterance(string: "\(number). \(text)")
+        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
+        utterance.rate = 0.48
+        synthesizer.speak(utterance)
+    }
+
+    func stop() {
+        queuedUtteranceCount = 0
+        isSpeakingAllSteps = false
+        synthesizer.stopSpeaking(at: .immediate)
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        guard queuedUtteranceCount > 0 else { return }
+        queuedUtteranceCount -= 1
+        if queuedUtteranceCount == 0 {
+            isSpeakingAllSteps = false
+        }
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        if queuedUtteranceCount > 0 {
+            queuedUtteranceCount -= 1
+        }
+        if queuedUtteranceCount == 0 {
+            isSpeakingAllSteps = false
+        }
     }
 }

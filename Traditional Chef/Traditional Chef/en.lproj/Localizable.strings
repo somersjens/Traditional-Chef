@@ -56,6 +56,9 @@
 
 "recipe.groceryTitle" = "Groceries";
 "recipe.stepsTitle" = "Steps";
+"recipe.steps.readAllAloud" = "Read all steps aloud";
+"recipe.steps.stopReadAloud" = "Stop reading";
+"recipe.steps.readSelectedAloud" = "Read this step aloud";
 "recipe.drinkTitle" = "What to drink?";
 "recipe.toolsTitle" = "Kitchen Tools";
 "recipe.infoTitle" = "Information";
