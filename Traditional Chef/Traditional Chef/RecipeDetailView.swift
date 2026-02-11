@@ -495,19 +495,21 @@ struct RecipeDetailView: View {
                     isDimmed: selectedStepID != nil && selectedStepID != step.id,
                     isSelected: selectedStepID == step.id,
                     onStepTap: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            if selectedStepID == step.id {
+                        if selectedStepID == step.id {
+                            withAnimation(.easeInOut(duration: 0.2)) {
                                 selectedStepID = nil
-                            } else {
+                            }
+                            stopStepReadAloud()
+                        } else {
+                            stopStepReadAloud()
+                            withAnimation(.easeInOut(duration: 0.2)) {
                                 selectedStepID = step.id
                             }
+                            readStep(step)
                         }
                     },
                     onTimerUpdate: { snapshot in
                         stepTimerSnapshots[snapshot.id] = snapshot
-                    },
-                    onReadAloudTap: {
-                        readStep(step)
                     }
                 )
                 if step.id != recipe.steps.last?.id {
@@ -543,6 +545,10 @@ struct RecipeDetailView: View {
     private func readStep(_ step: RecipeStep) {
         let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
         stepSpeaker.speakStep(text: body, languageCode: locale.identifier)
+    }
+
+    private func stopStepReadAloud() {
+        stepSpeaker.stop()
     }
 
     private func stepsHeaderText(summary: String) -> String {
@@ -683,7 +689,6 @@ private struct StepRowView: View {
     let isSelected: Bool
     let onStepTap: () -> Void
     let onTimerUpdate: (StepTimerSnapshot) -> Void
-    let onReadAloudTap: () -> Void
 
     @State private var showTimer: Bool = false
     @State private var isRunning: Bool = false
@@ -710,8 +715,7 @@ private struct StepRowView: View {
         isDimmed: Bool,
         isSelected: Bool,
         onStepTap: @escaping () -> Void,
-        onTimerUpdate: @escaping (StepTimerSnapshot) -> Void,
-        onReadAloudTap: @escaping () -> Void
+        onTimerUpdate: @escaping (StepTimerSnapshot) -> Void
     ) {
         self.step = step
         self.ingredients = ingredients
@@ -719,7 +723,6 @@ private struct StepRowView: View {
         self.isSelected = isSelected
         self.onStepTap = onStepTap
         self.onTimerUpdate = onTimerUpdate
-        self.onReadAloudTap = onReadAloudTap
         let initial = step.timerSeconds ?? 0
         _secondsLeft = State(initialValue: initial)
         _sessionInitialSeconds = State(initialValue: initial)
@@ -729,13 +732,20 @@ private struct StepRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            HStack(alignment: .bottom, spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
                 Text("\(step.stepNumber). ")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
                 Text(AppLanguage.string(String.LocalizationValue(step.titleKey), locale: locale))
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
+
+                if isSelected {
+                    readAloudIcon
+                        .alignmentGuide(.firstTextBaseline) { dimensions in
+                            dimensions[VerticalAlignment.center]
+                        }
+                }
 
                 Spacer()
 
@@ -775,28 +785,25 @@ private struct StepRowView: View {
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
                 Spacer(minLength: 0)
                 if step.timerSeconds != nil {
-                    VStack(spacing: 4) {
-                        TimerBadgeView(
-                            displayText: timerDisplayText,
-                            isRunning: isRunning,
-                            isOverdue: secondsLeft < 0
-                        ) {}
-                        .hidden()
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-
-                        if isSelected {
-                            readAloudButton
-                        }
-                    }
+                    TimerBadgeView(
+                        displayText: timerDisplayText,
+                        isRunning: isRunning,
+                        isOverdue: secondsLeft < 0
+                    ) {}
+                    .hidden()
+                    .accessibilityHidden(true)
                 }
             }
-
-            if isSelected, step.timerSeconds == nil {
-                HStack {
-                    Spacer()
-                    readAloudButton
-                }
+        }
+        .overlay(alignment: .topTrailing) {
+            if step.timerSeconds != nil {
+                Color.clear
+                    .frame(width: 82, height: 28)
+                    .contentShape(Rectangle())
+                    .offset(y: 26)
+                    .onTapGesture {
+                        handleTimerTap()
+                    }
             }
         }
         .padding(.vertical, 1.5)
@@ -969,18 +976,13 @@ private struct StepRowView: View {
         ))
     }
 
-    private var readAloudButton: some View {
-        Button {
-            onReadAloudTap()
-        } label: {
-            Image(systemName: "speaker.wave.2.fill")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.primaryBlue)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(
-            Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
-        )
+    private var readAloudIcon: some View {
+        Image(systemName: "speaker.wave.2.fill")
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(AppTheme.primaryBlue)
+            .accessibilityLabel(
+                Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
+            )
     }
 }
 
