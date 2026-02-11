@@ -195,3 +195,9 @@
 "recipe.it_pasta_bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
 "recipe.it_pasta_bolognese.tool.sharp_knife" = "Sharp knife";
 "recipe.it_pasta_bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";
+"recipe.card.readAloud" = "Read this card aloud";
+"recipe.tools.readAloud.intro.en" = "The tools you will need for this recipe are";
+"recipe.nutrition.readAloud.intro.en" = "Each serving will contain approximately %d calories";
+"recipe.grocery.readAloud.intro.en" = "The unticked groceries for this %d person recipe are";
+"recipe.grocery.readAloud.group.en" = "For the %@";
+"recipe.grocery.readAloud.none.en" = "All groceries are ticked.";

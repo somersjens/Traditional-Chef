@@ -10,16 +10,17 @@ struct KitchenToolsCard: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isExpanded: Bool = true
+    @StateObject private var cardSpeaker = CardReadAloudSpeaker()
 
     var body: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 10) {
-            Button {
-                withAnimation(.easeInOut) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: "wrench.and.screwdriver")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -28,20 +29,39 @@ struct KitchenToolsCard: View {
                     Text(AppLanguage.string("recipe.toolsTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
+                }
+                .buttonStyle(.plain)
 
-                    Spacer()
+                Spacer()
 
-                    Text(summaryText)
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                if isExpanded {
+                    Button {
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                    } label: {
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 24, height: 24, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                }
 
+                Text(summaryText)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .contentShape(Rectangle())
             .accessibilityLabel(Text(isExpanded ? "Collapse kitchen tools" : "Expand kitchen tools"))
 
@@ -65,6 +85,9 @@ struct KitchenToolsCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .onDisappear {
+            cardSpeaker.stop()
+        }
     }
 
     private var summaryText: String {
@@ -95,5 +118,15 @@ struct KitchenToolsCard: View {
                     .clipShape(Capsule())
             }
         }
+    }
+
+    private var readAloudText: String {
+        let introKey = locale.identifier.lowercased().hasPrefix("nl")
+            ? "recipe.tools.readAloud.intro.nl"
+            : "recipe.tools.readAloud.intro.en"
+        let intro = AppLanguage.string(introKey, locale: locale)
+        let tools = recipe.tools.map { AppLanguage.string(String.LocalizationValue($0.nameKey), locale: locale) }
+        let toolsText = joinedForSpeech(tools, locale: locale)
+        return "\(intro) \(toolsText)"
     }
 }

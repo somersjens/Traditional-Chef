@@ -6,6 +6,12 @@
 import SwiftUI
 
 struct NutritionCard: View {
+    private struct SpokenNutrient {
+        let label: String
+        let value: Double?
+        let unit: String
+    }
+
     let recipe: Recipe
     @State private var isExpanded: Bool = true
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
@@ -17,16 +23,17 @@ struct NutritionCard: View {
     private let rowVerticalPadding: CGFloat = 4
     private let tableTopPadding: CGFloat = 4
     private let tableFont: Font = .body
+    @StateObject private var cardSpeaker = CardReadAloudSpeaker()
 
     var body: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 8) {
-            Button {
-                withAnimation(.easeInOut) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: "chart.pie")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -35,20 +42,39 @@ struct NutritionCard: View {
                     Text(AppLanguage.string("recipe.nutritionTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
+                }
+                .buttonStyle(.plain)
 
-                    Spacer()
+                Spacer()
 
-                    Text("\(recipe.calories) kcal")
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                if isExpanded {
+                    Button {
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                    } label: {
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 24, height: 24, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                }
 
+                Text("\(recipe.calories) kcal")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .contentShape(Rectangle())
             .accessibilityLabel(Text(isExpanded ? "Collapse nutrition" : "Expand nutrition"))
 
@@ -125,6 +151,9 @@ struct NutritionCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .onDisappear {
+            cardSpeaker.stop()
+        }
     }
 
     private var dividerRow: some View {
@@ -216,5 +245,47 @@ struct NutritionCard: View {
             return String(Int(value))
         }
         return String(format: "%.1f", value)
+    }
+
+    private var readAloudText: String {
+        let introFormatKey = locale.identifier.lowercased().hasPrefix("nl")
+            ? "recipe.nutrition.readAloud.intro.nl"
+            : "recipe.nutrition.readAloud.intro.en"
+        let intro = String(
+            format: AppLanguage.string(introFormatKey, locale: locale),
+            locale: locale,
+            recipe.calories
+        )
+        let nutrientLines: [String] = nutritionReadAloudItems.reduce(into: []) { partialResult, item in
+            guard let value = item.value else { return }
+            partialResult.append("\(formattedNumber(value)) \(item.unit) \(item.label)")
+        }
+        return ([intro] + nutrientLines).joined(separator: ". ")
+    }
+
+    private var nutritionReadAloudItems: [SpokenNutrient] {
+        let energyKcalValue: Double? = {
+            guard let energyKcal = recipe.nutrition?.energyKcal else { return nil }
+            return Double(energyKcal)
+        }()
+
+        return [
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.energy", locale: locale), value: energyKcalValue, unit: "kcal"),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.protein", locale: locale), value: recipe.nutrition?.proteinGrams, unit: readAloudUnit("g")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.carbs", locale: locale), value: recipe.nutrition?.carbohydratesGrams, unit: readAloudUnit("g")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sugars", locale: locale), value: recipe.nutrition?.sugarsGrams, unit: readAloudUnit("g")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.fat", locale: locale), value: recipe.nutrition?.fatGrams, unit: readAloudUnit("g")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.saturated", locale: locale), value: recipe.nutrition?.saturatedFatGrams, unit: readAloudUnit("g")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sodium", locale: locale), value: recipe.nutrition?.sodiumMilligrams, unit: readAloudUnit("mg")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.fiber", locale: locale), value: recipe.nutrition?.fiberGrams, unit: readAloudUnit("g"))
+        ]
+    }
+
+    private func readAloudUnit(_ unit: String) -> String {
+        switch unit {
+        case "g": return locale.identifier.lowercased().hasPrefix("nl") ? "gram" : "gram"
+        case "mg": return locale.identifier.lowercased().hasPrefix("nl") ? "milligram" : "milligram"
+        default: return unit
+        }
     }
 }

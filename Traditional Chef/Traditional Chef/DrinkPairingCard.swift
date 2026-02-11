@@ -10,18 +10,19 @@ struct DrinkPairingCard: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isExpanded: Bool = true
+    @StateObject private var cardSpeaker = CardReadAloudSpeaker()
 
     var body: some View {
         Group {
             if let bodyKey = recipe.drinkPairingKey {
                 let headerIconWidth: CGFloat = 24
                 VStack(alignment: .leading, spacing: 10) {
-                    Button {
-                        withAnimation(.easeInOut) {
-                            isExpanded.toggle()
-                        }
-                    } label: {
-                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Button {
+                            withAnimation(.easeInOut) {
+                                isExpanded.toggle()
+                            }
+                        } label: {
                             Image(systemName: "wineglass")
                                 .font(.headline)
                                 .foregroundStyle(AppTheme.primaryBlue)
@@ -30,22 +31,44 @@ struct DrinkPairingCard: View {
                             Text(AppLanguage.string("recipe.drinkTitle", locale: locale))
                                 .font(.headline)
                                 .foregroundStyle(AppTheme.textPrimary)
+                        }
+                        .buttonStyle(.plain)
 
-                            Spacer()
+                        Spacer()
 
-                            if let summaryKey = recipe.drinkPairingSummaryKey {
-                                Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                        if isExpanded {
+                            Button {
+                                cardSpeaker.toggleRead(
+                                    text: AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale),
+                                    languageCode: locale.identifier
+                                )
+                            } label: {
+                                Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
                                     .font(.subheadline)
-                                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                                    .foregroundStyle(AppTheme.primaryBlue)
+                                    .frame(width: 24, height: 24, alignment: .center)
                             }
+                            .buttonStyle(.plain)
+                        }
 
+                        if let summaryKey = recipe.drinkPairingSummaryKey {
+                            Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                                .font(.subheadline)
+                                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                        }
+
+                        Button {
+                            withAnimation(.easeInOut) {
+                                isExpanded.toggle()
+                            }
+                        } label: {
                             Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                                 .font(.headline)
                                 .foregroundStyle(AppTheme.primaryBlue)
                                 .frame(width: 24, height: 24, alignment: .center)
                         }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                     .contentShape(Rectangle())
                     .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
 
@@ -72,6 +95,9 @@ struct DrinkPairingCard: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
                 )
+                .onDisappear {
+                    cardSpeaker.stop()
+                }
             }
         }
     }

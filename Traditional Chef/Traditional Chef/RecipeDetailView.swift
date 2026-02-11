@@ -31,6 +31,7 @@ struct RecipeDetailView: View {
     @State private var highlightFooterLinks = false
     @State private var selectedStepID: String? = nil
     @StateObject private var stepSpeaker = StepSpeaker()
+    @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
 
     var body: some View {
@@ -331,12 +332,12 @@ struct RecipeDetailView: View {
     private var header: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 8) {
-            Button {
-                withAnimation(.easeInOut) {
-                    isInfoExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        isInfoExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: "info.circle")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -345,20 +346,45 @@ struct RecipeDetailView: View {
                     Text(AppLanguage.string("recipe.infoTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
+                }
+                .buttonStyle(.plain)
 
-                    Spacer()
+                Spacer()
 
-                    Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                if isInfoExpanded {
+                    Button {
+                        cardSpeaker.toggleRead(
+                            text: AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale),
+                            languageCode: locale.identifier
+                        )
+                    } label: {
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 24, height: 24, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(
+                        Text(AppLanguage.string("recipe.card.readAloud", locale: locale))
+                    )
+                }
 
+                Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isInfoExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: isInfoExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .contentShape(Rectangle())
             .accessibilityLabel(
                 Text(
@@ -408,6 +434,7 @@ struct RecipeDetailView: View {
         )
         .onDisappear {
             stepSpeaker.stop()
+            cardSpeaker.stop()
         }
     }
 

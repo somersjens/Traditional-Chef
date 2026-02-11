@@ -29,6 +29,7 @@ struct GroceryListCard: View {
     @State private var resetDisplayIngredients: [Ingredient] = []
     @State private var isExpanded: Bool = true
     @State private var groupByDishPart: Bool = false
+    @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let minServings = 1
     private let maxServings = 99
     private let baseServings = 4
@@ -40,12 +41,12 @@ struct GroceryListCard: View {
     var body: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 10) {
-            Button {
-                withAnimation(.easeInOut) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: "cart")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -54,20 +55,39 @@ struct GroceryListCard: View {
                     Text(AppLanguage.string("recipe.groceryTitle", locale: locale))
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
+                }
+                .buttonStyle(.plain)
 
-                    Spacer()
+                Spacer()
 
-                    Text(grocerySummary)
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                if isExpanded {
+                    Button {
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                    } label: {
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 24, height: 24, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                }
 
+                Text(grocerySummary)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(width: 24, height: 24, alignment: .center)
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .contentShape(Rectangle())
             .accessibilityLabel(Text(isExpanded ? "Collapse grocery list" : "Expand grocery list"))
 
@@ -181,6 +201,9 @@ struct GroceryListCard: View {
         }
         .onAppear {
             checked = loadChecked()
+        }
+        .onDisappear {
+            cardSpeaker.stop()
         }
     }
 
@@ -547,6 +570,71 @@ struct GroceryListCard: View {
             guard !seen.contains(ingredient.id) else { return nil }
             seen.insert(ingredient.id)
             return ingredient.id
+        }
+    }
+
+    private var readAloudText: String {
+        let introKey = locale.identifier.lowercased().hasPrefix("nl")
+            ? "recipe.grocery.readAloud.intro.nl"
+            : "recipe.grocery.readAloud.intro.en"
+        let intro = String(
+            format: AppLanguage.string(introKey, locale: locale),
+            locale: locale,
+            servings
+        )
+
+        let ingredientSentences: [String]
+        if groupByDishPart {
+            ingredientSentences = groupedIngredients(uncheckedIngredients).flatMap { group in
+                let groupPrefixKey = locale.identifier.lowercased().hasPrefix("nl")
+                    ? "recipe.grocery.readAloud.group.nl"
+                    : "recipe.grocery.readAloud.group.en"
+                let groupPrefix = String(
+                    format: AppLanguage.string(groupPrefixKey, locale: locale),
+                    locale: locale,
+                    group.group.localizedName(in: locale)
+                )
+                let ingredients = group.items.map(spokenIngredientLine)
+                return [groupPrefix] + ingredients
+            }
+        } else {
+            ingredientSentences = uncheckedIngredients.map(spokenIngredientLine)
+        }
+
+        if ingredientSentences.isEmpty {
+            let emptyKey = locale.identifier.lowercased().hasPrefix("nl")
+                ? "recipe.grocery.readAloud.none.nl"
+                : "recipe.grocery.readAloud.none.en"
+            return "\(intro) \(AppLanguage.string(emptyKey, locale: locale))"
+        }
+        return "\(intro) \(ingredientSentences.joined(separator: ", "))"
+    }
+
+    private func spokenIngredientLine(_ ingredient: Ingredient) -> String {
+        let amount = formattedAmount(for: ingredient)
+        let name = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+        let unit = readAloudUnit(amount.unit)
+        if unit.isEmpty {
+            return "\(name) \(amount.value)"
+        }
+        return "\(name) \(amount.value) \(unit)"
+    }
+
+    private func readAloudUnit(_ unit: String) -> String {
+        let languageIsDutch = locale.identifier.lowercased().hasPrefix("nl")
+        switch unit.lowercased() {
+        case "g": return "gram"
+        case "mg": return languageIsDutch ? "milligram" : "milligram"
+        case "kg": return languageIsDutch ? "kilogram" : "kilogram"
+        case "ml": return "milliliter"
+        case "l": return "liter"
+        case "oz": return "ounce"
+        case "lb": return languageIsDutch ? "pond" : "pound"
+        case "cup": return languageIsDutch ? "kop" : "cup"
+        case "tbsp": return languageIsDutch ? "eetlepel" : "tablespoon"
+        case "tsp": return languageIsDutch ? "theelepel" : "teaspoon"
+        case "pcs": return languageIsDutch ? "stuks" : "pieces"
+        default: return unit
         }
     }
 }
