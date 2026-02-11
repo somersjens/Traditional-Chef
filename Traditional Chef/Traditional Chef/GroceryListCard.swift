@@ -453,6 +453,7 @@ struct GroceryListCard: View {
             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(isChecked ? AppTheme.primaryBlue : AppTheme.primaryBlue.opacity(0.8))
                 .frame(width: 24, alignment: .trailing)
+                .offset(y: 1.5)
                 .animation(.easeInOut(duration: 0.2), value: isChecked)
         }
         .contentShape(Rectangle())
