@@ -332,7 +332,7 @@ struct RecipeDetailView: View {
     private var header: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Button {
                     if isInfoExpanded {
                         cardSpeaker.toggleRead(
@@ -371,10 +371,9 @@ struct RecipeDetailView: View {
                             languageCode: locale.identifier
                         )
                     } label: {
-                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
-                            .font(.subheadline)
+                        ReadAloudIcon(isSpeaking: cardSpeaker.isSpeaking)
                             .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 24, height: 24, alignment: .center)
+                            .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(
@@ -392,6 +391,7 @@ struct RecipeDetailView: View {
                     Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                        .lineLimit(1)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(

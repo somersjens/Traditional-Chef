@@ -28,7 +28,7 @@ struct NutritionCard: View {
     var body: some View {
         let headerIconWidth: CGFloat = 24
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Button {
                     if isExpanded {
                         cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
@@ -56,10 +56,9 @@ struct NutritionCard: View {
                     Button {
                         cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
                     } label: {
-                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
-                            .font(.subheadline)
+                        ReadAloudIcon(isSpeaking: cardSpeaker.isSpeaking)
                             .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 24, height: 24, alignment: .center)
+                            .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                 }
@@ -74,6 +73,7 @@ struct NutritionCard: View {
                     Text("\(recipe.calories) kcal")
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                        .lineLimit(1)
                 }
                 .buttonStyle(.plain)
 

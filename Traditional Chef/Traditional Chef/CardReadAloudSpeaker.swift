@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import Combine
+import SwiftUI
 
 extension Notification.Name {
     static let readAloudDidStart = Notification.Name("readAloudDidStart")
@@ -164,4 +165,21 @@ func joinedForSpeech(_ items: [String], locale: Locale) -> String {
     }
     let head = cleaned.dropLast().joined(separator: ", ")
     return "\(head), \(localizedAndWord(for: locale)) \(cleaned.last!)"
+}
+
+struct ReadAloudIcon: View {
+    let isSpeaking: Bool
+
+    var body: some View {
+        ZStack {
+            Image(systemName: "speaker.fill")
+                .opacity(isSpeaking ? 0 : 1)
+
+            Image(systemName: "speaker.wave.2.fill")
+                .opacity(isSpeaking ? 1 : 0)
+        }
+        .font(.subheadline)
+        .frame(width: 16, height: 16, alignment: .center)
+        .contentTransition(.opacity)
+    }
 }

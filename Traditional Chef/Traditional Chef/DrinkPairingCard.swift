@@ -17,7 +17,7 @@ struct DrinkPairingCard: View {
             if let bodyKey = recipe.drinkPairingKey {
                 let headerIconWidth: CGFloat = 24
                 VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Button {
                             if isExpanded {
                                 cardSpeaker.toggleRead(
@@ -51,10 +51,9 @@ struct DrinkPairingCard: View {
                                     languageCode: locale.identifier
                                 )
                             } label: {
-                                Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
-                                    .font(.subheadline)
+                                ReadAloudIcon(isSpeaking: cardSpeaker.isSpeaking)
                                     .foregroundStyle(AppTheme.primaryBlue)
-                                    .frame(width: 24, height: 24, alignment: .center)
+                                    .frame(width: 18, height: 18, alignment: .center)
                             }
                             .buttonStyle(.plain)
                         }
@@ -70,6 +69,7 @@ struct DrinkPairingCard: View {
                                 Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
                                     .font(.subheadline)
                                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                                    .lineLimit(1)
                             }
                             .buttonStyle(.plain)
                         }
