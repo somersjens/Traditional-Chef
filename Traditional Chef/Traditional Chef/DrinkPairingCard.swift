@@ -19,8 +19,15 @@ struct DrinkPairingCard: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Button {
-                            withAnimation(.easeInOut) {
-                                isExpanded.toggle()
+                            if isExpanded {
+                                cardSpeaker.toggleRead(
+                                    text: AppLanguage.string(String.LocalizationValue(bodyKey), locale: locale),
+                                    languageCode: locale.identifier
+                                )
+                            } else {
+                                withAnimation(.easeInOut) {
+                                    isExpanded = true
+                                }
                             }
                         } label: {
                             Image(systemName: "wineglass")
@@ -33,8 +40,9 @@ struct DrinkPairingCard: View {
                                 .foregroundStyle(AppTheme.textPrimary)
                         }
                         .buttonStyle(.plain)
-
-                        Spacer()
+                        .accessibilityLabel(
+                            Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand drink recommendation")
+                        )
 
                         if isExpanded {
                             Button {
@@ -43,7 +51,7 @@ struct DrinkPairingCard: View {
                                     languageCode: locale.identifier
                                 )
                             } label: {
-                                Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                                Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
                                     .font(.subheadline)
                                     .foregroundStyle(AppTheme.primaryBlue)
                                     .frame(width: 24, height: 24, alignment: .center)
@@ -51,10 +59,19 @@ struct DrinkPairingCard: View {
                             .buttonStyle(.plain)
                         }
 
+                        Spacer()
+
                         if let summaryKey = recipe.drinkPairingSummaryKey {
-                            Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
-                                .font(.subheadline)
-                                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                            Button {
+                                withAnimation(.easeInOut) {
+                                    isExpanded.toggle()
+                                }
+                            } label: {
+                                Text(AppLanguage.string(String.LocalizationValue(summaryKey), locale: locale))
+                                    .font(.subheadline)
+                                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                            }
+                            .buttonStyle(.plain)
                         }
 
                         Button {
@@ -70,6 +87,12 @@ struct DrinkPairingCard: View {
                         .buttonStyle(.plain)
                     }
                     .contentShape(Rectangle())
+                    .onTapGesture {
+                        guard !isExpanded else { return }
+                        withAnimation(.easeInOut) {
+                            isExpanded = true
+                        }
+                    }
                     .accessibilityLabel(Text(isExpanded ? "Collapse drink recommendation" : "Expand drink recommendation"))
 
                     if isExpanded {

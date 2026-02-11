@@ -30,8 +30,12 @@ struct NutritionCard: View {
         return VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Button {
-                    withAnimation(.easeInOut) {
-                        isExpanded.toggle()
+                    if isExpanded {
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                    } else {
+                        withAnimation(.easeInOut) {
+                            isExpanded = true
+                        }
                     }
                 } label: {
                     Image(systemName: "chart.pie")
@@ -44,14 +48,15 @@ struct NutritionCard: View {
                         .foregroundStyle(AppTheme.textPrimary)
                 }
                 .buttonStyle(.plain)
-
-                Spacer()
+                .accessibilityLabel(
+                    Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand nutrition")
+                )
 
                 if isExpanded {
                     Button {
                         cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
                     } label: {
-                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
                             .font(.subheadline)
                             .foregroundStyle(AppTheme.primaryBlue)
                             .frame(width: 24, height: 24, alignment: .center)
@@ -59,9 +64,18 @@ struct NutritionCard: View {
                     .buttonStyle(.plain)
                 }
 
-                Text("\(recipe.calories) kcal")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                Spacer()
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isExpanded.toggle()
+                    }
+                } label: {
+                    Text("\(recipe.calories) kcal")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                }
+                .buttonStyle(.plain)
 
                 Button {
                     withAnimation(.easeInOut) {
@@ -76,6 +90,12 @@ struct NutritionCard: View {
                 .buttonStyle(.plain)
             }
             .contentShape(Rectangle())
+            .onTapGesture {
+                guard !isExpanded else { return }
+                withAnimation(.easeInOut) {
+                    isExpanded = true
+                }
+            }
             .accessibilityLabel(Text(isExpanded ? "Collapse nutrition" : "Expand nutrition"))
 
             if isExpanded {

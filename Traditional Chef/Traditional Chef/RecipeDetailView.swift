@@ -334,8 +334,15 @@ struct RecipeDetailView: View {
         return VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Button {
-                    withAnimation(.easeInOut) {
-                        isInfoExpanded.toggle()
+                    if isInfoExpanded {
+                        cardSpeaker.toggleRead(
+                            text: AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale),
+                            languageCode: locale.identifier
+                        )
+                    } else {
+                        withAnimation(.easeInOut) {
+                            isInfoExpanded = true
+                        }
                     }
                 } label: {
                     Image(systemName: "info.circle")
@@ -348,8 +355,14 @@ struct RecipeDetailView: View {
                         .foregroundStyle(AppTheme.textPrimary)
                 }
                 .buttonStyle(.plain)
-
-                Spacer()
+                .accessibilityLabel(
+                    Text(
+                        AppLanguage.string(
+                            isInfoExpanded ? "recipe.card.readAloud" : "recipe.detail.info.expand",
+                            locale: locale
+                        )
+                    )
+                )
 
                 if isInfoExpanded {
                     Button {
@@ -358,7 +371,7 @@ struct RecipeDetailView: View {
                             languageCode: locale.identifier
                         )
                     } label: {
-                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        Image(systemName: cardSpeaker.isSpeaking ? "speaker.wave.2.fill" : "speaker.fill")
                             .font(.subheadline)
                             .foregroundStyle(AppTheme.primaryBlue)
                             .frame(width: 24, height: 24, alignment: .center)
@@ -369,9 +382,26 @@ struct RecipeDetailView: View {
                     )
                 }
 
-                Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                Spacer()
+
+                Button {
+                    withAnimation(.easeInOut) {
+                        isInfoExpanded.toggle()
+                    }
+                } label: {
+                    Text(AppLanguage.string(String.LocalizationValue(recipe.infoSummaryKey), locale: locale))
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    Text(
+                        AppLanguage.string(
+                            isInfoExpanded ? "recipe.detail.info.collapse" : "recipe.detail.info.expand",
+                            locale: locale
+                        )
+                    )
+                )
 
                 Button {
                     withAnimation(.easeInOut) {
@@ -386,6 +416,12 @@ struct RecipeDetailView: View {
                 .buttonStyle(.plain)
             }
             .contentShape(Rectangle())
+            .onTapGesture {
+                guard !isInfoExpanded else { return }
+                withAnimation(.easeInOut) {
+                    isInfoExpanded = true
+                }
+            }
             .accessibilityLabel(
                 Text(
                     AppLanguage.string(
@@ -1024,6 +1060,7 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
 
     private let synthesizer = AVSpeechSynthesizer()
     private let audioSession = AVAudioSession.sharedInstance()
+    private let speakerID = UUID().uuidString
     private var queuedUtteranceCount = 0
     private lazy var availableVoices: [AVSpeechSynthesisVoice] = AVSpeechSynthesisVoice.speechVoices()
     private lazy var preferredVoicesByLanguage: [String: AVSpeechSynthesisVoice] = buildPreferredVoices()
@@ -1033,12 +1070,23 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         synthesizer.delegate = self
         configureAudioSessionForReadAloud()
         warmUpVoiceSelection()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleExternalReadAloudStart(_:)),
+            name: .readAloudDidStart,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     func speakSteps(_ steps: [SpokenStep], recipeName: String, locale: Locale, languageCode: String) {
         stop()
         isSpeakingAllSteps = true
         activateAudioSession()
+        notifyReadAloudStart()
 
         let intro = makeUtterance(
             text: introText(recipeName: recipeName, locale: locale),
@@ -1078,6 +1126,7 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         stop()
         isSpeakingAllSteps = false
         activateAudioSession()
+        notifyReadAloudStart()
         let utterance = makeUtterance(text: text, languageCode: languageCode)
         synthesizer.speak(utterance)
     }
@@ -1189,5 +1238,15 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
             .split(whereSeparator: { $0 == "_" || $0 == "-" })
             .first
             .map(String.init) ?? languageCode
+    }
+
+    private func notifyReadAloudStart() {
+        NotificationCenter.default.post(name: .readAloudDidStart, object: speakerID)
+    }
+
+    @objc
+    private func handleExternalReadAloudStart(_ notification: Notification) {
+        guard let sourceSpeakerID = notification.object as? String, sourceSpeakerID != speakerID else { return }
+        stop()
     }
 }
