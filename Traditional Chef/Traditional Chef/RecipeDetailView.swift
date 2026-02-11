@@ -444,7 +444,7 @@ struct RecipeDetailView: View {
                 Button {
                     readAllSteps()
                 } label: {
-                    Image(systemName: stepSpeaker.isSpeakingAllSteps ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    Image(systemName: stepSpeaker.isSpeakingAllSteps ? "speaker.wave.2.fill" : "speaker.fill")
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.primaryBlue)
                 }
