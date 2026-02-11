@@ -521,7 +521,7 @@ struct RecipeDetailView: View {
 
     private func readStep(_ step: RecipeStep) {
         let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-        stepSpeaker.speakStep(number: step.stepNumber, text: body, languageCode: locale.identifier)
+        stepSpeaker.speakStep(text: body, languageCode: locale.identifier)
     }
 
     private func stepsHeaderText(summary: String) -> String {
@@ -754,31 +754,27 @@ private struct StepRowView: View {
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
                 Spacer(minLength: 0)
                 if step.timerSeconds != nil {
-                    TimerBadgeView(
-                        displayText: timerDisplayText,
-                        isRunning: isRunning,
-                        isOverdue: secondsLeft < 0
-                    ) {}
-                    .hidden()
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
+                    VStack(spacing: 4) {
+                        TimerBadgeView(
+                            displayText: timerDisplayText,
+                            isRunning: isRunning,
+                            isOverdue: secondsLeft < 0
+                        ) {}
+                        .hidden()
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+
+                        if isSelected {
+                            readAloudButton
+                        }
+                    }
                 }
             }
 
-            if isSelected {
+            if isSelected, step.timerSeconds == nil {
                 HStack {
                     Spacer()
-                    Button {
-                        onReadAloudTap()
-                    } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(
-                        Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
-                    )
+                    readAloudButton
                 }
             }
         }
@@ -951,6 +947,20 @@ private struct StepRowView: View {
             sessionInitialSeconds: sessionInitialSeconds
         ))
     }
+
+    private var readAloudButton: some View {
+        Button {
+            onReadAloudTap()
+        } label: {
+            Image(systemName: "speaker.wave.2.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(
+            Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
+        )
+    }
 }
 
 private struct SpokenStep {
@@ -1013,7 +1023,7 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         if isDutch(locale: locale) {
             return "Dit zijn de stappen voor: \(recipeName)"
         }
-        return "Theses are the steps for: \(recipeName)"
+        return "These are the steps for: \(recipeName)"
     }
 
     private func outroText(locale: Locale) -> String {
@@ -1023,10 +1033,10 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         return "those were all the steps, enjoy your meal"
     }
 
-    func speakStep(number: Int, text: String, languageCode: String) {
+    func speakStep(text: String, languageCode: String) {
         stop()
         isSpeakingAllSteps = false
-        let utterance = AVSpeechUtterance(string: "\(number). \(text)")
+        let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
         utterance.rate = 0.48
         synthesizer.speak(utterance)
