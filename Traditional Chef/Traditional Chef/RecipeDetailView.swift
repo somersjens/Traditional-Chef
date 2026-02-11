@@ -510,7 +510,13 @@ struct RecipeDetailView: View {
             let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
             return SpokenStep(number: step.stepNumber, text: body)
         }
-        stepSpeaker.speakSteps(spokenSteps, languageCode: locale.identifier)
+        let recipeName = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+        stepSpeaker.speakSteps(
+            spokenSteps,
+            recipeName: recipeName,
+            locale: locale,
+            languageCode: locale.identifier
+        )
     }
 
     private func readStep(_ step: RecipeStep) {
@@ -963,9 +969,16 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         synthesizer.delegate = self
     }
 
-    func speakSteps(_ steps: [SpokenStep], languageCode: String) {
+    func speakSteps(_ steps: [SpokenStep], recipeName: String, locale: Locale, languageCode: String) {
         stop()
         isSpeakingAllSteps = true
+
+        let intro = AVSpeechUtterance(string: introText(recipeName: recipeName, locale: locale))
+        intro.voice = AVSpeechSynthesisVoice(language: languageCode)
+        intro.rate = 0.48
+        intro.postUtteranceDelay = 0.2
+        queuedUtteranceCount += 1
+        synthesizer.speak(intro)
 
         for step in steps {
             let utterance = AVSpeechUtterance(string: "\(step.number). \(step.text)")
@@ -975,6 +988,39 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
             queuedUtteranceCount += 1
             synthesizer.speak(utterance)
         }
+
+        let outro = AVSpeechUtterance(string: outroText(locale: locale))
+        outro.voice = AVSpeechSynthesisVoice(language: languageCode)
+        outro.rate = 0.48
+        outro.preUtteranceDelay = 0.5
+        queuedUtteranceCount += 1
+        synthesizer.speak(outro)
+    }
+
+
+    private func isDutch(locale: Locale) -> Bool {
+        if #available(iOS 16, *) {
+            return locale.language.languageCode?.identifier == "nl"
+        }
+        let languageCode = locale.identifier
+            .split(whereSeparator: { $0 == "_" || $0 == "-" })
+            .first
+            .map(String.init)
+        return languageCode == "nl"
+    }
+
+    private func introText(recipeName: String, locale: Locale) -> String {
+        if isDutch(locale: locale) {
+            return "Dit zijn de stappen voor: \(recipeName)"
+        }
+        return "Theses are the steps for: \(recipeName)"
+    }
+
+    private func outroText(locale: Locale) -> String {
+        if isDutch(locale: locale) {
+            return "Dat waren alle stappen, eetsmakelijk"
+        }
+        return "those were all the steps, enjoy your meal"
     }
 
     func speakStep(number: Int, text: String, languageCode: String) {
