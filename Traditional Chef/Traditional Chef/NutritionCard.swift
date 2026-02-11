@@ -278,19 +278,13 @@ struct NutritionCard: View {
         )
         let nutrientLines: [String] = nutritionReadAloudItems.reduce(into: []) { partialResult, item in
             guard let value = item.value else { return }
-            partialResult.append("\(formattedNumber(value)) \(item.unit) \(item.label)")
+            partialResult.append("\(item.label): \(formattedNumber(value)) \(item.unit)")
         }
         return ([intro] + nutrientLines).joined(separator: ". ")
     }
 
     private var nutritionReadAloudItems: [SpokenNutrient] {
-        let energyKcalValue: Double? = {
-            guard let energyKcal = recipe.nutrition?.energyKcal else { return nil }
-            return Double(energyKcal)
-        }()
-
         return [
-            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.energy", locale: locale), value: energyKcalValue, unit: "kcal"),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.protein", locale: locale), value: recipe.nutrition?.proteinGrams, unit: readAloudUnit("g")),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.carbs", locale: locale), value: recipe.nutrition?.carbohydratesGrams, unit: readAloudUnit("g")),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sugars", locale: locale), value: recipe.nutrition?.sugarsGrams, unit: readAloudUnit("g")),
