@@ -112,7 +112,7 @@ struct RecipeDetailView: View {
                     .foregroundStyle(iconColor)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("Back"))
+            .accessibilityLabel(Text(AppLanguage.string("recipe.detail.back", locale: locale)))
 
             Spacer()
 
@@ -125,7 +125,7 @@ struct RecipeDetailView: View {
                     .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : iconColor)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("Favorite"))
+            .accessibilityLabel(Text(AppLanguage.string("recipe.detail.favorite", locale: locale)))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -140,7 +140,7 @@ struct RecipeDetailView: View {
     }
 
     private var shareRecipeMessage: String {
-        "Try this recipe in Famous Chef."
+        AppLanguage.string("recipe.detail.shareText", locale: locale)
     }
 
     private var appStoreID: String {
@@ -234,7 +234,7 @@ struct RecipeDetailView: View {
                 heroPlaceholder
             }
         }
-        .accessibilityLabel(Text("Recipe image"))
+        .accessibilityLabel(Text(AppLanguage.string("recipe.detail.image", locale: locale)))
         .task {
             RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
             await loadHeroImage(targetPixelSize: targetPixelSize)
@@ -360,7 +360,14 @@ struct RecipeDetailView: View {
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
-            .accessibilityLabel(Text(isInfoExpanded ? "Collapse info" : "Expand info"))
+            .accessibilityLabel(
+                Text(
+                    AppLanguage.string(
+                        isInfoExpanded ? "recipe.detail.info.collapse" : "recipe.detail.info.expand",
+                        locale: locale
+                    )
+                )
+            )
 
             if isInfoExpanded {
                 Divider()
@@ -424,7 +431,14 @@ struct RecipeDetailView: View {
                     .foregroundStyle(AppTheme.textPrimary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
+            .accessibilityLabel(
+                Text(
+                    AppLanguage.string(
+                        isStepsExpanded ? "recipe.detail.steps.collapse" : "recipe.detail.steps.expand",
+                        locale: locale
+                    )
+                )
+            )
 
             if isStepsExpanded {
                 Button {
@@ -458,7 +472,14 @@ struct RecipeDetailView: View {
                     .frame(width: 24, height: 24, alignment: .center)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(isStepsExpanded ? "Collapse steps" : "Expand steps"))
+            .accessibilityLabel(
+                Text(
+                    AppLanguage.string(
+                        isStepsExpanded ? "recipe.detail.steps.collapse" : "recipe.detail.steps.expand",
+                        locale: locale
+                    )
+                )
+            )
         }
     }
 
@@ -1014,29 +1035,13 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
     }
 
 
-    private func isDutch(locale: Locale) -> Bool {
-        if #available(iOS 16, *) {
-            return locale.language.languageCode?.identifier == "nl"
-        }
-        let languageCode = locale.identifier
-            .split(whereSeparator: { $0 == "_" || $0 == "-" })
-            .first
-            .map(String.init)
-        return languageCode == "nl"
-    }
-
     private func introText(recipeName: String, locale: Locale) -> String {
-        if isDutch(locale: locale) {
-            return "Dit zijn de stappen voor: \(recipeName)"
-        }
-        return "These are the steps for: \(recipeName)"
+        let format = AppLanguage.string("recipe.steps.readAloud.intro", locale: locale)
+        return String(format: format, locale: locale, recipeName)
     }
 
     private func outroText(locale: Locale) -> String {
-        if isDutch(locale: locale) {
-            return "Dat waren alle stappen, eetsmakelijk"
-        }
-        return "those were all the steps, enjoy your meal"
+        AppLanguage.string("recipe.steps.readAloud.outro", locale: locale)
     }
 
     func speakStep(text: String, languageCode: String) {

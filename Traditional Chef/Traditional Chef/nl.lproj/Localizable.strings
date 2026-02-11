@@ -136,6 +136,16 @@
 "recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredienten";
 "recipe.steps.summary" = "%d minuten";
+"recipe.detail.back" = "Terug";
+"recipe.detail.favorite" = "Favoriet";
+"recipe.detail.shareText" = "Probeer dit recept in Famous Chef.";
+"recipe.detail.image" = "Receptafbeelding";
+"recipe.detail.info.expand" = "Info uitklappen";
+"recipe.detail.info.collapse" = "Info inklappen";
+"recipe.detail.steps.expand" = "Stappen uitklappen";
+"recipe.detail.steps.collapse" = "Stappen inklappen";
+"recipe.steps.readAloud.intro" = "Dit zijn de stappen voor: %@";
+"recipe.steps.readAloud.outro" = "Dat waren alle stappen, eet smakelijk.";
 
 // === AUTO-GENERATED RECIPES BELOW ===
 "ingredient.bay_leaf" = "Laurierblad";

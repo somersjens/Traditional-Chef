@@ -136,6 +136,16 @@
 "recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredients";
 "recipe.steps.summary" = "%d minutes";
+"recipe.detail.back" = "Back";
+"recipe.detail.favorite" = "Favorite";
+"recipe.detail.shareText" = "Try this recipe in Famous Chef.";
+"recipe.detail.image" = "Recipe image";
+"recipe.detail.info.expand" = "Expand info";
+"recipe.detail.info.collapse" = "Collapse info";
+"recipe.detail.steps.expand" = "Expand steps";
+"recipe.detail.steps.collapse" = "Collapse steps";
+"recipe.steps.readAloud.intro" = "These are the steps for: %@";
+"recipe.steps.readAloud.outro" = "Those were all the steps, enjoy your meal.";
 
 // === AUTO-GENERATED RECIPES BELOW ===
 "ingredient.bay_leaf" = "Bay leaf";
