@@ -18,7 +18,7 @@ struct TimerBadgeView: View {
                     .monospacedDigit()
             }
             .font(.caption2.weight(.semibold))
-            .foregroundStyle(isOverdue ? AppTheme.timerOverdue : AppTheme.primaryBlue)
+            .foregroundStyle(badgeForeground)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(badgeBackground)
@@ -27,8 +27,19 @@ struct TimerBadgeView: View {
         .buttonStyle(.plain)
     }
 
+    private var badgeForeground: Color {
+        if isOverdue {
+            return AppTheme.timerOverdue
+        }
+
+        return isRunning ? AppTheme.timerActiveGreen : AppTheme.primaryBlue
+    }
+
     private var badgeBackground: Color {
-        let base = isOverdue ? AppTheme.timerOverdue : AppTheme.primaryBlue
-        return base.opacity(isRunning ? 0.16 : 0.08)
+        if isOverdue {
+            return AppTheme.timerOverdue.opacity(0.12)
+        }
+
+        return isRunning ? AppTheme.timerActiveGreenBackground : AppTheme.primaryBlue.opacity(0.08)
     }
 }

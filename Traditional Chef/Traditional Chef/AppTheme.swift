@@ -17,4 +17,6 @@ enum AppTheme {
     static let searchHighlight = Color(hex: "1C263C")
     static let hairline = Color(hex: "1C263C")
     static let timerOverdue = Color(hex: "C5454F")
+    static let timerActiveGreen = Color(hex: "1F7A3A")
+    static let timerActiveGreenBackground = Color(hex: "DDF5E4")
 }
