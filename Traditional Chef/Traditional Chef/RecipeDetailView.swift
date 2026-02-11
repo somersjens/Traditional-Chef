@@ -732,7 +732,7 @@ private struct StepRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            HStack(alignment: .firstTextBaseline, spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
                 Text("\(step.stepNumber). ")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
@@ -742,9 +742,7 @@ private struct StepRowView: View {
 
                 if isSelected {
                     readAloudIcon
-                        .alignmentGuide(.firstTextBaseline) { dimensions in
-                            dimensions[VerticalAlignment.center]
-                        }
+                        .padding(.leading, 6)
                 }
 
                 Spacer()
@@ -836,19 +834,22 @@ private struct StepRowView: View {
 
     private var timerDisplayText: String {
         if !isRunning, secondsLeft == sessionInitialSeconds {
-            let m = sessionInitialSeconds / 60
-            return "\(m)m"
+            return formattedTimerText(sessionInitialSeconds)
         }
         return timeText
     }
 
     private var timeText: String {
-        if secondsLeft >= 0 {
-            let m = secondsLeft / 60
-            let s = secondsLeft % 60
+        formattedTimerText(secondsLeft)
+    }
+
+    private func formattedTimerText(_ totalSeconds: Int) -> String {
+        if totalSeconds >= 0 {
+            let m = totalSeconds / 60
+            let s = totalSeconds % 60
             return String(format: "%d:%02d", m, s)
         } else {
-            let over = abs(secondsLeft)
+            let over = abs(totalSeconds)
             let m = over / 60
             let s = over % 60
             return String(format: "-%d:%02d", m, s)
