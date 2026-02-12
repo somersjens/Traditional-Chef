@@ -10,6 +10,7 @@ import SwiftUI
 @MainActor
 final class RecipeListViewModel: ObservableObject {
     @Published var searchText: String = ""
+    @Published private(set) var debouncedSearchText: String = ""
 
     @Published var selectedCategories: Set<RecipeCategory> = []
     @Published var selectedCountryCode: String? = nil // nil = all countries
@@ -22,6 +23,17 @@ final class RecipeListViewModel: ObservableObject {
 
     @Published var sortKey: SortKey = .country
     @Published var ascending: Bool = true
+
+    private var cancellables: Set<AnyCancellable> = []
+
+    init() {
+        $searchText
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .removeDuplicates()
+            .debounce(for: .milliseconds(180), scheduler: DispatchQueue.main)
+            .assign(to: \.debouncedSearchText, on: self)
+            .store(in: &cancellables)
+    }
 
     func toggleCategory(_ cat: RecipeCategory) {
         if selectedCategories.contains(cat) {

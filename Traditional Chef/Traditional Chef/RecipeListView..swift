@@ -24,6 +24,8 @@ struct RecipeListView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
+        let visibleRecipes = filteredAndSortedRecipes
+
         NavigationStack {
             ZStack {
                 AppTheme.pageBackground.ignoresSafeArea()
@@ -49,12 +51,12 @@ struct RecipeListView: View {
 
                     ScrollView {
                         LazyVStack(spacing: 10) {
-                            if filteredAndSortedRecipes.isEmpty {
+                            if visibleRecipes.isEmpty {
                                 emptyState
                                     .frame(maxWidth: contentMaxWidth, alignment: .center)
                                     .frame(maxWidth: .infinity, alignment: .center)
                             } else {
-                                ForEach(filteredAndSortedRecipes) { recipe in
+                                ForEach(visibleRecipes) { recipe in
                                     NavigationLink(value: recipe) {
                                         RecipeRowView(
                                             recipe: recipe,
@@ -62,7 +64,7 @@ struct RecipeListView: View {
                                             metricColumnWidth: rowMetricColumnWidth,
                                             isFavorite: recipeStore.isFavorite(recipe),
                                             onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
-                                            searchText: vm.searchText
+                                            searchText: vm.debouncedSearchText
                                         )
                                     }
                                     .buttonStyle(.plain)
@@ -76,7 +78,6 @@ struct RecipeListView: View {
                         .padding(.top, 6)
                     }
                 }
-                .animation(.easeInOut(duration: 0.25), value: appLanguage)
             }
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
@@ -508,10 +509,10 @@ struct RecipeListView: View {
         var list = recipeStore.recipes
         let localizedNames = recipeStore.localizedNames(for: locale)
         let normalizedNames = recipeStore.normalizedNames(for: locale)
+        let query = vm.debouncedSearchText.normalizedSearchKey(locale: locale)
 
         // Search: wildcard both sides + ignore spaces
-        if !vm.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let query = vm.searchText.normalizedSearchKey(locale: locale)
+        if !query.isEmpty {
             list = list.filter { recipe in
                 let name = normalizedNames[recipe.id]
                     ?? AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)

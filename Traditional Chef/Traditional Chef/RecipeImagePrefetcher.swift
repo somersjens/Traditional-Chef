@@ -5,6 +5,21 @@
 
 import Foundation
 
+actor RecipeImagePrefetchTracker {
+    static let shared = RecipeImagePrefetchTracker()
+
+    private var inFlightURLs: Set<URL> = []
+
+    func begin(_ url: URL) -> Bool {
+        let inserted = inFlightURLs.insert(url).inserted
+        return inserted
+    }
+
+    func end(_ url: URL) {
+        inFlightURLs.remove(url)
+    }
+}
+
 enum RecipeImagePrefetcher {
     static func prefetch(urlString: String?) {
         guard let urlString,
@@ -25,8 +40,17 @@ enum RecipeImagePrefetcher {
             return
         }
 
-        let task = URLSession.shared.dataTask(with: request) { _, _, _ in }
-        task.priority = URLSessionTask.highPriority
-        task.resume()
+        Task {
+            let shouldStart = await RecipeImagePrefetchTracker.shared.begin(url)
+            guard shouldStart else { return }
+
+            let task = URLSession.shared.dataTask(with: request) { _, _, _ in
+                Task {
+                    await RecipeImagePrefetchTracker.shared.end(url)
+                }
+            }
+            task.priority = URLSessionTask.lowPriority
+            task.resume()
+        }
     }
 }
