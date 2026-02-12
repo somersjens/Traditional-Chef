@@ -131,9 +131,8 @@ struct RecipeListView: View {
     }
 
     private var listSideInset: CGFloat {
-        horizontalSizeClass == .regular ? 24 : 20
+        16
     }
-
     private var headerRow: some View {
         HStack(spacing: 6) {
             Button {
