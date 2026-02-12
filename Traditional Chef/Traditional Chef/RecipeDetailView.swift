@@ -19,7 +19,7 @@ struct RecipeDetailView: View {
     @AppStorage("defaultServings") private var defaultServings: Int = 4
     private var locale: Locale { Locale(identifier: appLanguage) }
     @State private var isInfoExpanded: Bool = true
-    @State private var isStepsExpanded: Bool = true
+    @State private var isStepsExpanded: Bool = false
     @State private var servings: Int = 4
     @State private var stepTimerSnapshots: [String: StepTimerSnapshot] = [:]
     @State private var heroUIImage: UIImage?
@@ -481,6 +481,11 @@ struct RecipeDetailView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .onChange(of: isInfoExpanded) { _, expanded in
+            if !expanded {
+                cardSpeaker.stop()
+            }
+        }
     }
 
     private var stepsCard: some View {
@@ -503,6 +508,12 @@ struct RecipeDetailView: View {
         .onDisappear {
             stepSpeaker.stop()
             cardSpeaker.stop()
+        }
+        .onChange(of: isStepsExpanded) { _, expanded in
+            if !expanded {
+                stepSpeaker.stop()
+                selectedStepID = nil
+            }
         }
     }
 

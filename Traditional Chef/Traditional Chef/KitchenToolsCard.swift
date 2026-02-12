@@ -9,7 +9,7 @@ struct KitchenToolsCard: View {
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
-    @State private var isExpanded: Bool = true
+    @State private var isExpanded: Bool = false
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
 
     var body: some View {
@@ -108,6 +108,11 @@ struct KitchenToolsCard: View {
         )
         .onDisappear {
             cardSpeaker.stop()
+        }
+        .onChange(of: isExpanded) { _, expanded in
+            if !expanded {
+                cardSpeaker.stop()
+            }
         }
     }
 

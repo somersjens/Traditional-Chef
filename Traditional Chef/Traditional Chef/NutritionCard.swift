@@ -13,7 +13,7 @@ struct NutritionCard: View {
     }
 
     let recipe: Recipe
-    @State private var isExpanded: Bool = true
+    @State private var isExpanded: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     private var locale: Locale { Locale(identifier: appLanguage) }
     private let baseServings = 4
@@ -174,6 +174,11 @@ struct NutritionCard: View {
         )
         .onDisappear {
             cardSpeaker.stop()
+        }
+        .onChange(of: isExpanded) { _, expanded in
+            if !expanded {
+                cardSpeaker.stop()
+            }
         }
     }
 

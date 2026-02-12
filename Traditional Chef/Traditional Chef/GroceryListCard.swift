@@ -27,7 +27,7 @@ struct GroceryListCard: View {
     @State private var checked: Set<String> = []
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
-    @State private var isExpanded: Bool = true
+    @State private var isExpanded: Bool = false
     @State private var groupByDishPart: Bool = false
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let minServings = 1
@@ -225,6 +225,11 @@ struct GroceryListCard: View {
         }
         .onDisappear {
             cardSpeaker.stop()
+        }
+        .onChange(of: isExpanded) { _, expanded in
+            if !expanded {
+                cardSpeaker.stop()
+            }
         }
     }
 
