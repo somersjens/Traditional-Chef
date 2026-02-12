@@ -25,6 +25,7 @@ struct RecipeDetailView: View {
     @State private var heroUIImage: UIImage?
     @State private var heroImageFailed = false
     @State private var heroTargetPixelSize: CGFloat = 0
+    @State private var hasHeroImageEntered = false
     @State private var isTopBarHidden = false
     @State private var scrollOffset: CGFloat = 0
     @State private var isHeroImageDark: Bool = false
@@ -221,20 +222,25 @@ struct RecipeDetailView: View {
 
     private func heroImage(targetPixelSize: CGFloat, isLandscape: Bool) -> some View {
         ZStack {
+            heroPlaceholder
+
             if let image = heroUIImage {
-                if isLandscape {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
+                Group {
+                    if isLandscape {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                    }
                 }
-            } else {
-                heroPlaceholder
+                .offset(y: hasHeroImageEntered ? 0 : -420)
+                .animation(.easeOut(duration: 0.5), value: hasHeroImageEntered)
             }
         }
+        .clipped()
         .accessibilityLabel(Text(AppLanguage.string("recipe.detail.image", locale: locale)))
         .task(priority: .userInitiated) {
             RecipeImagePrefetcher.prefetch(
@@ -246,12 +252,7 @@ struct RecipeDetailView: View {
     }
 
     private var heroPlaceholder: some View {
-        ZStack {
-            AppTheme.secondaryOffWhite
-            Image(systemName: "photo")
-                .font(.system(size: 42, weight: .semibold))
-                .foregroundStyle(AppTheme.primaryBlue.opacity(0.35))
-        }
+        AppTheme.secondaryOffWhite
     }
 
     private var heroImageURL: URL? {
@@ -277,6 +278,9 @@ struct RecipeDetailView: View {
         }
 
         guard let url = imageURL else {
+            await MainActor.run {
+                hasHeroImageEntered = true
+            }
             return
         }
 
@@ -291,6 +295,7 @@ struct RecipeDetailView: View {
             guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
                 await MainActor.run {
                     heroImageFailed = true
+                    hasHeroImageEntered = true
                 }
                 return
             }
@@ -305,6 +310,7 @@ struct RecipeDetailView: View {
             guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
                 await MainActor.run {
                     heroImageFailed = true
+                    hasHeroImageEntered = true
                 }
                 return
             }
@@ -313,13 +319,17 @@ struct RecipeDetailView: View {
             let imageIsDark = isImageDark(cgImage)
 
             await MainActor.run {
-                heroUIImage = image
+                withAnimation(.easeOut(duration: 0.5)) {
+                    heroUIImage = image
+                    hasHeroImageEntered = true
+                }
                 heroTargetPixelSize = targetPixelSize
                 isHeroImageDark = imageIsDark
             }
         } catch {
             await MainActor.run {
                 heroImageFailed = true
+                hasHeroImageEntered = true
             }
         }
     }
