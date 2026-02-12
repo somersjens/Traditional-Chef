@@ -42,12 +42,21 @@ final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesize
         guard !trimmed.isEmpty else { return }
         activateAudioSession()
         notifyReadAloudStart()
-        let utterance = AVSpeechUtterance(string: trimmed)
-        utterance.voice = preferredVoice(for: languageCode)
-        utterance.rate = 0.46
-        utterance.pitchMultiplier = 0.95
+
+        let voice = preferredVoice(for: languageCode)
+        let segments = speechSegments(from: trimmed)
         isSpeaking = true
-        synthesizer.speak(utterance)
+
+        for (index, segment) in segments.enumerated() {
+            let utterance = AVSpeechUtterance(string: segment)
+            utterance.voice = voice
+            utterance.rate = 0.46
+            utterance.pitchMultiplier = 0.95
+            if index == 0, segments.count > 1 {
+                utterance.postUtteranceDelay = 0.22
+            }
+            synthesizer.speak(utterance)
+        }
     }
 
     func stop() {
@@ -57,11 +66,24 @@ final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesize
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        isSpeaking = false
+        isSpeaking = synthesizer.isSpeaking
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        isSpeaking = false
+        isSpeaking = synthesizer.isSpeaking
+    }
+
+
+    private func speechSegments(from text: String) -> [String] {
+        guard let firstSentenceBreak = text.range(of: ". ") else {
+            return [text]
+        }
+
+        let intro = String(text[..<firstSentenceBreak.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+        let remainder = String(text[firstSentenceBreak.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !intro.isEmpty, !remainder.isEmpty else { return [text] }
+        return [intro, remainder]
     }
 
     private func configureAudioSession() {

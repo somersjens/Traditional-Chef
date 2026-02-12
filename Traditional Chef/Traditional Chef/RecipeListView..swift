@@ -19,6 +19,7 @@ struct RecipeListView: View {
 
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
+    @State private var settingsCardMeasuredHeight: CGFloat = 0
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -30,11 +31,7 @@ struct RecipeListView: View {
                 VStack(spacing: 10) {
                     topBar
 
-                    if showSettings {
-                        settingsCard
-                            .transition(.opacity)
-                            .padding(.top, 6)
-                    }
+                    settingsCardContainer
 
                     searchBar
 
@@ -269,6 +266,27 @@ struct RecipeListView: View {
         .padding(.horizontal, 16)
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private var settingsCardContainer: some View {
+        ZStack(alignment: .top) {
+            settingsCard
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear
+                            .preference(key: SettingsCardHeightPreferenceKey.self, value: proxy.size.height)
+                    }
+                )
+        }
+        .frame(height: showSettings ? settingsCardMeasuredHeight : 0, alignment: .top)
+        .clipped()
+        .opacity(showSettings ? 1 : 0)
+        .padding(.top, showSettings ? 6 : 0)
+        .onPreferenceChange(SettingsCardHeightPreferenceKey.self) { height in
+            if height > 0 {
+                settingsCardMeasuredHeight = height
+            }
+        }
     }
 
     private var settingsButton: some View {
@@ -647,5 +665,13 @@ private struct SortHeaderButton<Label: View>: View {
             Image(systemName: isAscending ? "arrow.up" : "arrow.down")
                 .font(.caption2)
         }
+    }
+}
+
+private struct SettingsCardHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }

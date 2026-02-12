@@ -279,9 +279,10 @@ struct NutritionCard: View {
         )
         let nutrientLines: [String] = nutritionReadAloudItems.reduce(into: []) { partialResult, item in
             guard let value = item.value else { return }
-            partialResult.append("\(item.label): \(formattedNumber(value)) \(item.unit)")
+            partialResult.append("\(item.label) \(formattedNumber(value)) \(item.unit)")
         }
-        return ([intro] + nutrientLines).joined(separator: ". ")
+        guard !nutrientLines.isEmpty else { return intro }
+        return "\(intro). \(nutrientLines.joined(separator: ", "))"
     }
 
     private var nutritionReadAloudItems: [SpokenNutrient] {
