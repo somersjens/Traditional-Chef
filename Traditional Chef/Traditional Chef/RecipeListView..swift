@@ -67,6 +67,12 @@ struct RecipeListView: View {
                                             searchText: vm.debouncedSearchText
                                         )
                                     }
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        RecipeImagePrefetcher.prefetch(
+                                            urlString: recipe.imageURL,
+                                            priority: URLSessionTask.highPriority
+                                        )
+                                    })
                                     .buttonStyle(.plain)
                                 }
                                 .padding(.horizontal, listSideInset)

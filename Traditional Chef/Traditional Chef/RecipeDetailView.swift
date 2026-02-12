@@ -236,8 +236,11 @@ struct RecipeDetailView: View {
             }
         }
         .accessibilityLabel(Text(AppLanguage.string("recipe.detail.image", locale: locale)))
-        .task {
-            RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
+        .task(priority: .userInitiated) {
+            RecipeImagePrefetcher.prefetch(
+                urlString: recipe.imageURL,
+                priority: URLSessionTask.highPriority
+            )
             await loadHeroImage(targetPixelSize: targetPixelSize)
         }
     }
@@ -260,14 +263,20 @@ struct RecipeDetailView: View {
         return URL(string: imageURL)
     }
 
-    @MainActor
     private func loadHeroImage(targetPixelSize: CGFloat) async {
-        guard heroUIImage == nil, !heroImageFailed, let url = heroImageURL else {
-            return
+        let targetPixelSize = max(targetPixelSize, 1)
+
+        let imageURL: URL? = await MainActor.run {
+            guard heroUIImage == nil,
+                  !heroImageFailed,
+                  heroTargetPixelSize != targetPixelSize
+            else {
+                return nil
+            }
+            return heroImageURL
         }
 
-        let targetPixelSize = max(targetPixelSize, 1)
-        if heroTargetPixelSize == targetPixelSize {
+        guard let url = imageURL else {
             return
         }
 
@@ -280,7 +289,9 @@ struct RecipeDetailView: View {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
-                heroImageFailed = true
+                await MainActor.run {
+                    heroImageFailed = true
+                }
                 return
             }
 
@@ -291,15 +302,25 @@ struct RecipeDetailView: View {
                 kCGImageSourceThumbnailMaxPixelSize: targetPixelSize
             ]
 
-            if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) {
-                heroUIImage = UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
+            guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
+                await MainActor.run {
+                    heroImageFailed = true
+                }
+                return
+            }
+
+            let image = UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
+            let imageIsDark = isImageDark(cgImage)
+
+            await MainActor.run {
+                heroUIImage = image
                 heroTargetPixelSize = targetPixelSize
-                isHeroImageDark = isImageDark(cgImage)
-            } else {
-                heroImageFailed = true
+                isHeroImageDark = imageIsDark
             }
         } catch {
-            heroImageFailed = true
+            await MainActor.run {
+                heroImageFailed = true
+            }
         }
     }
 

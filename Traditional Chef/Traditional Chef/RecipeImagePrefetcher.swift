@@ -21,7 +21,7 @@ actor RecipeImagePrefetchTracker {
 }
 
 enum RecipeImagePrefetcher {
-    static func prefetch(urlString: String?) {
+    static func prefetch(urlString: String?, priority: Float = URLSessionTask.lowPriority) {
         guard let urlString,
               let url = URL(string: urlString),
               url.scheme?.hasPrefix("http") == true
@@ -49,7 +49,7 @@ enum RecipeImagePrefetcher {
                     await RecipeImagePrefetchTracker.shared.end(url)
                 }
             }
-            task.priority = URLSessionTask.lowPriority
+            task.priority = max(URLSessionTask.lowPriority, min(priority, URLSessionTask.highPriority))
             task.resume()
         }
     }
