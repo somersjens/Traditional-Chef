@@ -297,7 +297,7 @@ struct RecipeListView: View {
             HStack {
                 Text(AppLanguage.string("settings.title", locale: locale))
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryBlue)
+                    .foregroundStyle(AppTheme.pageBackground)
                 Spacer()
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -306,7 +306,7 @@ struct RecipeListView: View {
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+                        .foregroundStyle(AppTheme.pageBackground)
                 }
                 .buttonStyle(.plain)
             }
