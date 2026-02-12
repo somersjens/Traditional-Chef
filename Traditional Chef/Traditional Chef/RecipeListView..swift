@@ -70,7 +70,7 @@ struct RecipeListView: View {
                                     }
                                     .buttonStyle(.plain)
                                 }
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, listSideInset)
                                 .padding(.bottom, 16)
                                 .frame(maxWidth: contentMaxWidth, alignment: .leading)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -130,6 +130,10 @@ struct RecipeListView: View {
         return horizontalSizeClass == .regular ? 170 : 140
     }
 
+    private var listSideInset: CGFloat {
+        horizontalSizeClass == .regular ? 24 : 20
+    }
+
     private var headerRow: some View {
         HStack(spacing: 6) {
             Button {
@@ -185,7 +189,8 @@ struct RecipeListView: View {
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 4)
+        .padding(.horizontal, listSideInset)
         .padding(.top, 4)
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
