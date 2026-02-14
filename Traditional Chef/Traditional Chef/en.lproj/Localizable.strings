@@ -1,26 +1,17 @@
 "ok" = "OK";
 "done" = "Done";
-"language.selector" = "Language";
 "language.english" = "English";
 "language.dutch" = "Dutch";
 
 "welcome.title" = "Welcome to Famous Chef!";
-"welcome.body" = "Are you ready and for world class recepi's in your pocket with all the conveniences that a fixed grocery list or recepi book could never bring. Get yourself comfortable with all the controls, and start cooking today. App doesn't collect any data nor, are their any premium paid features. When you get a lot of compliments consider leaving a tip!";
 "welcome.greeting" = "Hey, chef!";
 "welcome.startButton" = "Make something very delicious";
 "welcome.sponsorMessage" = "100% free thanks to sharp kitchen \nknifes of our sponsor: Hakketjak";
-"welcome.alertTitle" = "Tip";
 
-"tip.notConfigured" = "Tip products aren’t configured yet in App Store Connect.";
-"tip.thanks" = "Thank you for the tip! ❤️";
-"tip.cancelled" = "No worries — tip cancelled.";
 
-"recipes.title" = "Recipes";
 "recipes.search" = "Search recipes";
 "recipes.search.clear" = "Clear search";
 "recipes.allCountries" = "All countries included";
-"recipes.allCountriesShort" = "All 🌍";
-"recipes.countryOnly" = "Country filter";
 "recipes.pickContinent" = "Pick a continent";
 "recipes.pickCountry" = "Pick a country";
 "recipes.countryFilterTitle" = "Countries";
@@ -46,7 +37,6 @@
 "recipes.column.ing" = "#";
 
 "recipes.noResults" = "No results";
-"recipes.noResultsHint" = "Remove a filter to get results, or try a different search.";
 "recipes.clearAllFilters" = "Remove all filters";
 
 "category.breakfast" = "Breakfast";
@@ -64,7 +54,6 @@
 "recipe.toolsTitle" = "Kitchen Tools";
 "recipe.infoTitle" = "Information";
 "recipe.nutritionTitle" = "Nutritional values";
-"recipe.nutrition.perServing" = "(per serving)";
 "recipe.nutrition.columnType" = "Type";
 "recipe.nutrition.columnPerServing" = "Per serving";
 "recipe.nutrition.columnPer100g" = "Per 100g";
@@ -78,13 +67,10 @@
 "recipe.nutrition.fiber" = "Fiber";
 "recipe.drink.redWine" = "red wine";
 "grocery.optional" = "Optional";
-"grocery.allCollected" = "All collected!";
 "grocery.servings" = "Number of people";
 "grocery.option.allWeight" = "All weight";
 
 "grocery.option.partOfDish" = "Part of dish";
-"grocery.option.on" = "On";
-"grocery.option.off" = "Off";
 "settings.title" = "Settings";
 "settings.language" = "Language";
 "settings.measurement" = "Measurement";
@@ -102,17 +88,11 @@
 "settings.servings" = "People";
 "settings.listViewValue" = "Value in listview";
 "settings.timerAutoStop" = "Timer auto stop";
-"grocery.group.sauce" = "Sauce";
-"grocery.group.pasta" = "Pasta";
-"grocery.group.finishing" = "Finishing";
 
 "grocery.sortLabel.useOrder" = "Use order";
 "grocery.sortLabel.grams" = "Amount";
 "grocery.sortLabel.supermarket" = "Supermarket";
 
-"grocery.sort.useOrder" = "Sort by use order";
-"grocery.sort.grams" = "Sort by highest grams";
-"grocery.sort.supermarket" = "Sort by supermarket logic";
 
 "timer.title" = "Timer";
 "timer.remaining" = "Remaining";

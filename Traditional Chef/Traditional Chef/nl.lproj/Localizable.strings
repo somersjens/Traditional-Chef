@@ -1,26 +1,17 @@
 "ok" = "OK";
 "done" = "Gereed";
-"language.selector" = "Taal";
 "language.english" = "Engels";
 "language.dutch" = "Nederlands";
 
 "welcome.title" = "Welkom bij Famous Chef!";
-"welcome.body" = "Ben je klaar voor wereldklasse recepten in je zak, met gemakken die een vaste boodschappenlijst of receptenboek nooit kan bieden. Maak je vertrouwd met alle bediening, en begin vandaag nog met koken. De app verzamelt geen data en heeft geen premium betaalde functies. Krijg je veel complimenten? Overweeg dan een fooi!";
 "welcome.greeting" = "Hey, chef!";
 "welcome.startButton" = "De sterren van de hemel koken";
 "welcome.sponsorMessage" = "100% gratis dankzij de scherpe \nkeukenmessen van Hakketjak";
-"welcome.alertTitle" = "Fooi";
 
-"tip.notConfigured" = "De fooi-producten zijn nog niet ingesteld in App Store Connect.";
-"tip.thanks" = "Dankjewel voor je fooi! ❤️";
-"tip.cancelled" = "Geen probleem — fooi geannuleerd.";
 
-"recipes.title" = "Recepten";
 "recipes.search" = "Zoek recept";
 "recipes.search.clear" = "Zoekopdracht wissen";
 "recipes.allCountries" = "Alle landen inbegrepen";
-"recipes.allCountriesShort" = "Alle 🌍";
-"recipes.countryOnly" = "Landfilter";
 "recipes.pickContinent" = "Kies een continent";
 "recipes.pickCountry" = "Kies een land";
 "recipes.countryFilterTitle" = "Landen";
@@ -46,7 +37,6 @@
 "recipes.column.ing" = "#";
 
 "recipes.noResults" = "Geen resultaten";
-"recipes.noResultsHint" = "Verwijder een filter om resultaten te krijgen, of probeer een andere zoekopdracht.";
 "recipes.clearAllFilters" = "Verwijder alle filters";
 
 "category.breakfast" = "Ontbijt";
@@ -64,7 +54,6 @@
 "recipe.toolsTitle" = "Benodigdheden";
 "recipe.infoTitle" = "Informatie";
 "recipe.nutritionTitle" = "Voedingswaarden";
-"recipe.nutrition.perServing" = "(per eenpersoonsportie)";
 "recipe.nutrition.columnType" = "Soort";
 "recipe.nutrition.columnPerServing" = "Per portie";
 "recipe.nutrition.columnPer100g" = "Per 100 g";
@@ -78,13 +67,10 @@
 "recipe.nutrition.fiber" = "vezels";
 "recipe.drink.redWine" = "rode wijn";
 "grocery.optional" = "Optioneel";
-"grocery.allCollected" = "Alles verzameld!";
 "grocery.servings" = "Aantal personen";
 "grocery.option.allWeight" = "All gewicht";
 
 "grocery.option.partOfDish" = "Onderdeel";
-"grocery.option.on" = "Aan";
-"grocery.option.off" = "Uit";
 "settings.title" = "Instellingen";
 "settings.language" = "Taal voor recepten";
 "settings.measurement" = "Standaard Maat";
@@ -102,17 +88,11 @@
 "settings.servings" = "Aantal personen";
 "settings.listViewValue" = "Waarde in overzicht";
 "settings.timerAutoStop" = "Stop timer automatisch";
-"grocery.group.sauce" = "Saus";
-"grocery.group.pasta" = "Pasta";
-"grocery.group.finishing" = "Afwerking";
 
 "grocery.sortLabel.useOrder" = "Stap volgorde";
 "grocery.sortLabel.grams" = "Hoeveelheid";
 "grocery.sortLabel.supermarket" = "Supermarkt";
 
-"grocery.sort.useOrder" = "Sorteer op gebruiksvolgorde";
-"grocery.sort.grams" = "Sorteer op hoogste gram";
-"grocery.sort.supermarket" = "Sorteer op supermarktlogica";
 
 "timer.title" = "Timer";
 "timer.remaining" = "Resterend";
