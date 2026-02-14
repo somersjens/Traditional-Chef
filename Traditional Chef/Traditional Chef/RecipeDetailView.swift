@@ -602,6 +602,8 @@ struct RecipeDetailView: View {
                 StepRowView(
                     step: step,
                     ingredients: recipe.ingredients,
+                    servings: servings,
+                    baseServings: 4,
                     isDimmed: selectedStepID != nil && selectedStepID != step.id,
                     isSelected: selectedStepID == step.id,
                     onStepTap: {
@@ -660,13 +662,14 @@ struct RecipeDetailView: View {
 
     private func renderDynamicIngredients(in text: String) -> String {
         var output = text
-        for ingredient in recipe.ingredients {
+        let sortedIngredients = recipe.ingredients.sorted { $0.id.count > $1.id.count }
+        for ingredient in sortedIngredients {
             let token = "%\(ingredient.id)"
             guard output.contains(token) else { continue }
             let amount = GroceryMeasurementFormatter.formattedAmount(
                 for: ingredient,
-                servings: 1,
-                baseServings: 1,
+                servings: servings,
+                baseServings: 4,
                 measurementUnit: .metric,
                 showAllMeasurements: true,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
@@ -815,6 +818,8 @@ private struct StepTimerSnapshot {
 private struct StepRowView: View {
     let step: RecipeStep
     let ingredients: [Ingredient]
+    let servings: Int
+    let baseServings: Int
     let isDimmed: Bool
     let isSelected: Bool
     let onStepTap: () -> Void
@@ -842,6 +847,8 @@ private struct StepRowView: View {
     init(
         step: RecipeStep,
         ingredients: [Ingredient],
+        servings: Int,
+        baseServings: Int,
         isDimmed: Bool,
         isSelected: Bool,
         onStepTap: @escaping () -> Void,
@@ -849,6 +856,8 @@ private struct StepRowView: View {
     ) {
         self.step = step
         self.ingredients = ingredients
+        self.servings = servings
+        self.baseServings = baseServings
         self.isDimmed = isDimmed
         self.isSelected = isSelected
         self.onStepTap = onStepTap
@@ -990,13 +999,14 @@ private struct StepRowView: View {
 
     private func renderedDynamicText(_ text: String) -> String {
         var output = text
-        for ingredient in ingredients {
+        let sortedIngredients = ingredients.sorted { $0.id.count > $1.id.count }
+        for ingredient in sortedIngredients {
             let token = "%\(ingredient.id)"
             guard output.contains(token) else { continue }
             let amount = GroceryMeasurementFormatter.formattedAmount(
                 for: ingredient,
-                servings: 1,
-                baseServings: 1,
+                servings: servings,
+                baseServings: baseServings,
                 measurementUnit: .metric,
                 showAllMeasurements: true,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
