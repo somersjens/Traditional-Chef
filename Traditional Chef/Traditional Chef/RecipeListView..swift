@@ -398,12 +398,16 @@ struct RecipeListView: View {
                                     measurementUnitRaw = unit.rawValue
                                     showMeasurementOptions = false
                                 } label: {
-                                    Text(AppLanguage.string(unit.settingsListLabelKey, locale: locale))
-                                        .foregroundStyle(AppTheme.primaryBlue)
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 14)
+                                    HStack(spacing: 0) {
+                                        Text(AppLanguage.string(unit.settingsListLabelKey, locale: locale))
+                                            .foregroundStyle(AppTheme.primaryBlue)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer(minLength: 0)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 14)
+                                    .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
 
