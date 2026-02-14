@@ -675,7 +675,8 @@ struct RecipeDetailView: View {
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            output = output.replacingOccurrences(of: token, with: "\(amount.value) \(amount.unit) \(ingredientName)")
+            let dynamicValue = "\(amount.value) \(amount.unit) \(ingredientName)".lowercased(with: locale)
+            output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
     }
@@ -1012,7 +1013,8 @@ private struct StepRowView: View {
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            output = output.replacingOccurrences(of: token, with: "\(amount.value) \(amount.unit) \(ingredientName)")
+            let dynamicValue = "\(amount.value) \(amount.unit) \(ingredientName)".lowercased(with: locale)
+            output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
     }
