@@ -43,6 +43,9 @@ struct RecipeDetailView: View {
     @StateObject private var stepSpeaker = StepSpeaker()
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
+    private let openingTransitionDuration: TimeInterval = 0.936
+    private let openingTransitionDelay: TimeInterval = 0.096
+    private let openingTransitionHideDelay: TimeInterval = 1.14
 
     var body: some View {
         GeometryReader { proxy in
@@ -151,11 +154,11 @@ struct RecipeDetailView: View {
         knifeFlightProgress = 0
         showOpeningKnifeTransition = true
 
-        withAnimation(.linear(duration: 0.78).delay(0.08)) {
+        withAnimation(.linear(duration: openingTransitionDuration).delay(openingTransitionDelay)) {
             knifeFlightProgress = 1
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + openingTransitionHideDelay) {
             showOpeningKnifeTransition = false
         }
     }
@@ -320,7 +323,7 @@ struct RecipeDetailView: View {
 
             if showHeroImageOfflineFallback && heroUIImage == nil {
                 VStack(spacing: 8) {
-                    Image("chef_no_background")
+                    Image("sad_chef_no_background")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)
