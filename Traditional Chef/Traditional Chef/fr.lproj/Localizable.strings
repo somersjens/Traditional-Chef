@@ -1,0 +1,22 @@
+// === AUTO-GENERATED RECIPES BELOW ===
+"grocery.group.it_pasta_bolognese.g1" = "Pâtes";
+"grocery.group.it_pasta_bolognese.g2" = "Sauce";
+"grocery.group.it_pasta_bolognese.g3" = "Finition";
+"ingredient.i1" = "Pâtes";
+"ingredient.i10" = "Vin rouge";
+"ingredient.i11" = "Huile d'olive";
+"ingredient.i12" = "Feuille de laurier";
+"ingredient.i13" = "Origan séché";
+"ingredient.i14" = "Sel (total)";
+"ingredient.i15" = "Poivre noir";
+"ingredient.i16" = "Beurre";
+"ingredient.i17" = "Parmesan (pour servir)";
+"ingredient.i18" = "Eau";
+"ingredient.i2" = "Viande hachée (bœuf ou mélange)";
+"ingredient.i3" = "Oignon";
+"ingredient.i4" = "Carotte";
+"ingredient.i5" = "Céleri";
+"ingredient.i6" = "Ail";
+"ingredient.i7" = "Tomates concassées en boîte";
+"ingredient.i8" = "Concentré de tomate";
+"ingredient.i9" = "Bouillon de bœuf";

@@ -146,6 +146,12 @@
 "recipe.detail.steps.collapse" = "Stappen inklappen";
 "recipe.steps.readAloud.intro" = "Dit zijn de stappen voor: %@";
 "recipe.steps.readAloud.outro" = "Dat waren alle stappen, eet smakelijk.";
+"recipe.card.readAloud" = "Lees deze kaart hardop";
+"recipe.tools.readAloud.intro.nl" = "De benodigdheden voor dit recept zijn";
+"recipe.nutrition.readAloud.intro.nl" = "Elke portie bevat ongeveer %d calorieën";
+"recipe.grocery.readAloud.intro.nl" = "Dit zijn boodschappen voor %d personen die nog niet afgevinkt zijn";
+"recipe.grocery.readAloud.group.nl" = "Voor de %@";
+"recipe.grocery.readAloud.none.nl" = "Alle boodschappen zijn afgevinkt.";
 
 // === AUTO-GENERATED RECIPES BELOW ===
 "ingredient.bay_leaf" = "Laurierblad";
@@ -195,9 +201,4 @@
 "recipe.it_pasta_bolognese.tool.pasta_pot" = "Kookpan voor de pasta";
 "recipe.it_pasta_bolognese.tool.sharp_knife" = "Scherp mes";
 "recipe.it_pasta_bolognese.tool.wooden_spoon" = "Houten lepel of spatel";
-"recipe.card.readAloud" = "Lees deze kaart hardop";
-"recipe.tools.readAloud.intro.nl" = "De benodigdheden voor dit recept zijn";
-"recipe.nutrition.readAloud.intro.nl" = "Elke portie bevat ongeveer %d calorieën";
-"recipe.grocery.readAloud.intro.nl" = "Dit zijn boodschappen voor %d personen die nog niet afgevinkt zijn";
-"recipe.grocery.readAloud.group.nl" = "Voor de %@";
-"recipe.grocery.readAloud.none.nl" = "Alle boodschappen zijn afgevinkt.";
+
