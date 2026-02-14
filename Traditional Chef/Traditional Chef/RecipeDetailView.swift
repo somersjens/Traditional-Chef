@@ -126,6 +126,9 @@ struct RecipeDetailView: View {
     }
 
     private func openingKnifeTransitionOverlay(in proxy: GeometryProxy) -> some View {
+        let horizontalInset = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
+        let fullWidth = proxy.size.width + horizontalInset
+        let fullWidthCenterX = (proxy.size.width / 2) + ((proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing) / 2)
         let knifeHeight = max(proxy.size.width * 0.2, 56)
         let knifeTravelStart = proxy.size.height + (knifeHeight / 2)
         let knifeTravelEnd = -(knifeHeight / 2)
@@ -136,13 +139,16 @@ struct RecipeDetailView: View {
         return ZStack(alignment: .top) {
             AppTheme.pageBackground
                 .frame(height: coverHeight)
+                .frame(width: fullWidth)
+                .padding(.leading, -proxy.safeAreaInsets.leading)
+                .padding(.trailing, -proxy.safeAreaInsets.trailing)
                 .frame(maxWidth: .infinity, alignment: .top)
 
             Image("Knife_no_background")
                 .resizable()
                 .scaledToFit()
-                .frame(width: proxy.size.width)
-                .position(x: proxy.size.width / 2, y: knifeCenterY)
+                .frame(width: fullWidth)
+                .position(x: fullWidthCenterX, y: knifeCenterY)
         }
         .ignoresSafeArea()
         .allowsHitTesting(false)
