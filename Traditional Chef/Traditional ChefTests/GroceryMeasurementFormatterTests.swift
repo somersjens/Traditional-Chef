@@ -47,7 +47,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
         XCTAssertEqual(amount.unit, "g")
     }
 
-    func testUSWeightConvertsToOunces() {
+    func testAllWeightModeAlwaysUsesGramsEvenInUSUnits() {
         let ing = ingredient(grams: 56.69904625, mode: .weight)
         let amount = GroceryMeasurementFormatter.formattedAmount(
             for: ing,
@@ -58,12 +58,12 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             localizedCustomLabel: { _ in "" }
         )
 
-        XCTAssertEqual(amount.value, "2")
-        XCTAssertEqual(amount.unit, "oz")
+        XCTAssertEqual(amount.value, "57")
+        XCTAssertEqual(amount.unit, "g")
     }
 
-    func testUSWeightConvertsToPoundsAtSixteenOunces() {
-        let ing = ingredient(grams: 453.59237, mode: .weight)
+    func testAllWeightModeForLiquidStillUsesGrams() {
+        let ing = ingredient(grams: 240, mode: .liquid, gramsPerMl: 1, allowCup: true)
         let amount = GroceryMeasurementFormatter.formattedAmount(
             for: ing,
             servings: 4,
@@ -73,18 +73,33 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             localizedCustomLabel: { _ in "" }
         )
 
-        XCTAssertEqual(amount.value, "1")
-        XCTAssertEqual(amount.unit, "lb")
+        XCTAssertEqual(amount.value, "240")
+        XCTAssertEqual(amount.unit, "g")
     }
 
-    func testUSLiquidUsesCupWhenAllowed() {
+    func testMeasurementModeConvertsUSWeightToOunces() {
+        let ing = ingredient(grams: 56.69904625, mode: .weight)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .us,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.value, "2")
+        XCTAssertEqual(amount.unit, "oz")
+    }
+
+    func testMeasurementModeUSLiquidUsesCupWhenAllowed() {
         let ing = ingredient(grams: 240, mode: .liquid, gramsPerMl: 1, allowCup: true)
         let amount = GroceryMeasurementFormatter.formattedAmount(
             for: ing,
             servings: 4,
             baseServings: 4,
             measurementUnit: .us,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 
@@ -99,7 +114,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             servings: 4,
             baseServings: 4,
             measurementUnit: .auNz,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 
@@ -114,7 +129,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             servings: 4,
             baseServings: 4,
             measurementUnit: .jp,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 
@@ -129,7 +144,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             servings: 4,
             baseServings: 4,
             measurementUnit: .ukImp,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 
@@ -144,7 +159,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             servings: 4,
             baseServings: 4,
             measurementUnit: .us,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 
@@ -159,7 +174,7 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             servings: 4,
             baseServings: 4,
             measurementUnit: .metric,
-            showAllMeasurements: true,
+            showAllMeasurements: false,
             localizedCustomLabel: { _ in "" }
         )
 

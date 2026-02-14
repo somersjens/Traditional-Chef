@@ -14,8 +14,13 @@ struct GroceryMeasurementFormatter {
         showAllMeasurements: Bool,
         localizedCustomLabel: (String) -> String
     ) -> DisplayAmount {
-        if !showAllMeasurements,
-           let customValue = ingredient.customAmountValue,
+        let grams = scaledGrams(ingredient.grams, servings: servings, baseServings: baseServings)
+
+        if showAllMeasurements {
+            return metricWeightAmount(grams)
+        }
+
+        if let customValue = ingredient.customAmountValue,
            let customLabelKey = ingredient.customAmountLabelKey {
             return DisplayAmount(
                 value: customValue,
@@ -23,7 +28,6 @@ struct GroceryMeasurementFormatter {
             )
         }
 
-        let grams = scaledGrams(ingredient.grams, servings: servings, baseServings: baseServings)
         switch measurementUnit {
         case .metric:
             return metricAmount(for: ingredient, grams: grams)
