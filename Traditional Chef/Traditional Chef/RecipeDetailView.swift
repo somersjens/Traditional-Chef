@@ -571,9 +571,17 @@ struct RecipeDetailView: View {
 
             Spacer()
 
-            Text(headerText)
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+            Button {
+                withAnimation(.easeInOut) {
+                    isStepsExpanded.toggle()
+                }
+            } label: {
+                Text(headerText)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    .lineLimit(1)
+            }
+            .buttonStyle(.plain)
 
             Button {
                 withAnimation(.easeInOut) {
