@@ -340,7 +340,8 @@ struct GroceryListCard: View {
     }
 
     private var sortedAll: [Ingredient] {
-        let sourceIngredients = groupByDishPart ? recipe.ingredients : mergedIngredients(recipe.ingredients)
+        let visibleIngredients = recipe.ingredients.filter { !($0.isInvisible ?? false) }
+        let sourceIngredients = groupByDishPart ? visibleIngredients : mergedIngredients(visibleIngredients)
         switch sortMode {
         case .useOrder:
             return sourceIngredients.sorted { lhs, rhs in
@@ -408,10 +409,10 @@ struct GroceryListCard: View {
 
     private func groupedIngredients(_ ingredients: [Ingredient]) -> [(group: IngredientGroup, items: [Ingredient])] {
         let groups = Array(Set(ingredients.map { $0.group })).sorted { lhs, rhs in
-            let leftId = ingredients.first { $0.group == lhs }?.groupId ?? 0
-            let rightId = ingredients.first { $0.group == rhs }?.groupId ?? 0
-            if leftId != rightId {
-                return leftId < rightId
+            let leftOrder = ingredients.first { $0.group == lhs }?.groupSortOrder ?? 0
+            let rightOrder = ingredients.first { $0.group == rhs }?.groupSortOrder ?? 0
+            if leftOrder != rightOrder {
+                return leftOrder < rightOrder
             }
             return lhs.id < rhs.id
         }
@@ -432,6 +433,7 @@ struct GroceryListCard: View {
                     isOptional: false,
                     group: existing.group,
                     groupId: existing.groupId,
+                    groupSortOrder: existing.groupSortOrder,
                     aisle: existing.aisle,
                     useOrder: min(existing.useOrder, ingredient.useOrder),
                     customAmountValue: nil,
@@ -440,7 +442,8 @@ struct GroceryListCard: View {
                     gramsPerMl: existing.gramsPerMl ?? ingredient.gramsPerMl,
                     gramsPerTsp: existing.gramsPerTsp ?? ingredient.gramsPerTsp,
                     gramsPerCount: existing.gramsPerCount ?? ingredient.gramsPerCount,
-                    allowCup: existing.allowCup ?? ingredient.allowCup
+                    allowCup: existing.allowCup,
+                    isInvisible: existing.isInvisible ?? ingredient.isInvisible
                 )
                 byId[ingredient.id] = existing
             } else {
@@ -452,6 +455,7 @@ struct GroceryListCard: View {
                     isOptional: false,
                     group: ingredient.group,
                     groupId: ingredient.groupId,
+                    groupSortOrder: ingredient.groupSortOrder,
                     aisle: ingredient.aisle,
                     useOrder: ingredient.useOrder,
                     customAmountValue: ingredient.customAmountValue,
@@ -460,7 +464,8 @@ struct GroceryListCard: View {
                     gramsPerMl: ingredient.gramsPerMl,
                     gramsPerTsp: ingredient.gramsPerTsp,
                     gramsPerCount: ingredient.gramsPerCount,
-                    allowCup: ingredient.allowCup
+                    allowCup: ingredient.allowCup,
+                    isInvisible: ingredient.isInvisible
                 )
             }
         }

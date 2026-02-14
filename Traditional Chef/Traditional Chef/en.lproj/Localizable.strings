@@ -154,23 +154,27 @@
 "recipe.grocery.readAloud.none.en" = "All groceries are ticked.";
 
 // === AUTO-GENERATED RECIPES BELOW ===
-"ingredient.bay_leaf" = "Bay leaf";
-"ingredient.beef_stock" = "Beef stock";
-"ingredient.black_pepper" = "Black pepper";
-"ingredient.butter_optional" = "Butter";
-"ingredient.canned_tomatoes" = "Canned chopped tomatoes";
-"ingredient.carrot" = "Carrot";
-"ingredient.celery" = "Celery";
-"ingredient.garlic_optional" = "Garlic";
-"ingredient.minced_meat" = "Minced meat (beef or mixed)";
-"ingredient.olive_oil" = "Olive oil";
-"ingredient.onion" = "Onion";
-"ingredient.oregano" = "Dried oregano";
-"ingredient.parmesan_to_serve" = "Parmesan (to serve)";
-"ingredient.pasta" = "Pasta";
-"ingredient.red_wine_optional" = "Red wine";
-"ingredient.salt_total" = "Salt (total)";
-"ingredient.tomato_paste" = "Tomato paste";
+"grocery.group.it_pasta_bolognese.g1" = "Pasta";
+"grocery.group.it_pasta_bolognese.g2" = "Sauce";
+"grocery.group.it_pasta_bolognese.g3" = "Finishing";
+"ingredient.i1" = "Pasta";
+"ingredient.i10" = "Red wine";
+"ingredient.i11" = "Olive oil";
+"ingredient.i12" = "Bay leaf";
+"ingredient.i13" = "Dried oregano";
+"ingredient.i14" = "Salt (total)";
+"ingredient.i15" = "Black pepper";
+"ingredient.i16" = "Butter";
+"ingredient.i17" = "Parmesan (to serve)";
+"ingredient.i18" = "Water";
+"ingredient.i2" = "Minced meat (beef or mixed)";
+"ingredient.i3" = "Onion";
+"ingredient.i4" = "Carrot";
+"ingredient.i5" = "Celery";
+"ingredient.i6" = "Garlic";
+"ingredient.i7" = "Canned chopped tomatoes";
+"ingredient.i8" = "Tomato paste";
+"ingredient.i9" = "Beef stock";
 "recipe.it_pasta_bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
 "recipe.it_pasta_bolognese.drink.summary" = "Red Wine (Sangiovese)";
 "recipe.it_pasta_bolognese.info" = "It originated in Bologna (Northern Italy), where the sauce is known as ragu alla bolognese and is mainly built around slow-cooked meat with a little tomato. It is traditionally served with tagliatelle because those wide, flat ribbons hold on to the thick, meaty sauce far better than thin spaghetti.";
@@ -188,7 +192,7 @@
 "recipe.it_pasta_bolognese.step5.title" = "Deglaze";
 "recipe.it_pasta_bolognese.step6.body" = "Add canned chopped tomatoes, beef stock, bay leaf, dried oregano, salt, and black pepper. Simmer gently with the lid slightly open, stirring now and then.";
 "recipe.it_pasta_bolognese.step6.title" = "Simmer the sauce";
-"recipe.it_pasta_bolognese.step7.body" = "Boil water, add salt, cook pasta until al dente. Drain.";
+"recipe.it_pasta_bolognese.step7.body" = "Bring %i18 to a boil, add salt, cook pasta until al dente. Drain.";
 "recipe.it_pasta_bolognese.step7.title" = "Cook the pasta";
 "recipe.it_pasta_bolognese.step8.body" = "Remove bay leaf. Taste and adjust salt/pepper. Stir in butter if using. Serve with Parmesan.";
 "recipe.it_pasta_bolognese.step8.title" = "Finish & serve";
@@ -201,4 +205,3 @@
 "recipe.it_pasta_bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
 "recipe.it_pasta_bolognese.tool.sharp_knife" = "Sharp knife";
 "recipe.it_pasta_bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";
-

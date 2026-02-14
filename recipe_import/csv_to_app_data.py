@@ -30,7 +30,7 @@ APP_DIR = BASE_DIR.parent / "Traditional Chef" / "Traditional Chef"
 LOCALIZATION_DIR = APP_DIR
 RECIPES_JSON_PATH = APP_DIR / "recipes.json"
 
-LANGUAGES = ["nl", "en", "de"]
+LANGUAGES = ["en", "nl", "de", "fr"]
 LOCALIZATION_MARKER = "// === AUTO-GENERATED RECIPES BELOW ==="
 GRAMS_PER_OUNCE = 28.349523125
 
@@ -83,6 +83,16 @@ def parse_int(value: str) -> Optional[int]:
     return int(value)
 
 
+def parse_sort_index(value: str) -> Optional[int]:
+    value = (value or "").strip().lower()
+    if not value:
+        return None
+    digits = "".join(ch for ch in value if ch.isdigit())
+    if not digits:
+        return None
+    return int(digits)
+
+
 def parse_float(value: str) -> Optional[float]:
     value = (value or "").strip()
     if not value:
@@ -121,6 +131,10 @@ def load_recipes(path: Path, strings: LocalizedStrings) -> Dict[str, dict]:
                     "recipe_id",
                     "country_code",
                     "category",
+                    "name_en",
+                    "name_nl",
+                    "name_de",
+                    "name_fr",
                 ],
                 "recipes.csv",
             )
@@ -189,15 +203,21 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 [
                     "recipe_id",
                     "ingredient_id",
-                    "group",
                     "group_id",
                     "use_order",
                     "aisle",
                     "display_mode",
                     "amount_g",
                     "allow_cup",
-                    "name_nl",
+                    "is_invisible",
+                    "group_en",
+                    "group_nl",
+                    "group_de",
+                    "group_fr",
                     "name_en",
+                    "name_nl",
+                    "name_de",
+                    "name_fr",
                 ],
                 "groceries.csv",
             )
@@ -211,6 +231,12 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             if not ingredient_id:
                 continue
             ingredient_key = f"ingredient.{ingredient_id}"
+            raw_group_id = row.get("group_id", "").strip()
+            group_id = raw_group_id or "g0"
+            group_key = f"grocery.group.{recipe_id}.{group_id}"
+
+            for lang in LANGUAGES:
+                strings.add(group_key, lang, row.get(f"group_{lang}"))
             for lang in LANGUAGES:
                 strings.add(ingredient_key, lang, row.get(f"name_{lang}"))
 
@@ -227,8 +253,9 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 "grams": grams_value,
                 "ounces": ounces_value,
                 "isOptional": False,
-                "group": row.get("group", "").strip(),
-                "groupId": parse_int(row.get("group_id", "")),
+                "group": f"{recipe_id}.{group_id}",
+                "groupId": group_id,
+                "groupSortOrder": parse_sort_index(group_id) or 0,
                 "aisle": normalize_aisle(row.get("aisle", "")),
                 "useOrder": parse_int(row.get("use_order", "")) or 0,
                 "customAmountValue": custom_value or None,
@@ -238,6 +265,7 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 "gramsPerTsp": parse_float(row.get("g_per_tsp", "")),
                 "gramsPerCount": parse_float(row.get("g_per_count", "")),
                 "allowCup": parse_bool(row.get("allow_cup", "")),
+                "isInvisible": parse_bool(row.get("is_invisible", "")),
             })
             recipe["nutrition"]["energyKcal"] += parse_int(row.get("kcal", "")) or 0
             recipe["nutrition"]["proteinGrams"] += parse_float(row.get("protein", "")) or 0.0
@@ -276,10 +304,14 @@ def load_steps(path: Path, recipes: Dict[str, dict], strings: LocalizedStrings) 
                     "step_id",
                     "step_number",
                     "timer_seconds",
-                    "title_nl",
-                    "body_nl",
                     "title_en",
                     "body_en",
+                    "title_nl",
+                    "body_nl",
+                    "title_de",
+                    "body_de",
+                    "title_fr",
+                    "body_fr",
                 ],
                 "steps.csv",
             )
@@ -329,7 +361,11 @@ def cleanup_nutrition(recipes: Iterable[dict]) -> None:
 
 def finalize_recipes(recipes: Iterable[dict]) -> None:
     for recipe in recipes:
-        unique_ids = {ingredient["id"] for ingredient in recipe.get("ingredients", [])}
+        unique_ids = {
+            ingredient["id"]
+            for ingredient in recipe.get("ingredients", [])
+            if not ingredient.get("isInvisible", False)
+        }
         recipe["ingredientsCountForList"] = len(unique_ids)
         if recipe.get("approximateMinutes", 0) == 0:
             recipe["approximateMinutes"] = recipe.get("totalMinutes", 0)
@@ -363,8 +399,14 @@ def load_tools(path: Path, recipes: Dict[str, dict], strings: LocalizedStrings) 
                     "recipe_id",
                     "tool_id",
                     "is_optional",
-                    "name_nl",
                     "name_en",
+                    "name_nl",
+                    "name_de",
+                    "name_fr",
+                    "optional_label_en",
+                    "optional_label_nl",
+                    "optional_label_de",
+                    "optional_label_fr",
                 ],
                 "tools.csv",
             )

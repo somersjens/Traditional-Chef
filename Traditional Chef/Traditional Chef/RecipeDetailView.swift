@@ -641,7 +641,8 @@ struct RecipeDetailView: View {
         }
         let spokenSteps = recipe.steps.map { step in
             let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-            return SpokenStep(number: step.stepNumber, text: body)
+            let renderedBody = renderDynamicIngredients(in: body)
+            return SpokenStep(number: step.stepNumber, text: renderedBody)
         }
         let recipeName = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
         stepSpeaker.speakSteps(
@@ -654,7 +655,26 @@ struct RecipeDetailView: View {
 
     private func readStep(_ step: RecipeStep) {
         let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-        stepSpeaker.speakStep(text: body, languageCode: locale.identifier)
+        stepSpeaker.speakStep(text: renderDynamicIngredients(in: body), languageCode: locale.identifier)
+    }
+
+    private func renderDynamicIngredients(in text: String) -> String {
+        var output = text
+        for ingredient in recipe.ingredients {
+            let token = "%\(ingredient.id)"
+            guard output.contains(token) else { continue }
+            let amount = GroceryMeasurementFormatter.formattedAmount(
+                for: ingredient,
+                servings: 1,
+                baseServings: 1,
+                measurementUnit: .metric,
+                showAllMeasurements: true,
+                localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
+            )
+            let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+            output = output.replacingOccurrences(of: token, with: "\(amount.value) \(amount.unit) \(ingredientName)")
+        }
+        return output
     }
 
     private func stopStepReadAloud() {
@@ -881,13 +901,14 @@ private struct StepRowView: View {
             }
 
             let raw = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
+            let renderedText = renderedDynamicText(raw)
             HStack(alignment: .top, spacing: 0) {
                 Text("\(step.stepNumber). ")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
                     .opacity(0)
                     .accessibilityHidden(true)
-                Text(raw)
+                Text(renderedText)
                     .font(.headline)
                     .fontWeight(.regular)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
@@ -966,6 +987,25 @@ private struct StepRowView: View {
         }
     }
 
+
+    private func renderedDynamicText(_ text: String) -> String {
+        var output = text
+        for ingredient in ingredients {
+            let token = "%\(ingredient.id)"
+            guard output.contains(token) else { continue }
+            let amount = GroceryMeasurementFormatter.formattedAmount(
+                for: ingredient,
+                servings: 1,
+                baseServings: 1,
+                measurementUnit: .metric,
+                showAllMeasurements: true,
+                localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
+            )
+            let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+            output = output.replacingOccurrences(of: token, with: "\(amount.value) \(amount.unit) \(ingredientName)")
+        }
+        return output
+    }
     private func handleTimerTap() {
         if isRunning {
             if secondsLeft > 0 {

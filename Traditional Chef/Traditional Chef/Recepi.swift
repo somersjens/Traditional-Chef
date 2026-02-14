@@ -99,7 +99,8 @@ struct Ingredient: Identifiable, Hashable, Codable {
     let ounces: Double
     let isOptional: Bool
     let group: IngredientGroup
-    let groupId: Int?
+    let groupId: String?
+    let groupSortOrder: Int?
 
     /// Used for “supermarket logic”
     let aisle: GroceryAisle
@@ -117,6 +118,7 @@ struct Ingredient: Identifiable, Hashable, Codable {
     let gramsPerTsp: Double?
     let gramsPerCount: Double?
     let allowCup: Bool?
+    let isInvisible: Bool?
 }
 
 enum IngredientDisplayMode: String, Codable {

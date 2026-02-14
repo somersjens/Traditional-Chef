@@ -1,19 +1,20 @@
-recipe_id,ingredient_id,group,group_id,use_order,aisle,display_mode,amount_g,g_per_ml,g_per_tsp,g_per_count,allow_cup,kcal,protein,carbs,sugars,fat,saturated_fat,sodium,fiber,name_nl,name_en
-it_pasta_bolognese,pasta,pasta,1,7,pantry,weight,400,,,,,635,23,66,7,28,4,760,15,Pasta,Pasta
-it_pasta_bolognese,minced_meat,sauce,2,3,meat,weight,500,,,,,,,,,,,,,Gehakt (rund of half-om-half),Minced meat (beef or mixed)
-it_pasta_bolognese,onion,sauce,2,1,vegetables,weight,150,,,,,,,,,,,,,Ui,Onion
-it_pasta_bolognese,carrot,sauce,2,1,vegetables,weight,150,,,,,,,,,,,,,Wortel,Carrot
-it_pasta_bolognese,celery,sauce,2,1,vegetables,weight,100,,,,,,,,,,,,,Bleekselderij,Celery
-it_pasta_bolognese,garlic_optional,sauce,2,1,aromatics,weight,6,,,,,,,,,,,,,Knoflook,Garlic
-it_pasta_bolognese,canned_tomatoes,sauce,2,6,canned,weight,800,,,,,,,,,,,,,Tomatenblokjes uit blik,Canned chopped tomatoes
-it_pasta_bolognese,tomato_paste,sauce,2,4,canned,weight,33,,,,,,,,,,,,,Tomatenpuree,Tomato paste
-it_pasta_bolognese,beef_stock,sauce,2,6,pantry,weight,250,,,,,,,,,,,,,Runderbouillon,Beef stock
-it_pasta_bolognese,red_wine_optional,sauce,2,5,pantry,weight,150,,,,,,,,,,,,,Rode wijn,Red wine
-it_pasta_bolognese,olive_oil,sauce,2,2,pantry,weight,27,,,,,,,,,,,,,Olijfolie,Olive oil
-it_pasta_bolognese,bay_leaf,sauce,2,6,spices,weight,0.2,,,,,,,,,,,,,Laurierblad,Bay leaf
-it_pasta_bolognese,oregano,sauce,2,6,spices,weight,1,,,,,,,,,,,,,Gedroogde oregano,Dried oregano
-it_pasta_bolognese,salt_total,sauce,2,6,spices,weight,26,,,,,,,,,,,,,Zout (totaal),Salt (total)
-it_pasta_bolognese,salt_total,pasta,1,6,spices,weight,12,,,,,,,,,,,,,Zout (totaal),Salt (total)
-it_pasta_bolognese,black_pepper,sauce,2,6,spices,weight,2,,,,,,,,,,,,,Zwarte peper,Black pepper
-it_pasta_bolognese,butter_optional,finishing,3,8,dairy,weight,14,,,,,,,,,,,,,Boter,Butter
-it_pasta_bolognese,parmesan_to_serve,finishing,3,8,dairy,weight,60,,,,,,,,,,,,,Parmezaan (om te serveren),Parmesan (to serve)
+recipe_id,ingredient_id,group_id,use_order,aisle,display_mode,amount_g,g_per_ml,g_per_tsp,g_per_count,allow_cup,is_invisible,kcal,protein,carbs,sugars,fat,saturated_fat,sodium,fiber,group_en,group_nl,group_de,group_fr,name_en,name_nl,name_de,name_fr
+it_pasta_bolognese,i1,g1,7,pantry,weight,400,,,,,0,635,23,66,7,28,4,760,15,Pasta,Pasta,Pasta,Pâtes,Pasta,Pasta,Pasta,Pâtes
+it_pasta_bolognese,i2,g2,3,meat,weight,500,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Minced meat (beef or mixed),Gehakt (rund of half-om-half),Hackfleisch (Rind oder gemischt),Viande hachée (bœuf ou mélange)
+it_pasta_bolognese,i3,g2,1,vegetables,weight,150,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Onion,Ui,Zwiebel,Oignon
+it_pasta_bolognese,i4,g2,1,vegetables,weight,150,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Carrot,Wortel,Karotte,Carotte
+it_pasta_bolognese,i5,g2,1,vegetables,weight,100,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Celery,Bleekselderij,Staudensellerie,Céleri
+it_pasta_bolognese,i6,g2,1,aromatics,weight,6,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Garlic,Knoflook,Knoblauch,Ail
+it_pasta_bolognese,i7,g2,6,canned,weight,800,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Canned chopped tomatoes,Tomatenblokjes uit blik,Gehackte Tomaten (Dose),Tomates concassées en boîte
+it_pasta_bolognese,i8,g2,4,canned,weight,33,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Tomato paste,Tomatenpuree,Tomatenmark,Concentré de tomate
+it_pasta_bolognese,i9,g2,6,pantry,liquid,250,1,,,0,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Beef stock,Runderbouillon,Rinderbrühe,Bouillon de bœuf
+it_pasta_bolognese,i10,g2,5,pantry,liquid,150,1,,,0,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Red wine,Rode wijn,Rotwein,Vin rouge
+it_pasta_bolognese,i11,g2,2,pantry,liquid,27,0.91,,,0,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Olive oil,Olijfolie,Olivenöl,Huile d'olive
+it_pasta_bolognese,i12,g2,6,spices,weight,0.2,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Bay leaf,Laurierblad,Lorbeerblatt,Feuille de laurier
+it_pasta_bolognese,i13,g2,6,spices,weight,1,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Dried oregano,Gedroogde oregano,getrockneter Oregano,Origan séché
+it_pasta_bolognese,i14,g2,6,spices,weight,26,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Salt (total),Zout (totaal),Salz (gesamt),Sel (total)
+it_pasta_bolognese,i14,g1,6,spices,weight,12,,,,,0,,,,,,,,,Pasta,Pasta,Pasta,Pâtes,Salt (total),Zout (totaal),Salz (gesamt),Sel (total)
+it_pasta_bolognese,i15,g2,6,spices,weight,2,,,,,0,,,,,,,,,Sauce,Saus,Soße,Sauce,Black pepper,Zwarte peper,Schwarzer Pfeffer,Poivre noir
+it_pasta_bolognese,i16,g3,8,dairy,weight,14,,,,,0,,,,,,,,,Finishing,Afwerking,Fertigstellung,Finition,Butter,Boter,Butter,Beurre
+it_pasta_bolognese,i17,g3,8,dairy,weight,60,,,,,0,,,,,,,,,Finishing,Afwerking,Fertigstellung,Finition,Parmesan (to serve),Parmezaan (om te serveren),Parmesan (zum Servieren),Parmesan (pour servir)
+it_pasta_bolognese,i18,g1,6,pantry,liquid,500,1,,,0,1,,,,,,,,,Pasta,Pasta,Pasta,Pâtes,Water,Water,Wasser,Eau
