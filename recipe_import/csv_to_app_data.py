@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
@@ -92,6 +93,16 @@ def parse_sort_index(value: str) -> Optional[int]:
         return None
     return int(digits)
 
+
+def normalize_prefixed_id(value: str, prefix: str, fallback_number: int) -> str:
+    raw = (value or "").strip()
+    if not raw:
+        return f"{prefix}{fallback_number}"
+    if re.fullmatch(fr"{prefix}\d+", raw):
+        return raw
+    if raw.isdigit():
+        return f"{prefix}{raw}"
+    return raw
 
 def parse_float(value: str) -> Optional[float]:
     value = (value or "").strip()
@@ -232,7 +243,7 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 continue
             ingredient_key = f"ingredient.{ingredient_id}"
             raw_group_id = row.get("group_id", "").strip()
-            group_id = raw_group_id or "g0"
+            group_id = normalize_prefixed_id(raw_group_id, "g", 0)
             group_key = f"grocery.group.{recipe_id}.{group_id}"
 
             for lang in LANGUAGES:
@@ -367,6 +378,10 @@ def finalize_recipes(recipes: Iterable[dict]) -> None:
             if not ingredient.get("isInvisible", False)
         }
         recipe["ingredientsCountForList"] = len(unique_ids)
+        recipe["tools"] = sorted(
+            recipe.get("tools", []),
+            key=lambda tool: (parse_sort_index(tool.get("id", "")) is None, parse_sort_index(tool.get("id", "")) or 0),
+        )
         if recipe.get("approximateMinutes", 0) == 0:
             recipe["approximateMinutes"] = recipe.get("totalMinutes", 0)
 
@@ -416,9 +431,7 @@ def load_tools(path: Path, recipes: Dict[str, dict], strings: LocalizedStrings) 
             recipe = recipes.get(recipe_id)
             if not recipe:
                 raise ValueError(f"Unknown recipe_id in tools.csv: {recipe_id}")
-            tool_id = row.get("tool_id", "").strip()
-            if not tool_id:
-                continue
+            tool_id = normalize_prefixed_id(row.get("tool_id", ""), "t", len(recipe["tools"]) + 1)
             is_optional = parse_bool(row.get("is_optional", ""))
             tool_key = f"recipe.{recipe_id}.tool.{tool_id}"
             optional_key = f"recipe.{recipe_id}.tool.{tool_id}.optional"

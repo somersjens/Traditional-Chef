@@ -8,7 +8,7 @@
 "welcome.title" = "Welkom bij Famous Chef!";
 "welcome.greeting" = "Hey, chef!";
 "welcome.startButton" = "De sterren van de hemel koken";
-"welcome.sponsorMessage" = "100% gratis dankzij de scherpe \nkeukenmessen van Hakketjak";
+"welcome.sponsorMessage" = "Helemaal gratis dankzij de scherpe \nkeukenmessen van Hakketjak";
 
 
 "recipes.search" = "Zoek recept";
@@ -180,12 +180,12 @@
 "recipe.it_pasta_bolognese.step7.title" = "Pasta koken";
 "recipe.it_pasta_bolognese.step8.body" = "Haal laurier eruit. Proef en breng op smaak met zout/peper. Roer boter erdoor (optioneel). Serveer met Parmezaan.";
 "recipe.it_pasta_bolognese.step8.title" = "Afmaken & serveren";
-"recipe.it_pasta_bolognese.tool.cheese_grater" = "Kaasrasp";
-"recipe.it_pasta_bolognese.tool.cheese_grater.optional" = "Optioneel";
-"recipe.it_pasta_bolognese.tool.colander" = "Vergiet";
-"recipe.it_pasta_bolognese.tool.cutting_board" = "Snijplank";
-"recipe.it_pasta_bolognese.tool.large_pot" = "Grote pan of braadpan met dikke bodem";
-"recipe.it_pasta_bolognese.tool.measuring_cup" = "Maatbeker en of weegschaal (handig)";
-"recipe.it_pasta_bolognese.tool.pasta_pot" = "Kookpan voor de pasta";
-"recipe.it_pasta_bolognese.tool.sharp_knife" = "Scherp mes";
-"recipe.it_pasta_bolognese.tool.wooden_spoon" = "Houten lepel of spatel";
+"recipe.it_pasta_bolognese.tool.t1" = "Grote pan of braadpan met dikke bodem";
+"recipe.it_pasta_bolognese.tool.t2" = "Kookpan voor de pasta";
+"recipe.it_pasta_bolognese.tool.t3" = "Houten lepel of spatel";
+"recipe.it_pasta_bolognese.tool.t4" = "Snijplank";
+"recipe.it_pasta_bolognese.tool.t5" = "Scherp mes";
+"recipe.it_pasta_bolognese.tool.t6" = "Vergiet";
+"recipe.it_pasta_bolognese.tool.t7" = "Maatbeker en of weegschaal (handig)";
+"recipe.it_pasta_bolognese.tool.t8" = "Kaasrasp";
+"recipe.it_pasta_bolognese.tool.t8.optional" = "Optioneel";
