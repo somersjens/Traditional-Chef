@@ -20,6 +20,7 @@ struct RecipeListView: View {
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
     @State private var settingsCardMeasuredHeight: CGFloat = 0
+    @State private var showMeasurementOptions: Bool = false
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -301,6 +302,9 @@ struct RecipeListView: View {
             isSearchFocused = false
             withAnimation(.easeInOut(duration: 0.2)) {
                 showSettings.toggle()
+                if !showSettings {
+                    showMeasurementOptions = false
+                }
             }
         } label: {
             Image(systemName: "gearshape.fill")
@@ -327,6 +331,7 @@ struct RecipeListView: View {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         showSettings = false
+                        showMeasurementOptions = false
                     }
                 } label: {
                     Image(systemName: "gearshape.fill")
@@ -374,14 +379,8 @@ struct RecipeListView: View {
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
                     Spacer()
-                    Menu {
-                        ForEach(MeasurementUnit.allCases) { unit in
-                            Button {
-                                measurementUnitRaw = unit.rawValue
-                            } label: {
-                                Text(AppLanguage.string(unit.settingsListLabelKey, locale: locale))
-                            }
-                        }
+                    Button {
+                        showMeasurementOptions = true
                     } label: {
                         HStack(spacing: 6) {
                             Text(AppLanguage.string(resolvedMeasurementUnit.settingsLabelKey, locale: locale))
@@ -391,7 +390,33 @@ struct RecipeListView: View {
                         .foregroundStyle(AppTheme.primaryBlue)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .menuIndicator(.hidden)
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showMeasurementOptions, arrowEdge: .top) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(MeasurementUnit.allCases) { unit in
+                                Button {
+                                    measurementUnitRaw = unit.rawValue
+                                    showMeasurementOptions = false
+                                } label: {
+                                    Text(AppLanguage.string(unit.settingsListLabelKey, locale: locale))
+                                        .foregroundStyle(AppTheme.primaryBlue)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 14)
+                                }
+                                .buttonStyle(.plain)
+
+                                if unit != MeasurementUnit.allCases.last {
+                                    Divider()
+                                        .overlay(AppTheme.primaryBlue.opacity(0.12))
+                                }
+                            }
+                        }
+                        .frame(width: 330)
+                        .padding(.vertical, 4)
+                        .presentationCompactAdaptation(.popover)
+                    }
                 }
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
