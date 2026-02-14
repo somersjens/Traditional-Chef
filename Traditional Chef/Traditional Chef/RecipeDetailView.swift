@@ -16,8 +16,12 @@ struct RecipeDetailView: View {
     @Environment(\.openURL) private var openURL
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage("defaultServings") private var defaultServings: Int = 4
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var measurementUnit: MeasurementUnit {
+        MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
+    }
     @State private var isInfoExpanded: Bool = true
     @State private var isStepsExpanded: Bool = false
     @State private var servings: Int = 4
@@ -670,9 +674,9 @@ struct RecipeDetailView: View {
                 for: ingredient,
                 servings: servings,
                 baseServings: 4,
-                measurementUnit: .metric,
-                // Step inline references should always use each ingredient's preferred display mode
-                // (e.g. liquid ingredients stay in ml/l), regardless of grocery card toggles.
+                measurementUnit: measurementUnit,
+                // Step inline references should follow the selected measurement system while
+                // still using each ingredient's preferred display mode.
                 showAllMeasurements: false,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
@@ -841,8 +845,12 @@ private struct StepRowView: View {
     @State private var startToken: UUID = UUID()
 
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var measurementUnit: MeasurementUnit {
+        MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
+    }
     @Environment(\.scenePhase) private var scenePhase
 
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -1010,9 +1018,9 @@ private struct StepRowView: View {
                 for: ingredient,
                 servings: servings,
                 baseServings: baseServings,
-                measurementUnit: .metric,
-                // Step inline references should always use each ingredient's preferred display mode
-                // (e.g. liquid ingredients stay in ml/l), regardless of grocery card toggles.
+                measurementUnit: measurementUnit,
+                // Step inline references should follow the selected measurement system while
+                // still using each ingredient's preferred display mode.
                 showAllMeasurements: false,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
