@@ -532,12 +532,6 @@ struct RecipeListView: View {
                 .font(.headline)
                 .foregroundStyle(AppTheme.textPrimary)
 
-            Text(AppLanguage.string("recipes.noResultsHint", locale: locale))
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.textPrimary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 26)
-
             Button {
                 clearAllFilters()
             } label: {
