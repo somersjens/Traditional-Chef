@@ -1,7 +1,9 @@
 "ok" = "OK";
 "done" = "Done";
 "language.english" = "English";
+"language.german" = "German";
 "language.dutch" = "Dutch";
+"language.french" = "French";
 
 "welcome.title" = "Welcome to Famous Chef!";
 "welcome.greeting" = "Hey, chef!";

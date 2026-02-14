@@ -1,7 +1,9 @@
 "ok" = "OK";
 "done" = "Terminé";
 "language.english" = "Anglais";
+"language.german" = "Allemand";
 "language.dutch" = "Néerlandais";
+"language.french" = "Français";
 
 "welcome.title" = "Bienvenue sur Famous Chef !";
 "welcome.greeting" = "Hey, chef !";
@@ -85,8 +87,8 @@
 "settings.measurement.jp.long" = "JP : cup 200 ml · tbsp 15 · tsp 5";
 
 "settings.servings" = "Personnes";
-"settings.listViewValue" = "Valeur dans la vue liste";
-"settings.timerAutoStop" = "Arrêt automatique du minuteur";
+"settings.listViewValue" = "Valeur en liste";
+"settings.timerAutoStop" = "Arrêt auto minuteur";
 
 "grocery.sortLabel.useOrder" = "Utiliser l’ordre";
 "grocery.sortLabel.grams" = "Quantité";
@@ -99,9 +101,9 @@
 "timer.pause" = "Pause";
 "timer.reset" = "Réinitialiser";
 
-"footer.feedback" = "Envoyer un commentaire";
-"footer.review" = "Écrire un avis";
-"footer.share" = "Partager avec des amis";
+"footer.feedback" = "Donner un avis";
+"footer.review" = "Noter";
+"footer.share" = "Partager";
 
 "aisle.vegetables" = "Légumes";
 "aisle.aromatics" = "Aromates";

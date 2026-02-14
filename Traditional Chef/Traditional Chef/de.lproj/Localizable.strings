@@ -1,0 +1,191 @@
+"ok" = "OK";
+"done" = "Fertig";
+"language.english" = "Englisch";
+"language.dutch" = "Niederländisch";
+"language.german" = "Deutsch";
+"language.french" = "Französisch";
+
+"welcome.title" = "Willkommen bei Famous Chef!";
+"welcome.greeting" = "Hey, Chef!";
+"welcome.startButton" = "Koche etwas richtig Leckeres";
+"welcome.sponsorMessage" = "100% gratis dank der scharfen \nKüchenmesser unseres Sponsors: Hakketjak";
+
+"recipes.search" = "Rezepte suchen";
+"recipes.search.clear" = "Suche löschen";
+"recipes.allCountries" = "Alle Länder enthalten";
+"recipes.pickContinent" = "Wähle einen Kontinent";
+"recipes.pickCountry" = "Wähle ein Land";
+"recipes.countryFilterTitle" = "Länder";
+"recipes.favoritesOnly" = "Nur Favoriten";
+
+"continent.africa" = "Afrika";
+"continent.asia" = "Asien";
+"continent.europe" = "Europa";
+"continent.northAmerica" = "Nordamerika";
+"continent.southAmerica" = "Südamerika";
+"continent.oceania" = "Ozeanien";
+
+"recipes.column.name" = "Rezept";
+"recipes.column.time" = "Gesamtzeit";
+"recipes.column.timeShort" = "Zeit";
+"recipes.column.prepTime" = "Zubereitungszeit";
+"recipes.column.prepTimeShort" = "Zeit (Z)";
+"recipes.column.ingredients" = "Zutaten";
+"recipes.column.calories" = "Kalorien";
+"recipes.column.ingredientsShort" = "#";
+"recipes.column.caloriesShort" = "kcal";
+"recipes.column.cal" = "kcal";
+"recipes.column.ing" = "#";
+
+"recipes.noResults" = "Keine Ergebnisse";
+"recipes.clearAllFilters" = "Alle Filter entfernen";
+
+"category.breakfast" = "Frühstück";
+"category.snack" = "Snack";
+"category.starter" = "Vorspeise";
+"category.main" = "Hauptgericht";
+"category.dessert" = "Dessert";
+
+"recipe.groceryTitle" = "Einkaufsliste";
+"recipe.stepsTitle" = "Schritte";
+"recipe.steps.readAllAloud" = "Alle Schritte laut vorlesen";
+"recipe.steps.stopReadAloud" = "Vorlesen stoppen";
+"recipe.steps.readSelectedAloud" = "Diesen Schritt laut vorlesen";
+"recipe.drinkTitle" = "Was dazu trinken?";
+"recipe.toolsTitle" = "Küchenwerkzeuge";
+"recipe.infoTitle" = "Informationen";
+"recipe.nutritionTitle" = "Nährwerte";
+"recipe.nutrition.columnType" = "Typ";
+"recipe.nutrition.columnPerServing" = "Pro Portion";
+"recipe.nutrition.columnPer100g" = "Pro 100 g";
+"recipe.nutrition.energy" = "Energie";
+"recipe.nutrition.protein" = "Eiweiß";
+"recipe.nutrition.carbs" = "Kohlenhydrate";
+"recipe.nutrition.sugars" = "davon Zucker";
+"recipe.nutrition.fat" = "Fett";
+"recipe.nutrition.saturated" = "davon gesättigte Fettsäuren";
+"recipe.nutrition.sodium" = "Natrium";
+"recipe.nutrition.fiber" = "Ballaststoffe";
+"recipe.drink.redWine" = "Rotwein";
+"grocery.optional" = "Optional";
+"grocery.servings" = "Anzahl der Personen";
+"grocery.option.allWeight" = "Gesamtgewicht";
+
+"grocery.option.partOfDish" = "Teil des Gerichts";
+"settings.title" = "Einstellungen";
+"settings.language" = "Sprache";
+"settings.measurement" = "Maßeinheiten";
+"settings.measurement.metric.short" = "International";
+"settings.measurement.metric.long" = "Metrisch: g/ml";
+"settings.measurement.us.short" = "US Cups";
+"settings.measurement.us.long" = "US: cup 240 ml · tbsp 15 · tsp 5";
+"settings.measurement.uk.short" = "UK oz/pint";
+"settings.measurement.uk.long" = "UK (imp): fl oz/pint · tbsp 15 · tsp 5";
+"settings.measurement.aunz.short" = "Australische Cups";
+"settings.measurement.aunz.long" = "AU/NZ: cup 250 ml · tbsp 20 · tsp 5";
+"settings.measurement.jp.short" = "Japanische Cups";
+"settings.measurement.jp.long" = "JP: cup 200 ml · tbsp 15 · tsp 5";
+
+"settings.servings" = "Personen";
+"settings.listViewValue" = "Wert in Liste";
+"settings.timerAutoStop" = "Timer automatisch stoppen";
+
+"grocery.sortLabel.useOrder" = "Reihenfolge verwenden";
+"grocery.sortLabel.grams" = "Menge";
+"grocery.sortLabel.supermarket" = "Supermarkt";
+
+"timer.title" = "Timer";
+"timer.remaining" = "Verbleibend";
+"timer.finished" = "Fertig";
+"timer.start" = "Start";
+"timer.pause" = "Pause";
+"timer.reset" = "Zurücksetzen";
+
+"footer.feedback" = "Feedback senden";
+"footer.review" = "Bewerten";
+"footer.share" = "Teilen";
+
+
+"aisle.vegetables" = "Gemüse";
+"aisle.aromatics" = "Aromaten";
+"aisle.meat" = "Fleisch";
+"aisle.canned" = "Konserven";
+"aisle.dairy" = "Milchprodukte";
+"aisle.pantry" = "Vorratskammer";
+"aisle.spices" = "Gewürze";
+"aisle.other" = "Sonstiges";
+
+"recipe.tools.summary" = "%d Artikel";
+"recipe.grocery.summary" = "%d Zutaten";
+"recipe.steps.summary" = "%d Minuten";
+"recipe.detail.back" = "Zurück";
+"recipe.detail.favorite" = "Favorit";
+"recipe.detail.shareText" = "Probiere dieses Rezept in Famous Chef aus.";
+"recipe.detail.image" = "Rezeptbild";
+"recipe.detail.info.expand" = "Infos aufklappen";
+"recipe.detail.info.collapse" = "Infos einklappen";
+"recipe.detail.steps.expand" = "Schritte aufklappen";
+"recipe.detail.steps.collapse" = "Schritte einklappen";
+"recipe.detail.internetNotConnected" = "keine Internetverbindung";
+"recipe.steps.readAloud.intro" = "Das sind die Schritte für: %@";
+"recipe.steps.readAloud.outro" = "Das waren alle Schritte, guten Appetit.";
+"recipe.card.readAloud" = "Diese Karte laut vorlesen";
+"recipe.tools.readAloud.intro.en" = "Die Werkzeuge, die du für dieses Rezept benötigst, sind";
+"recipe.nutrition.readAloud.intro.en" = "Jede Portion enthält ungefähr %d Kalorien";
+"recipe.grocery.readAloud.intro.en" = "Die noch nicht abgehakten Einkäufe für dieses Rezept für %d Personen sind";
+"recipe.grocery.readAloud.group.en" = "Für die %@";
+"recipe.grocery.readAloud.none.en" = "Alle Einkäufe sind abgehakt.";
+
+
+// === AUTO-GENERATED RECIPES BELOW ===
+"grocery.group.it_pasta_bolognese.g1" = "Pasta";
+"grocery.group.it_pasta_bolognese.g2" = "Sauce";
+"grocery.group.it_pasta_bolognese.g3" = "Finishing";
+"ingredient.i1" = "Pasta";
+"ingredient.i10" = "Red wine";
+"ingredient.i11" = "Olive oil";
+"ingredient.i12" = "Bay leaf";
+"ingredient.i13" = "Dried oregano";
+"ingredient.i14" = "Salt (total)";
+"ingredient.i15" = "Black pepper";
+"ingredient.i16" = "Butter";
+"ingredient.i17" = "Parmesan (to serve)";
+"ingredient.i18" = "Water";
+"ingredient.i2" = "Minced meat (beef or mixed)";
+"ingredient.i3" = "Onion";
+"ingredient.i4" = "Carrot";
+"ingredient.i5" = "Celery";
+"ingredient.i6" = "Garlic";
+"ingredient.i7" = "Canned chopped tomatoes";
+"ingredient.i8" = "Tomato paste";
+"ingredient.i9" = "Beef stock";
+"recipe.it_pasta_bolognese.drink.body" = "Traditionally, pasta bolognese is served with a red wine that has bright acidity, like Sangiovese or Barbera. It pairs beautifully with the tomato and the richness of the meat, keeping each bite fresh and balanced. Not in the mood for wine? Sparkling water or a light lager works great too.";
+"recipe.it_pasta_bolognese.drink.summary" = "Red Wine (Sangiovese)";
+"recipe.it_pasta_bolognese.info" = "It originated in Bologna (Northern Italy), where the sauce is known as ragu alla bolognese and is mainly built around slow-cooked meat with a little tomato. It is traditionally served with tagliatelle because those wide, flat ribbons hold on to the thick, meaty sauce far better than thin spaghetti.";
+"recipe.it_pasta_bolognese.info.summary" = "Bologna (city)";
+"recipe.it_pasta_bolognese.name" = "Pasta Bolognese";
+"recipe.it_pasta_bolognese.step1.body" = "Chop onion, carrot, celery (and garlic if using).";
+"recipe.it_pasta_bolognese.step1.title" = "Prep the vegetables";
+"recipe.it_pasta_bolognese.step2.body" = "Heat olive oil in a large pan. Add onion, carrot, celery. Cook until softened.";
+"recipe.it_pasta_bolognese.step2.title" = "Cook the veg";
+"recipe.it_pasta_bolognese.step3.body" = "Add minced meat. Cook, breaking it up, until nicely browned.";
+"recipe.it_pasta_bolognese.step3.title" = "Brown the meat";
+"recipe.it_pasta_bolognese.step4.body" = "Stir in tomato paste and cook for 2 minutes.";
+"recipe.it_pasta_bolognese.step4.title" = "Add tomato paste";
+"recipe.it_pasta_bolognese.step5.body" = "Pour in red wine (or a splash of beef stock). Stir and let it bubble for a couple minutes.";
+"recipe.it_pasta_bolognese.step5.title" = "Deglaze";
+"recipe.it_pasta_bolognese.step6.body" = "Add canned chopped tomatoes, beef stock, bay leaf, dried oregano, salt, and black pepper. Simmer gently with the lid slightly open, stirring now and then.";
+"recipe.it_pasta_bolognese.step6.title" = "Simmer the sauce";
+"recipe.it_pasta_bolognese.step7.body" = "Bring %i18 to a boil, add salt, cook pasta until al dente. Drain.";
+"recipe.it_pasta_bolognese.step7.title" = "Cook the pasta";
+"recipe.it_pasta_bolognese.step8.body" = "Remove bay leaf. Taste and adjust salt/pepper. Stir in butter if using. Serve with Parmesan.";
+"recipe.it_pasta_bolognese.step8.title" = "Finish & serve";
+"recipe.it_pasta_bolognese.tool.cheese_grater" = "Cheese grater";
+"recipe.it_pasta_bolognese.tool.cheese_grater.optional" = "Optional";
+"recipe.it_pasta_bolognese.tool.colander" = "Colander";
+"recipe.it_pasta_bolognese.tool.cutting_board" = "Cutting board";
+"recipe.it_pasta_bolognese.tool.large_pot" = "Large pot or Dutch oven with a heavy base";
+"recipe.it_pasta_bolognese.tool.measuring_cup" = "Measuring cup and or kitchen scale (handy)";
+"recipe.it_pasta_bolognese.tool.pasta_pot" = "Pot for boiling the pasta";
+"recipe.it_pasta_bolognese.tool.sharp_knife" = "Sharp knife";
+"recipe.it_pasta_bolognese.tool.wooden_spoon" = "Wooden spoon or spatula";

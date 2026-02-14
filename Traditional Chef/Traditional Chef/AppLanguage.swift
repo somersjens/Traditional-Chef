@@ -16,7 +16,9 @@ enum AppLanguage {
 
     static let supported: [Option] = [
         Option(code: "nl", regionCode: "NL", nameKey: "language.dutch"),
-        Option(code: "en", regionCode: "GB", nameKey: "language.english")
+        Option(code: "en", regionCode: "GB", nameKey: "language.english"),
+        Option(code: "de", regionCode: "DE", nameKey: "language.german"),
+        Option(code: "fr", regionCode: "FR", nameKey: "language.french")
     ]
 
     static func defaultCode() -> String {
@@ -33,9 +35,15 @@ enum AppLanguage {
             regionCode = parts.count > 1 ? String(parts[1]) : nil
         }
 
-        if languageCode == "nl" || regionCode == "NL" {
-            return "nl"
+        if let languageCode, supported.contains(where: { $0.code == languageCode }) {
+            return languageCode
         }
+
+        if let regionCode,
+           let regionMatch = supported.first(where: { $0.regionCode == regionCode }) {
+            return regionMatch.code
+        }
+
         return "en"
     }
 
