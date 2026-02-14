@@ -1,9 +1,9 @@
-recipe_id,tool_id,is_optional,name_en,name_nl,name_de,name_fr,optional_label_en,optional_label_nl,optional_label_de,optional_label_fr
-it_pasta_bolognese,large_pot,false,Large pot or Dutch oven with a heavy base,Grote pan of braadpan met dikke bodem,,,,,,
-it_pasta_bolognese,pasta_pot,false,Pot for boiling the pasta,Kookpan voor de pasta,,,,,,
-it_pasta_bolognese,wooden_spoon,false,Wooden spoon or spatula,Houten lepel of spatel,,,,,,
-it_pasta_bolognese,cutting_board,false,Cutting board,Snijplank,,,,,,
-it_pasta_bolognese,sharp_knife,false,Sharp knife,Scherp mes,,,,,,
-it_pasta_bolognese,colander,false,Colander,Vergiet,,,,,,
-it_pasta_bolognese,measuring_cup,false,Measuring cup and or kitchen scale (handy),Maatbeker en of weegschaal (handig),,,,,,
-it_pasta_bolognese,cheese_grater,true,Cheese grater,Kaasrasp,,,Optional,Optioneel,,
+recipe_id,tool_id,is_optional,name_en,optional_label_en,name_nl,optional_label_nl,name_de,optional_label_de,name_fr,optional_label_fr
+it_pasta_bolognese,large_pot,false,Large pot or Dutch oven with a heavy base,,Grote pan of braadpan met dikke bodem,,,,,
+it_pasta_bolognese,pasta_pot,false,Pot for boiling the pasta,,Kookpan voor de pasta,,,,,
+it_pasta_bolognese,wooden_spoon,false,Wooden spoon or spatula,,Houten lepel of spatel,,,,,
+it_pasta_bolognese,cutting_board,false,Cutting board,,Snijplank,,,,,
+it_pasta_bolognese,sharp_knife,false,Sharp knife,,Scherp mes,,,,,
+it_pasta_bolognese,colander,false,Colander,,Vergiet,,,,,
+it_pasta_bolognese,measuring_cup,false,Measuring cup and or kitchen scale (handy),,Maatbeker en of weegschaal (handig),,,,,
+it_pasta_bolognese,cheese_grater,true,Cheese grater,Optional,Kaasrasp,Optioneel,,,,
