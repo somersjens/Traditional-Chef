@@ -537,8 +537,30 @@ struct RecipeListView: View {
                 .foregroundStyle(AppTheme.textPrimary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 26)
+
+            Button {
+                clearAllFilters()
+            } label: {
+                Text(AppLanguage.string("recipes.clearAllFilters", locale: locale))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.pageBackground)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 9)
+                    .background(AppTheme.primaryBlue)
+                    .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 4)
         }
         .padding(.top, 40)
+    }
+
+    private func clearAllFilters() {
+        vm.selectedCountryCode = nil
+        vm.selectedContinent = nil
+        vm.selectedCategories.removeAll()
+        vm.searchText = ""
+        isSearchFocused = false
     }
 
     private var filteredAndSortedRecipes: [Recipe] {

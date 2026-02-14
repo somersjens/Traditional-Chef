@@ -47,6 +47,7 @@
 
 "recipes.noResults" = "No results";
 "recipes.noResultsHint" = "Remove a filter to get results, or try a different search.";
+"recipes.clearAllFilters" = "Remove all filters";
 
 "category.breakfast" = "Breakfast";
 "category.snack" = "Snack";

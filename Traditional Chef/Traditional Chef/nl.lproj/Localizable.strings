@@ -47,6 +47,7 @@
 
 "recipes.noResults" = "Geen resultaten";
 "recipes.noResultsHint" = "Verwijder een filter om resultaten te krijgen, of probeer een andere zoekopdracht.";
+"recipes.clearAllFilters" = "Verwijder alle filters";
 
 "category.breakfast" = "Ontbijt";
 "category.snack" = "Snack";
