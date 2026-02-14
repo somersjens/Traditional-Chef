@@ -125,6 +125,7 @@
 "recipe.detail.info.collapse" = "Collapse info";
 "recipe.detail.steps.expand" = "Expand steps";
 "recipe.detail.steps.collapse" = "Collapse steps";
+"recipe.detail.internetNotConnected" = "internet not connected";
 "recipe.steps.readAloud.intro" = "These are the steps for: %@";
 "recipe.steps.readAloud.outro" = "Those were all the steps, enjoy your meal.";
 "recipe.card.readAloud" = "Read this card aloud";

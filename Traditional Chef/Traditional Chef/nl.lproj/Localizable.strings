@@ -125,6 +125,7 @@
 "recipe.detail.info.collapse" = "Info inklappen";
 "recipe.detail.steps.expand" = "Stappen uitklappen";
 "recipe.detail.steps.collapse" = "Stappen inklappen";
+"recipe.detail.internetNotConnected" = "geen internetverbinding";
 "recipe.steps.readAloud.intro" = "Dit zijn de stappen voor: %@";
 "recipe.steps.readAloud.outro" = "Dat waren alle stappen, eet smakelijk.";
 "recipe.card.readAloud" = "Lees deze kaart hardop";

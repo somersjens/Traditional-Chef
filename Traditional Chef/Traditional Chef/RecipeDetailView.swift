@@ -28,6 +28,8 @@ struct RecipeDetailView: View {
     @State private var stepTimerSnapshots: [String: StepTimerSnapshot] = [:]
     @State private var heroUIImage: UIImage?
     @State private var heroImageFailed = false
+    @State private var showHeroImageOfflineFallback = false
+    @State private var heroImageLoadAttempt = 0
     @State private var heroTargetPixelSize: CGFloat = 0
     @State private var hasHeroImageEntered = false
     @State private var isTopBarHidden = false
@@ -301,17 +303,64 @@ struct RecipeDetailView: View {
         }
         .clipped()
         .accessibilityLabel(Text(AppLanguage.string("recipe.detail.image", locale: locale)))
-        .task(priority: .userInitiated) {
+        .task(id: heroImageLoadAttempt, priority: .userInitiated) {
+            async let fallbackTimer: Void = startHeroImageFallbackTimer()
             RecipeImagePrefetcher.prefetch(
                 urlString: recipe.imageURL,
                 priority: URLSessionTask.highPriority
             )
             await loadHeroImage(targetPixelSize: targetPixelSize)
+            _ = await fallbackTimer
         }
     }
 
     private var heroPlaceholder: some View {
-        AppTheme.secondaryOffWhite
+        ZStack {
+            AppTheme.secondaryOffWhite
+
+            if showHeroImageOfflineFallback && heroUIImage == nil {
+                VStack(spacing: 8) {
+                    Image("chef_no_background")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 120)
+
+                    Text(AppLanguage.string("recipe.detail.internetNotConnected", locale: locale))
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.textPrimary)
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard showHeroImageOfflineFallback && heroUIImage == nil else { return }
+            retryHeroImageLoad()
+        }
+    }
+
+    private func startHeroImageFallbackTimer() async {
+        await MainActor.run {
+            showHeroImageOfflineFallback = false
+        }
+
+        try? await Task.sleep(for: .seconds(2))
+        guard !Task.isCancelled else { return }
+
+        await MainActor.run {
+            if heroUIImage == nil {
+                showHeroImageOfflineFallback = true
+            }
+        }
+    }
+
+    private func retryHeroImageLoad() {
+        heroImageFailed = false
+        heroUIImage = nil
+        heroTargetPixelSize = 0
+        hasHeroImageEntered = false
+        showHeroImageOfflineFallback = false
+        heroImageLoadAttempt += 1
     }
 
     private var heroImageURL: URL? {
@@ -382,6 +431,7 @@ struct RecipeDetailView: View {
                     heroUIImage = image
                     hasHeroImageEntered = true
                 }
+                showHeroImageOfflineFallback = false
                 heroTargetPixelSize = targetPixelSize
                 isHeroImageDark = imageIsDark
             }
