@@ -937,8 +937,8 @@ private struct StepRowView: View {
                     .opacity(0)
                     .accessibilityHidden(true)
                 Text(renderedText)
-                    .font(.headline)
-                    .fontWeight(.regular)
+                    .font(.body)
+                    .lineSpacing(2)
                     .foregroundStyle(AppTheme.textPrimary.opacity(0.92))
                 Spacer(minLength: 0)
                 if step.timerSeconds != nil {
