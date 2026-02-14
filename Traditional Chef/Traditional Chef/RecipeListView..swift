@@ -310,10 +310,11 @@ struct RecipeListView: View {
             Image(systemName: "gearshape.fill")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 20, alignment: .center)
         }
         .buttonStyle(.plain)
         .background(Color.clear)
-        .padding(.trailing, 4)
+        .padding(.trailing, 8)
         .accessibilityLabel(Text(AppLanguage.string("settings.title", locale: locale)))
     }
 
