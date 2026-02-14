@@ -671,7 +671,9 @@ struct RecipeDetailView: View {
                 servings: servings,
                 baseServings: 4,
                 measurementUnit: .metric,
-                showAllMeasurements: true,
+                // Step inline references should always use each ingredient's preferred display mode
+                // (e.g. liquid ingredients stay in ml/l), regardless of grocery card toggles.
+                showAllMeasurements: false,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
@@ -1009,7 +1011,9 @@ private struct StepRowView: View {
                 servings: servings,
                 baseServings: baseServings,
                 measurementUnit: .metric,
-                showAllMeasurements: true,
+                // Step inline references should always use each ingredient's preferred display mode
+                // (e.g. liquid ingredients stay in ml/l), regardless of grocery card toggles.
+                showAllMeasurements: false,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)

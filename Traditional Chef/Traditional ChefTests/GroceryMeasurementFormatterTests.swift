@@ -77,6 +77,21 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
         XCTAssertEqual(amount.unit, "g")
     }
 
+    func testMetricMeasurementModeForLiquidUsesMilliliters() {
+        let ing = ingredient(grams: 240, mode: .liquid, gramsPerMl: 1, allowCup: true)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.value, "240")
+        XCTAssertEqual(amount.unit, "ml")
+    }
+
     func testMeasurementModeConvertsUSWeightToOunces() {
         let ing = ingredient(grams: 56.69904625, mode: .weight)
         let amount = GroceryMeasurementFormatter.formattedAmount(
