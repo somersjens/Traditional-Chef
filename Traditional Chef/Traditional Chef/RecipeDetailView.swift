@@ -606,46 +606,46 @@ struct RecipeDetailView: View {
     }
 
     private var stepsContent: some View {
-        VStack(spacing: 9) {
-            Divider()
-                .overlay(AppTheme.hairline)
+        Group {
+            if isStepsExpanded {
+                VStack(spacing: 9) {
+                    Divider()
+                        .overlay(AppTheme.hairline)
 
-            ForEach(recipe.steps) { step in
-                StepRowView(
-                    step: step,
-                    ingredients: recipe.ingredients,
-                    servings: servings,
-                    baseServings: 4,
-                    isDimmed: selectedStepID != nil && selectedStepID != step.id,
-                    isSelected: selectedStepID == step.id,
-                    onStepTap: {
-                        if selectedStepID == step.id {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                selectedStepID = nil
+                    ForEach(recipe.steps) { step in
+                        StepRowView(
+                            step: step,
+                            ingredients: recipe.ingredients,
+                            servings: servings,
+                            baseServings: 4,
+                            isDimmed: selectedStepID != nil && selectedStepID != step.id,
+                            isSelected: selectedStepID == step.id,
+                            onStepTap: {
+                                if selectedStepID == step.id {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedStepID = nil
+                                    }
+                                    stopStepReadAloud()
+                                } else {
+                                    stopStepReadAloud()
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedStepID = step.id
+                                    }
+                                    readStep(step)
+                                }
+                            },
+                            onTimerUpdate: { snapshot in
+                                stepTimerSnapshots[snapshot.id] = snapshot
                             }
-                            stopStepReadAloud()
-                        } else {
-                            stopStepReadAloud()
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                selectedStepID = step.id
-                            }
-                            readStep(step)
+                        )
+                        if step.id != recipe.steps.last?.id {
+                            Divider().overlay(AppTheme.hairline)
                         }
-                    },
-                    onTimerUpdate: { snapshot in
-                        stepTimerSnapshots[snapshot.id] = snapshot
                     }
-                )
-                if step.id != recipe.steps.last?.id {
-                    Divider().overlay(AppTheme.hairline)
                 }
+                .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
         }
-        .frame(height: isStepsExpanded ? nil : 0, alignment: .top)
-        .clipped()
-        .opacity(isStepsExpanded ? 1 : 0)
-        .allowsHitTesting(isStepsExpanded)
-        .accessibilityHidden(!isStepsExpanded)
     }
 
     private func readAllSteps() {
