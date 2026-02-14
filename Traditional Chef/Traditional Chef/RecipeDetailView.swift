@@ -44,9 +44,12 @@ struct RecipeDetailView: View {
     @StateObject private var stepSpeaker = StepSpeaker()
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
+    private let knifeRevealBoundaryFraction: CGFloat = 0.45
+    private let knifeRevealFineTuneOffset: CGFloat = 0
+    private let knifeImageAspectRatio: CGFloat = 6.4
     private let openingTransitionDuration: TimeInterval = 0.936
     private let openingTransitionDelay: TimeInterval = 0.096
-    private let openingTransitionHideDelay: TimeInterval = 1.14
+    private let openingTransitionHideBuffer: TimeInterval = 0.03
 
     var body: some View {
         GeometryReader { proxy in
@@ -127,14 +130,17 @@ struct RecipeDetailView: View {
 
     private func openingKnifeTransitionOverlay(in proxy: GeometryProxy) -> some View {
         let horizontalInset = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
+        let verticalInset = proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
         let fullWidth = proxy.size.width + horizontalInset
+        let fullHeight = proxy.size.height + verticalInset
         let fullWidthCenterX = (proxy.size.width / 2) + ((proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing) / 2)
-        let knifeHeight = max(proxy.size.width * 0.2, 56)
-        let knifeTravelStart = proxy.size.height + (knifeHeight / 2)
-        let knifeTravelEnd = -(knifeHeight / 2)
-        let knifeCenterY = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
-        let revealBoundaryY = knifeCenterY - (knifeHeight / 2)
-        let coverHeight = min(max(revealBoundaryY, 0), proxy.size.height)
+        let knifeHeight = fullWidth / knifeImageAspectRatio
+        let knifeTravelStart = fullHeight + (knifeHeight / 2)
+        let knifeTravelEnd = knifeHeight * (0.5 - knifeRevealBoundaryFraction)
+        let knifeCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
+        let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
+        let revealBoundaryY = knifeCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
+        let coverHeight = min(max(revealBoundaryY, 0), fullHeight)
 
         return ZStack(alignment: .top) {
             AppTheme.pageBackground
@@ -142,6 +148,8 @@ struct RecipeDetailView: View {
                 .frame(width: fullWidth)
                 .padding(.leading, -proxy.safeAreaInsets.leading)
                 .padding(.trailing, -proxy.safeAreaInsets.trailing)
+                .padding(.top, -proxy.safeAreaInsets.top)
+                .padding(.bottom, -proxy.safeAreaInsets.bottom)
                 .frame(maxWidth: .infinity, alignment: .top)
 
             Image("Knife_no_background")
@@ -165,7 +173,8 @@ struct RecipeDetailView: View {
             knifeFlightProgress = 1
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + openingTransitionHideDelay) {
+        let hideDelay = openingTransitionDelay + openingTransitionDuration + openingTransitionHideBuffer
+        DispatchQueue.main.asyncAfter(deadline: .now() + hideDelay) {
             showOpeningKnifeTransition = false
         }
     }
