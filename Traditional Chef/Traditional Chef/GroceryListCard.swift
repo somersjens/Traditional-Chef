@@ -215,7 +215,8 @@ struct GroceryListCard: View {
         .allowsHitTesting(!isResettingChecks)
         .onChange(of: checked) { _, newValue in
             saveChecked(newValue)
-            if newValue.count == orderedIngredientIds.count && !isResettingChecks {
+            let checkedVisibleCount = newValue.intersection(visibleIngredientIds).count
+            if checkedVisibleCount == visibleIngredientIds.count && !isResettingChecks {
                 Haptics.success()
                 startSequentialUncheck()
             }
@@ -556,16 +557,20 @@ struct GroceryListCard: View {
         "grocery.checked.\(recipe.id)"
     }
 
+    private var visibleIngredientIds: Set<String> {
+        Set(orderedIngredientIds)
+    }
+
     private func loadChecked() -> Set<String> {
         guard let data = UserDefaults.standard.data(forKey: checkedStorageKey),
               let decoded = try? JSONDecoder().decode([String].self, from: data) else {
             return []
         }
-        return Set(decoded)
+        return Set(decoded).intersection(visibleIngredientIds)
     }
 
     private func saveChecked(_ values: Set<String>) {
-        let encoded = try? JSONEncoder().encode(Array(values))
+        let encoded = try? JSONEncoder().encode(Array(values.intersection(visibleIngredientIds)))
         UserDefaults.standard.set(encoded, forKey: checkedStorageKey)
     }
 
