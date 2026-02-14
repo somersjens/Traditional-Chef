@@ -8,7 +8,8 @@
 "welcome.title" = "Willkommen bei Famous Chef!";
 "welcome.greeting" = "Hey, Chef!";
 "welcome.startButton" = "Koche etwas richtig Leckeres";
-"welcome.sponsorMessage" = "100% gratis dank der scharfen \nKüchenmesser unseres Sponsors: Hakketjak";
+"welcome.sponsorMessage" = "100% gratis dank den scharfen \nMessern unseres Sponsors: Hakketjak";
+
 
 "recipes.search" = "Rezepte suchen";
 "recipes.search.clear" = "Suche löschen";

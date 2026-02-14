@@ -7,8 +7,9 @@
 
 "welcome.title" = "Bienvenue sur Famous Chef !";
 "welcome.greeting" = "Hey, chef !";
-"welcome.startButton" = "Prépare quelque chose de vraiment délicieux";
-"welcome.sponsorMessage" = "100% gratuit grâce aux \ncouteaux de cuisine bien aiguisés de notre sponsor : Hakketjak";
+"welcome.startButton" = "Prépare un plat délicieux";
+"welcome.sponsorMessage" = "L’app est 100% gratuit grâce aux \ncouteaux de notre sponsor : Hakketjak";
+
 
 "recipes.search" = "Rechercher des recettes";
 "recipes.search.clear" = "Effacer la recherche";
