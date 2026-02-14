@@ -68,6 +68,9 @@ struct RecipeListView: View {
                                             searchText: vm.debouncedSearchText
                                         )
                                     }
+                                    .transaction { transaction in
+                                        transaction.disablesAnimations = true
+                                    }
                                     .simultaneousGesture(TapGesture().onEnded {
                                         RecipeImagePrefetcher.prefetch(
                                             urlString: recipe.imageURL,
@@ -88,6 +91,9 @@ struct RecipeListView: View {
             }
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
+                    .transaction { transaction in
+                        transaction.disablesAnimations = true
+                    }
             }
             .toolbar(.hidden, for: .navigationBar)
             .onAppear {

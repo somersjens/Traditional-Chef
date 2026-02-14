@@ -35,56 +35,77 @@ struct RecipeDetailView: View {
     @State private var isHeroImageDark: Bool = false
     @State private var highlightFooterLinks = false
     @State private var selectedStepID: String? = nil
+    @State private var knifeFlightProgress: CGFloat = 0
+    @State private var showOpeningKnifeTransition: Bool = true
+    @State private var hasStartedOpeningKnifeTransition: Bool = false
     @StateObject private var stepSpeaker = StepSpeaker()
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
 
     var body: some View {
-        ZStack(alignment: .top) {
-            GeometryReader { proxy in
-                let isLandscape = proxy.size.width > proxy.size.height
-                let heroSize = proxy.size.width
-                let heroHeight = isLandscape ? proxy.size.height * 0.45 : heroSize
-                let heroPixelSize = max(heroSize, heroHeight) * displayScale
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
-                        heroSection(
-                            height: heroHeight,
-                            width: proxy.size.width,
-                            safeAreaInsets: proxy.safeAreaInsets,
-                            targetPixelSize: heroPixelSize,
-                            isLandscape: isLandscape
-                        )
+        GeometryReader { proxy in
+            ZStack(alignment: .top) {
+                detailContent(in: proxy)
 
-                        VStack(alignment: .leading, spacing: 14) {
-                            header
-
-                            NutritionCard(recipe: recipe)
-
-                            DrinkPairingCard(recipe: recipe)
-
-                            KitchenToolsCard(recipe: recipe)
-
-                            GroceryListCard(recipe: recipe, servings: $servings)
-
-                            stepsCard
-
-                            footerLinks
-                        }
-                        .padding(.leading, 12 + proxy.safeAreaInsets.leading)
-                        .padding(.trailing, 12 + proxy.safeAreaInsets.trailing)
-                    }
-                    .padding(.bottom, 12)
-                    .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
+                if showOpeningKnifeTransition {
+                    openingKnifeTransitionOverlay(in: proxy)
+                        .zIndex(4)
                 }
-                .contentMargins(.horizontal, 0, for: .scrollContent)
-                .ignoresSafeArea(edges: .top)
-                .onChange(of: scrollOffset) { _, offset in
-                    let shouldHide = offset > (heroHeight * 0.5)
-                    if shouldHide != isTopBarHidden {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isTopBarHidden = shouldHide
-                        }
+            }
+        }
+        .background(AppTheme.pageBackground)
+        .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            servings = defaultServings
+            startOpeningKnifeTransitionIfNeeded()
+        }
+    }
+
+    private func detailContent(in proxy: GeometryProxy) -> some View {
+        let isLandscape = proxy.size.width > proxy.size.height
+        let heroSize = proxy.size.width
+        let heroHeight = isLandscape ? proxy.size.height * 0.45 : heroSize
+        let heroPixelSize = max(heroSize, heroHeight) * displayScale
+
+        return ZStack(alignment: .top) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    heroSection(
+                        height: heroHeight,
+                        width: proxy.size.width,
+                        safeAreaInsets: proxy.safeAreaInsets,
+                        targetPixelSize: heroPixelSize,
+                        isLandscape: isLandscape
+                    )
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        header
+
+                        NutritionCard(recipe: recipe)
+
+                        DrinkPairingCard(recipe: recipe)
+
+                        KitchenToolsCard(recipe: recipe)
+
+                        GroceryListCard(recipe: recipe, servings: $servings)
+
+                        stepsCard
+
+                        footerLinks
+                    }
+                    .padding(.leading, 12 + proxy.safeAreaInsets.leading)
+                    .padding(.trailing, 12 + proxy.safeAreaInsets.trailing)
+                }
+                .padding(.bottom, 12)
+                .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
+            }
+            .contentMargins(.horizontal, 0, for: .scrollContent)
+            .ignoresSafeArea(edges: .top)
+            .onChange(of: scrollOffset) { _, offset in
+                let shouldHide = offset > (heroHeight * 0.5)
+                if shouldHide != isTopBarHidden {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isTopBarHidden = shouldHide
                     }
                 }
             }
@@ -94,12 +115,46 @@ struct RecipeDetailView: View {
                 .contentShape(Rectangle())
                 .zIndex(3)
                 .opacity(isTopBarHidden ? 0 : 1)
-                .allowsHitTesting(!isTopBarHidden)
+                .allowsHitTesting(!isTopBarHidden && !showOpeningKnifeTransition)
         }
-        .background(AppTheme.pageBackground)
-        .toolbar(.hidden, for: .navigationBar)
-        .onAppear {
-            servings = defaultServings
+    }
+
+    private func openingKnifeTransitionOverlay(in proxy: GeometryProxy) -> some View {
+        let knifeHeight = max(proxy.size.width * 0.2, 56)
+        let knifeTravelStart = proxy.size.height + (knifeHeight / 2)
+        let knifeTravelEnd = -(knifeHeight / 2)
+        let knifeCenterY = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
+        let revealBoundaryY = knifeCenterY - (knifeHeight / 2)
+        let coverHeight = min(max(revealBoundaryY, 0), proxy.size.height)
+
+        return ZStack(alignment: .top) {
+            AppTheme.pageBackground
+                .frame(height: coverHeight)
+                .frame(maxWidth: .infinity, alignment: .top)
+
+            Image("Knife_no_background")
+                .resizable()
+                .scaledToFit()
+                .frame(width: proxy.size.width)
+                .position(x: proxy.size.width / 2, y: knifeCenterY)
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+
+    private func startOpeningKnifeTransitionIfNeeded() {
+        guard !hasStartedOpeningKnifeTransition else { return }
+
+        hasStartedOpeningKnifeTransition = true
+        knifeFlightProgress = 0
+        showOpeningKnifeTransition = true
+
+        withAnimation(.linear(duration: 0.78).delay(0.08)) {
+            knifeFlightProgress = 1
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
+            showOpeningKnifeTransition = false
         }
     }
 
