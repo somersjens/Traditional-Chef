@@ -29,6 +29,7 @@ struct RecipeDetailView: View {
     @State private var heroUIImage: UIImage?
     @State private var heroImageFailed = false
     @State private var showHeroImageOfflineFallback = false
+    @State private var hasHeroFallbackEntered = false
     @State private var heroImageLoadAttempt = 0
     @State private var heroTargetPixelSize: CGFloat = 0
     @State private var hasHeroImageEntered = false
@@ -333,6 +334,8 @@ struct RecipeDetailView: View {
                         .foregroundStyle(AppTheme.textPrimary)
                 }
                 .padding(.horizontal, 16)
+                .offset(y: hasHeroFallbackEntered ? 0 : -420)
+                .animation(.easeOut(duration: 0.5), value: hasHeroFallbackEntered)
             }
         }
         .contentShape(Rectangle())
@@ -345,14 +348,18 @@ struct RecipeDetailView: View {
     private func startHeroImageFallbackTimer() async {
         await MainActor.run {
             showHeroImageOfflineFallback = false
+            hasHeroFallbackEntered = false
         }
 
-        try? await Task.sleep(for: .seconds(2))
+        try? await Task.sleep(for: .seconds(1.5))
         guard !Task.isCancelled else { return }
 
         await MainActor.run {
             if heroUIImage == nil {
                 showHeroImageOfflineFallback = true
+                withAnimation(.easeOut(duration: 0.5)) {
+                    hasHeroFallbackEntered = true
+                }
             }
         }
     }
@@ -363,6 +370,7 @@ struct RecipeDetailView: View {
         heroTargetPixelSize = 0
         hasHeroImageEntered = false
         showHeroImageOfflineFallback = false
+        hasHeroFallbackEntered = false
         heroImageLoadAttempt += 1
     }
 
@@ -435,6 +443,7 @@ struct RecipeDetailView: View {
                     hasHeroImageEntered = true
                 }
                 showHeroImageOfflineFallback = false
+                hasHeroFallbackEntered = false
                 heroTargetPixelSize = targetPixelSize
                 isHeroImageDark = imageIsDark
             }

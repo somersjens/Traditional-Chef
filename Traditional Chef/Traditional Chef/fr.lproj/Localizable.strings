@@ -1,22 +1,137 @@
+"ok" = "OK";
+"done" = "Terminé";
+"language.english" = "Anglais";
+"language.dutch" = "Néerlandais";
+
+"welcome.title" = "Bienvenue sur Famous Chef !";
+"welcome.greeting" = "Hey, chef !";
+"welcome.startButton" = "Prépare quelque chose de vraiment délicieux";
+"welcome.sponsorMessage" = "100% gratuit grâce aux \ncouteaux de cuisine bien aiguisés de notre sponsor : Hakketjak";
+
+"recipes.search" = "Rechercher des recettes";
+"recipes.search.clear" = "Effacer la recherche";
+"recipes.allCountries" = "Tous les pays inclus";
+"recipes.pickContinent" = "Choisir un continent";
+"recipes.pickCountry" = "Choisir un pays";
+"recipes.countryFilterTitle" = "Pays";
+"recipes.favoritesOnly" = "Favoris uniquement";
+
+"continent.africa" = "Afrique";
+"continent.asia" = "Asie";
+"continent.europe" = "Europe";
+"continent.northAmerica" = "Amérique du Nord";
+"continent.southAmerica" = "Amérique du Sud";
+"continent.oceania" = "Océanie";
+
+"recipes.column.name" = "Recette";
+"recipes.column.time" = "Temps total";
+"recipes.column.timeShort" = "Temps";
+"recipes.column.prepTime" = "Temps de préparation";
+"recipes.column.prepTimeShort" = "Temps (p)";
+"recipes.column.ingredients" = "Ingrédients";
+"recipes.column.calories" = "Calories";
+"recipes.column.ingredientsShort" = "#";
+"recipes.column.caloriesShort" = "kcal";
+"recipes.column.cal" = "kcal";
+"recipes.column.ing" = "#";
+
+"recipes.noResults" = "Aucun résultat";
+"recipes.clearAllFilters" = "Supprimer tous les filtres";
+
+"category.breakfast" = "Petit-déjeuner";
+"category.snack" = "En-cas";
+"category.starter" = "Entrée";
+"category.main" = "Plat";
+"category.dessert" = "Dessert";
+
+"recipe.groceryTitle" = "Courses";
+"recipe.stepsTitle" = "Étapes";
+"recipe.steps.readAllAloud" = "Lire toutes les étapes à voix haute";
+"recipe.steps.stopReadAloud" = "Arrêter la lecture";
+"recipe.steps.readSelectedAloud" = "Lire cette étape à voix haute";
+"recipe.drinkTitle" = "Que boire ?";
+"recipe.toolsTitle" = "Ustensiles de cuisine";
+"recipe.infoTitle" = "Informations";
+"recipe.nutritionTitle" = "Valeurs nutritionnelles";
+"recipe.nutrition.columnType" = "Type";
+"recipe.nutrition.columnPerServing" = "Par portion";
+"recipe.nutrition.columnPer100g" = "Pour 100 g";
+"recipe.nutrition.energy" = "Énergie";
+"recipe.nutrition.protein" = "Protéines";
+"recipe.nutrition.carbs" = "Glucides";
+"recipe.nutrition.sugars" = "dont sucres";
+"recipe.nutrition.fat" = "Lipides";
+"recipe.nutrition.saturated" = "dont saturés";
+"recipe.nutrition.sodium" = "Sodium";
+"recipe.nutrition.fiber" = "Fibres";
+"recipe.drink.redWine" = "vin rouge";
+"grocery.optional" = "Optionnel";
+"grocery.servings" = "Nombre de personnes";
+"grocery.option.allWeight" = "Poids total";
+
+"grocery.option.partOfDish" = "Partie du plat";
+"settings.title" = "Paramètres";
+"settings.language" = "Langue";
+"settings.measurement" = "Mesures";
+"settings.measurement.metric.short" = "International";
+"settings.measurement.metric.long" = "Métrique : g/ml";
+"settings.measurement.us.short" = "Tasses US";
+"settings.measurement.us.long" = "US : cup 240 ml · tbsp 15 · tsp 5";
+"settings.measurement.uk.short" = "UK oz/pint";
+"settings.measurement.uk.long" = "UK (imp) : fl oz/pint · tbsp 15 · tsp 5";
+"settings.measurement.aunz.short" = "Tasses australiennes";
+"settings.measurement.aunz.long" = "AU/NZ : cup 250 ml · tbsp 20 · tsp 5";
+"settings.measurement.jp.short" = "Tasses japonaises";
+"settings.measurement.jp.long" = "JP : cup 200 ml · tbsp 15 · tsp 5";
+
+"settings.servings" = "Personnes";
+"settings.listViewValue" = "Valeur dans la vue liste";
+"settings.timerAutoStop" = "Arrêt automatique du minuteur";
+
+"grocery.sortLabel.useOrder" = "Utiliser l’ordre";
+"grocery.sortLabel.grams" = "Quantité";
+"grocery.sortLabel.supermarket" = "Supermarché";
+
+"timer.title" = "Minuteur";
+"timer.remaining" = "Restant";
+"timer.finished" = "Terminé";
+"timer.start" = "Démarrer";
+"timer.pause" = "Pause";
+"timer.reset" = "Réinitialiser";
+
+"footer.feedback" = "Envoyer un commentaire";
+"footer.review" = "Écrire un avis";
+"footer.share" = "Partager avec des amis";
+
+"aisle.vegetables" = "Légumes";
+"aisle.aromatics" = "Aromates";
+"aisle.meat" = "Viande";
+"aisle.canned" = "Conserves";
+"aisle.dairy" = "Produits laitiers";
+"aisle.pantry" = "Garde-manger";
+"aisle.spices" = "Épices";
+"aisle.other" = "Autre";
+
+"recipe.tools.summary" = "%d articles";
+"recipe.grocery.summary" = "%d ingrédients";
+"recipe.steps.summary" = "%d minutes";
+"recipe.detail.back" = "Retour";
+"recipe.detail.favorite" = "Favori";
+"recipe.detail.shareText" = "Essayez cette recette dans Famous Chef.";
+"recipe.detail.image" = "Image de la recette";
+"recipe.detail.info.expand" = "Développer les infos";
+"recipe.detail.info.collapse" = "Réduire les infos";
+"recipe.detail.steps.expand" = "Développer les étapes";
+"recipe.detail.steps.collapse" = "Réduire les étapes";
+"recipe.detail.internetNotConnected" = "internet non connecté";
+"recipe.steps.readAloud.intro" = "Voici les étapes pour : %@";
+"recipe.steps.readAloud.outro" = "C’était toutes les étapes, bon appétit.";
+"recipe.card.readAloud" = "Lire cette carte à voix haute";
+"recipe.tools.readAloud.intro.en" = "Les ustensiles dont vous aurez besoin pour cette recette sont";
+"recipe.nutrition.readAloud.intro.en" = "Chaque portion contiendra environ %d calories";
+"recipe.grocery.readAloud.intro.en" = "Les courses non cochées pour cette recette pour %d personnes sont";
+"recipe.grocery.readAloud.group.en" = "Pour le %@";
+"recipe.grocery.readAloud.none.en" = "Toutes les courses sont cochées.";
+
+
 // === AUTO-GENERATED RECIPES BELOW ===
-"grocery.group.it_pasta_bolognese.g1" = "Pâtes";
-"grocery.group.it_pasta_bolognese.g2" = "Sauce";
-"grocery.group.it_pasta_bolognese.g3" = "Finition";
-"ingredient.i1" = "Pâtes";
-"ingredient.i10" = "Vin rouge";
-"ingredient.i11" = "Huile d'olive";
-"ingredient.i12" = "Feuille de laurier";
-"ingredient.i13" = "Origan séché";
-"ingredient.i14" = "Sel (total)";
-"ingredient.i15" = "Poivre noir";
-"ingredient.i16" = "Beurre";
-"ingredient.i17" = "Parmesan (pour servir)";
-"ingredient.i18" = "Eau";
-"ingredient.i2" = "Viande hachée (bœuf ou mélange)";
-"ingredient.i3" = "Oignon";
-"ingredient.i4" = "Carotte";
-"ingredient.i5" = "Céleri";
-"ingredient.i6" = "Ail";
-"ingredient.i7" = "Tomates concassées en boîte";
-"ingredient.i8" = "Concentré de tomate";
-"ingredient.i9" = "Bouillon de bœuf";

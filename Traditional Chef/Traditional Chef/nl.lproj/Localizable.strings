@@ -74,15 +74,15 @@
 "settings.title" = "Instellingen";
 "settings.language" = "Taal voor recepten";
 "settings.measurement" = "Standaard Maat";
-"settings.measurement.metric.short" = "Metrisch";
-"settings.measurement.metric.long" = "Metrisch: g/ml";
-"settings.measurement.us.short" = "US";
+"settings.measurement.metric.short" = "Internationaal";
+"settings.measurement.metric.long" = "Internationaal: g/ml";
+"settings.measurement.us.short" = "Amerikaanse cups";
 "settings.measurement.us.long" = "US: cup 240 ml · tbsp 15 · tsp 5";
-"settings.measurement.uk.short" = "UK (imp)";
+"settings.measurement.uk.short" = "Engels oz/pint";
 "settings.measurement.uk.long" = "UK (imp): fl oz/pint · tbsp 15 · tsp 5";
-"settings.measurement.aunz.short" = "AU/NZ";
+"settings.measurement.aunz.short" = "Australische cups";
 "settings.measurement.aunz.long" = "AU/NZ: cup 250 ml · tbsp 20 · tsp 5";
-"settings.measurement.jp.short" = "JP";
+"settings.measurement.jp.short" = "Japanse cups";
 "settings.measurement.jp.long" = "JP: cup 200 ml · tbsp 15 · tsp 5";
 
 "settings.servings" = "Aantal personen";
