@@ -538,6 +538,7 @@ struct GroceryListCard: View {
             baseServings: baseServings,
             measurementUnit: measurementUnit,
             showAllMeasurements: showAllMeasurements,
+            locale: locale,
             localizedCustomLabel: { key in
                 AppLanguage.string(String.LocalizationValue(key), locale: locale)
             }

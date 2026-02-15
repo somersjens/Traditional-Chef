@@ -268,9 +268,21 @@ struct NutritionCard: View {
 
     private func formattedNumber(_ value: Double) -> String {
         if value.rounded() == value {
-            return String(Int(value))
+            return decimalNumberFormatter(fractionDigits: 0).string(from: NSNumber(value: value))
+                ?? String(Int(value))
         }
-        return String(format: "%.1f", value)
+        return decimalNumberFormatter(fractionDigits: 1).string(from: NSNumber(value: value))
+            ?? String(format: "%.1f", value)
+    }
+
+    private func decimalNumberFormatter(fractionDigits: Int) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = fractionDigits
+        formatter.maximumFractionDigits = fractionDigits
+        formatter.usesGroupingSeparator = true
+        return formatter
     }
 
     private var readAloudText: String {

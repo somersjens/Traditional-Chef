@@ -818,6 +818,7 @@ struct RecipeDetailView: View {
                 // Step inline references should follow the selected measurement system while
                 // still using each ingredient's preferred display mode.
                 showAllMeasurements: false,
+                locale: locale,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
@@ -1162,6 +1163,7 @@ private struct StepRowView: View {
                 // Step inline references should follow the selected measurement system while
                 // still using each ingredient's preferred display mode.
                 showAllMeasurements: false,
+                locale: locale,
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
