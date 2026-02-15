@@ -260,7 +260,7 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             ingredient_id = row.get("ingredient_id", "").strip()
             if not ingredient_id:
                 continue
-            ingredient_key = f"ingredient.{ingredient_id}"
+            ingredient_key = f"ingredient.{recipe_id}.{ingredient_id}"
             raw_group_id = row.get("group_id", "").strip()
             group_id = normalize_prefixed_id(raw_group_id, "g", 0)
             group_key = f"grocery.group.{recipe_id}.{group_id}"
