@@ -152,8 +152,8 @@ struct NutritionCard: View {
                         dividerRow
                         nutritionRow(
                             labelKey: "recipe.nutrition.sodium",
-                            perServing: milligramsText(recipe.nutrition?.sodiumMilligrams),
-                            per100g: milligramsText(recipe.nutrition?.sodiumMilligrams, multiplier: per100gMultiplier)
+                            perServing: sodiumText(recipe.nutrition?.sodiumMilligrams),
+                            per100g: sodiumText(recipe.nutrition?.sodiumMilligrams, multiplier: per100gMultiplier)
                         )
                         dividerRow
                         nutritionRow(
@@ -261,10 +261,11 @@ struct NutritionCard: View {
         return "\(formattedNumber(scaled)) g"
     }
 
-    private func milligramsText(_ value: Double?, multiplier: Double? = nil) -> String {
-        guard let value else { return "x" }
-        let scaled = multiplier.map { value * $0 } ?? value
-        return "\(formattedNumber(scaled)) mg"
+    private func sodiumText(_ valueInMilligrams: Double?, multiplier: Double? = nil) -> String {
+        guard let valueInMilligrams else { return "x" }
+        let scaledMilligrams = multiplier.map { valueInMilligrams * $0 } ?? valueInMilligrams
+        let grams = scaledMilligrams / 1_000
+        return "\(formattedNumber(grams)) g"
     }
 
     private func formattedNumber(_ value: Double) -> String {
@@ -310,7 +311,7 @@ struct NutritionCard: View {
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sugars", locale: locale), value: recipe.nutrition?.sugarsGrams, unit: readAloudUnit("g")),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.fat", locale: locale), value: recipe.nutrition?.fatGrams, unit: readAloudUnit("g")),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.saturated", locale: locale), value: recipe.nutrition?.saturatedFatGrams, unit: readAloudUnit("g")),
-            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sodium", locale: locale), value: recipe.nutrition?.sodiumMilligrams, unit: readAloudUnit("mg")),
+            SpokenNutrient(label: AppLanguage.string("recipe.nutrition.sodium", locale: locale), value: recipe.nutrition?.sodiumMilligrams.map { $0 / 1_000 }, unit: readAloudUnit("g")),
             SpokenNutrient(label: AppLanguage.string("recipe.nutrition.fiber", locale: locale), value: recipe.nutrition?.fiberGrams, unit: readAloudUnit("g"))
         ]
     }
