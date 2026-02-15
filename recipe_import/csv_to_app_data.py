@@ -87,10 +87,16 @@ def capitalize_first_text_character(value: str) -> str:
 
 
 def parse_int(value: str) -> Optional[int]:
-    value = value.strip()
+    value = (value or "").strip()
     if not value:
         return None
-    return int(value)
+    try:
+        return int(value)
+    except ValueError:
+        parsed_float = parse_float(value)
+        if parsed_float is None:
+            return None
+        return int(parsed_float)
 
 
 def parse_sort_index(value: str) -> Optional[int]:
