@@ -105,9 +105,13 @@ def normalize_prefixed_id(value: str, prefix: str, fallback_number: int) -> str:
     return raw
 
 def parse_float(value: str) -> Optional[float]:
-    value = (value or "").strip()
+    value = (value or "").strip().replace(" ", "")
     if not value:
         return None
+    if "," in value and "." in value:
+        value = value.replace(".", "").replace(",", ".")
+    elif "," in value:
+        value = value.replace(",", ".")
     try:
         return float(value)
     except ValueError:

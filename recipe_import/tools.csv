@@ -1,7 +1,7 @@
 recipe_id,tool_id,is_optional,name_en,optional_label_en,name_nl,optional_label_nl,name_de,optional_label_de,name_fr,optional_label_fr
 it_pasta_bolognese,t1,false,Large pot or Dutch oven with a heavy base,,Grote pan of braadpan met dikke bodem,,,,,
 it_pasta_bolognese,t2,false,Pot for boiling the pasta,,Kookpan voor de pasta,,,,,
-it_pasta_bolognese,t3,false,Wooden spoon or spatula,,Houten lepel of spatel,,,,,
+it_pasta_bolognese,t3,false,Wooden spoon or spatula,,houten lepel of spatel,,,,,
 it_pasta_bolognese,t4,false,Cutting board,,Snijplank,,,,,
 it_pasta_bolognese,t5,false,Sharp knife,,Scherp mes,,,,,
 it_pasta_bolognese,t6,false,Colander,,Vergiet,,,,,
