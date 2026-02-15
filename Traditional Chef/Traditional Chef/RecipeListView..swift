@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct RecipeListView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
@@ -26,6 +27,7 @@ struct RecipeListView: View {
 
     var body: some View {
         let visibleRecipes = filteredAndSortedRecipes
+        let metricColumnWidth = metricColumnWidth(for: visibleRecipes)
 
         NavigationStack {
             ZStack {
@@ -48,7 +50,7 @@ struct RecipeListView: View {
                     .frame(maxWidth: contentMaxWidth, alignment: .leading)
                     .frame(maxWidth: .infinity, alignment: .center)
 
-                    headerRow
+                    headerRow(metricColumnWidth: metricColumnWidth)
 
                     ScrollView {
                         LazyVStack(spacing: 10) {
@@ -62,7 +64,7 @@ struct RecipeListView: View {
                                         RecipeRowView(
                                             recipe: recipe,
                                             listViewValue: listViewValue,
-                                            metricColumnWidth: rowMetricColumnWidth,
+                                            metricColumnWidth: metricColumnWidth,
                                             isFavorite: recipeStore.isFavorite(recipe),
                                             onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                             searchText: vm.debouncedSearchText
@@ -134,17 +136,31 @@ struct RecipeListView: View {
         horizontalSizeClass == .regular ? 760 : .infinity
     }
 
-    private var rowMetricColumnWidth: CGFloat {
-        if dynamicTypeSize.isAccessibilitySize {
-            return 100
+    private func metricColumnWidth(for recipes: [Recipe]) -> CGFloat {
+        let maxValueLength = (recipes.map(listValueText(for:)).map(\.count).max() ?? 1) + 1
+        let headlineCharacterWidth = UIFont.preferredFont(forTextStyle: .headline).pointSize * 0.62
+        let computedWidth = ceil(CGFloat(maxValueLength) * headlineCharacterWidth)
+        let minWidth: CGFloat = dynamicTypeSize.isAccessibilitySize ? 56 : 48
+        return max(minWidth, computedWidth)
+    }
+
+    private func listValueText(for recipe: Recipe) -> String {
+        switch listViewValue {
+        case .totalTime:
+            return "\(recipe.totalMinutes)"
+        case .prepTime:
+            return "\(recipe.totalActiveMinutes)"
+        case .ingredients:
+            return "\(recipe.ingredientsCountForList)"
+        case .calories:
+            return "\(recipe.calories)"
         }
-        return horizontalSizeClass == .regular ? 170 : 140
     }
 
     private var listSideInset: CGFloat {
         16
     }
-    private var headerRow: some View {
+    private func headerRow(metricColumnWidth: CGFloat) -> some View {
         HStack(spacing: 6) {
             Button {
                 vm.setSort(.country)
@@ -182,7 +198,7 @@ struct RecipeListView: View {
             } action: {
                 vm.setSort(listViewValue.sortKey)
             }
-            .frame(width: rowMetricColumnWidth, alignment: .trailing)
+            .frame(width: metricColumnWidth, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
