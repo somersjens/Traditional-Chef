@@ -19,7 +19,8 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             ounces: grams / 28.349523125,
             isOptional: false,
             group: IngredientGroup(id: "g"),
-            groupId: 1,
+            groupId: "g",
+            groupSortOrder: 1,
             aisle: .pantry,
             useOrder: 1,
             customAmountValue: customValue,
@@ -28,7 +29,8 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
             gramsPerMl: gramsPerMl,
             gramsPerTsp: gramsPerTsp,
             gramsPerCount: gramsPerCount,
-            allowCup: allowCup
+            allowCup: allowCup,
+            isInvisible: false
         )
     }
 
@@ -180,6 +182,51 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
 
         XCTAssertEqual(amount.value, "3")
         XCTAssertEqual(amount.unit, "tsp")
+    }
+
+    func testMetricSpoonModeUsesSpoonUnits() {
+        let ing = ingredient(grams: 30, mode: .spoon, gramsPerTsp: 5, allowCup: false)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.value, "2")
+        XCTAssertEqual(amount.unit, "tbsp")
+    }
+
+    func testSpoonModeIgnoresZeroGramsPerMlAndUsesTeaspoonDensity() {
+        let ing = ingredient(grams: 5, mode: .spoon, gramsPerMl: 0, gramsPerTsp: 5, allowCup: false)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.value, "1")
+        XCTAssertEqual(amount.unit, "tsp")
+    }
+
+    func testLiquidModeIgnoresZeroGramsPerMlFallback() {
+        let ing = ingredient(grams: 15, mode: .liquid, gramsPerMl: 0, allowCup: false)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .us,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.value, "1")
+        XCTAssertEqual(amount.unit, "tbsp")
     }
 
     func testPcsModeUsesQuarterRounding() {

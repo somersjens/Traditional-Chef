@@ -40,12 +40,8 @@ struct GroceryMeasurementFormatter {
         let mode = ingredient.displayMode ?? .weight
         switch mode {
         case .pcs:
-            if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
-                let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
-                return DisplayAmount(value: formatNumber(count), unit: "pcs")
-            }
-            return metricWeightAmount(grams)
-        case .liquid, .spoon:
+            return pieceAmount(for: ingredient, grams: grams) ?? metricWeightAmount(grams)
+        case .liquid:
             if let gramsPerMl = ingredient.gramsPerMl, gramsPerMl > 0 {
                 let ml = grams / gramsPerMl
                 if ml >= 1000 {
@@ -54,6 +50,8 @@ struct GroceryMeasurementFormatter {
                 return DisplayAmount(value: formatNumber(ml), unit: "ml")
             }
             return metricWeightAmount(grams)
+        case .spoon:
+            return spoonAmount(for: ingredient, grams: grams, unit: .metric)
         case .weight:
             return metricWeightAmount(grams)
         }
@@ -63,19 +61,13 @@ struct GroceryMeasurementFormatter {
         let mode = ingredient.displayMode ?? .weight
         switch mode {
         case .pcs:
-            if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
-                let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
-                return DisplayAmount(value: formatNumber(count), unit: "pcs")
-            }
-            return DisplayAmount(value: formatNumber(grams), unit: "g")
+            return pieceAmount(for: ingredient, grams: grams)
+                ?? DisplayAmount(value: formatNumber(grams), unit: "g")
         case .liquid:
-            let gramsPerMl = ingredient.gramsPerMl ?? 1
+            let gramsPerMl = positiveValue(ingredient.gramsPerMl) ?? 1
             return volumeAmount(grams: grams, gramsPerMl: gramsPerMl, allowCup: ingredient.allowCup ?? false, unit: unit)
         case .spoon:
-            let gramsPerTsp = ingredient.gramsPerTsp
-                ?? ((ingredient.gramsPerMl ?? 1) * unit.teaspoonMilliliters)
-            let ml = grams / max(gramsPerTsp / unit.teaspoonMilliliters, 0.001)
-            return volumeAmount(grams: grams, gramsPerMl: grams / max(ml, 0.001), allowCup: ingredient.allowCup ?? false, unit: unit)
+            return spoonAmount(for: ingredient, grams: grams, unit: unit)
         case .weight:
             switch unit {
             case .us, .ukImp:
@@ -98,10 +90,40 @@ struct GroceryMeasurementFormatter {
         return DisplayAmount(value: formatNumber(ounces), unit: "oz")
     }
 
+    private static func pieceAmount(for ingredient: Ingredient, grams: Double) -> DisplayAmount? {
+        if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
+            let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
+            return DisplayAmount(value: formatNumber(count), unit: "pcs")
+        }
+
+        if ingredient.grams > 0 {
+            let count = max(0.25, (grams / ingredient.grams).rounded(toNearest: 0.25))
+            return DisplayAmount(value: formatNumber(count), unit: "pcs")
+        }
+
+        return nil
+    }
+
+    private static func spoonAmount(for ingredient: Ingredient, grams: Double, unit: MeasurementUnit) -> DisplayAmount {
+        let spoonTeaspoonMl = unit == .metric ? 5.0 : unit.teaspoonMilliliters
+        let spoonMeasurement = spoonTeaspoonMl > 0 ? spoonTeaspoonMl : 5.0
+        let gramsPerMl = positiveValue(ingredient.gramsPerTsp).map { $0 / spoonMeasurement }
+            ?? positiveValue(ingredient.gramsPerMl)
+            ?? 1
+        return volumeAmount(grams: grams, gramsPerMl: gramsPerMl, allowCup: ingredient.allowCup ?? false, unit: unit)
+    }
+
+    private static func positiveValue(_ value: Double?) -> Double? {
+        guard let value, value > 0 else { return nil }
+        return value
+    }
+
     private static func volumeAmount(grams: Double, gramsPerMl: Double, allowCup: Bool, unit: MeasurementUnit) -> DisplayAmount {
         let ml = grams / max(gramsPerMl, 0.001)
-        let tsp = ml / unit.teaspoonMilliliters
-        let tbsp = ml / unit.tablespoonMilliliters
+        let teaspoonMl = unit == .metric ? 5.0 : unit.teaspoonMilliliters
+        let tablespoonMl = unit == .metric ? 15.0 : unit.tablespoonMilliliters
+        let tsp = ml / max(teaspoonMl, 0.001)
+        let tbsp = ml / max(tablespoonMl, 0.001)
 
         if allowCup, unit.cupMilliliters > 0 {
             let cups = ml / unit.cupMilliliters
