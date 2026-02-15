@@ -32,7 +32,10 @@ struct GroceryListCard: View {
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let minServings = 1
     private let maxServings = 99
-    private let baseServings = 4
+    // Grocery amounts in the imported CSV are stored per person.
+    // Keep scaling relative to a single serving so the selected
+    // number of people multiplies the ingredient amounts directly.
+    private let baseServings = 1
     private let headerRowHeight: CGFloat = 28
     private let optionRowHeight: CGFloat = 22.4
     private let optionRowVerticalPadding: CGFloat = 4.8
