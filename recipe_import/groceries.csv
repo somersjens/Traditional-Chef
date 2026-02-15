@@ -22,7 +22,7 @@ it_cacio_e_pepe,i3,g2,3,"2,5",spoon,"2,5",0,0,0,"6,375",100,0,"6,375","0,275","1
 it_cacio_e_pepe,i4,g3,4,750,liquid,750,1,5,0,0,100,1,0,0,0,0,0,0,0,0,Cooking water,Water,Kookwater,Water,Kochwasser,Wasser,Eau de cuisson,Eau
 it_cacio_e_pepe,i5,g4,5,"2,5",spoon,"2,5",0,0,0,0,100,0,0,0,0,0,0,0,"967,5",0,Seasoning,Fine salt,Kruiden,Fijn zout,Würzen,Feines Salz,Assaisonnement,Sel fin
 it_spaghetti_alla_carbonara,i1,g1,1,90,weight,90,0,0,0,"333,9",100,0,"333,9","11,7","67,23","1,62","1,35","0,27","4,5","2,88",Pasta,Spaghetti,Pasta,Spaghetti,Pasta,Spaghetti,Pâtes,Spaghetti
-it_spaghetti_alla_carbonara,i2,g2,2,60,weight,60,0,0,0,"193,2",100,0,"193,2","9,54","2,16","0,36","15,9","5,76","28,8",0,Sauce,Egg yolk,Saus,Eidooier,Sauce,Eigelb,Sauce,Jaune d’œuf
+it_spaghetti_alla_carbonara,i2,g2,2,60,pcs,60,0,0,20,"193,2",100,0,"193,2","9,54","2,16","0,36","15,9","5,76","28,8",0,Sauce,Egg yolk,Saus,Eidooier,Sauce,Eigelb,Sauce,Jaune d’œuf
 it_spaghetti_alla_carbonara,i3,g2,3,30,weight,30,0,2,0,"116,1",100,0,"116,1","9,54","1,08",0,"8,07","4,95",450,0,Sauce,Pecorino Romano,Saus,Pecorino Romano,Sauce,Pecorino Romano,Sauce,Pecorino Romano
 it_spaghetti_alla_carbonara,i4,g2,4,2,spoon,2,0,0,0,"5,1",100,0,"5,1","0,22","1,296","0,012","0,066","0,02","0,88","0,53",Sauce,Freshly ground black pepper,Saus,Versgemalen zwarte peper,Sauce,Frisch gemahlener schwarzer Pfeffer,Sauce,Poivre noir fraîchement moulu
 it_spaghetti_alla_carbonara,i5,g3,5,40,weight,40,0,0,0,"242,8",100,0,"242,8","4,8",0,0,24,"8,8",480,0,Guanciale,Guanciale,Guanciale,Guanciale,Guanciale,Guanciale,Guanciale,Guanciale
@@ -101,14 +101,14 @@ it_bruschetta_al_pomodoro,i4,g2,4,"2,5",weight,"2,5",0,"0,4",0,"0,675",100,0,"0,
 it_bruschetta_al_pomodoro,i5,g2,5,"6,75",liquid,"6,75","0,92","4,6",0,"59,67",100,0,"59,67",0,0,0,"6,75","0,9315","0,135",0,Topping,Extra-virgin olive oil,Beleg,Extra vergine olijfolie,Belag,Natives Olivenöl extra,Garniture,Huile d’olive extra vierge
 it_bruschetta_al_pomodoro,i6,g3,6,"1,5",spoon,"1,5",0,0,0,0,100,0,0,0,0,0,0,0,"580,5",0,Seasoning,Fine salt,Kruiden,Fijn zout,Würzen,Feines Salz,Assaisonnement,Sel fin
 it_bruschetta_al_pomodoro,i7,g3,7,"0,25",spoon,"0,25",0,0,0,"0,6375",100,0,"0,6375","0,0275","0,162","0,0015","0,00825","0,0025","0,11","0,06625",Seasoning,Ground black pepper,Kruiden,Gemalen zwarte peper,Würzen,Gemahlener schwarzer Pfeffer,Assaisonnement,Poivre noir moulu
-it_insalata_caprese,i1,g1,1,125,weight,125,0,"3,5",0,"22,5",100,0,"22,5","1,125","4,875","3,25","0,25",0,"6,25","1,5",Salad,Ripe tomatoes,Salade,Rijpe tomaten,Salat,Reife Tomaten,Salade,Tomates mûres
-it_insalata_caprese,i2,g1,2,100,weight,100,0,0,0,250,100,0,250,18,2,1,17,10,400,0,Salad,Fresh mozzarella,Salade,Verse mozzarella,Salat,Frischer Mozzarella,Salade,Mozzarella fraîche
-it_insalata_caprese,i3,g1,3,"3,75",weight,"3,75",0,"0,4",0,"1,0125",100,0,"1,0125","0,09375","0,16125","0,01125","0,0225",0,"0,15","0,14625",Salad,Fresh basil leaves,Salade,Verse basilicumblaadjes,Salat,Frische Basilikumblätter,Salade,Feuilles de basilic frais
-it_insalata_caprese,i4,g2,4,"6,75",liquid,"6,75","0,92","4,6",0,"59,67",100,0,"59,67",0,0,0,"6,75","0,9315","0,135",0,Dressing,Extra-virgin olive oil,Dressing,Extra vergine olijfolie,Dressing,Natives Olivenöl extra,Vinaigrette,Huile d’olive extra vierge
+it_insalata_caprese,i1,g1,1,150,weight,150,0,"3,5",0,27,100,0,27,"1,35","5,85","3,9","0,3",0,"7,5","1,8",Salad,Ripe tomatoes,Salade,Rijpe tomaten,Salat,Reife Tomaten,Salade,Tomates mûres
+it_insalata_caprese,i2,g1,2,150,weight,150,0,0,0,375,100,0,375,27,3,"1,5","25,5",15,600,0,Salad,Fresh mozzarella,Salade,Verse mozzarella,Salat,Frischer Mozzarella,Salade,Mozzarella fraîche
+it_insalata_caprese,i3,g1,3,5,weight,5,0,"0,4",0,"1,35",100,0,"1,35","0,125","0,215","0,015","0,03",0,"0,2","0,195",Salad,Fresh basil leaves,Salade,Verse basilicumblaadjes,Salat,Frische Basilikumblätter,Salade,Feuilles de basilic frais
+it_insalata_caprese,i4,g2,4,"7,5",liquid,"7,5","0,92","4,6",0,"66,3",100,0,"66,3",0,0,0,"7,5","1,035","0,15",0,Dressing,Extra-virgin olive oil,Dressing,Extra vergine olijfolie,Dressing,Natives Olivenöl extra,Vinaigrette,Huile d’olive extra vierge
 it_insalata_caprese,i5,g3,5,"1,5",spoon,"1,5",0,0,0,0,100,0,0,0,0,0,0,0,"580,5",0,Seasoning,Fine salt,Kruiden,Fijn zout,Würzen,Feines Salz,Assaisonnement,Sel fin
 it_insalata_caprese,i6,g3,6,"0,25",spoon,"0,25",0,0,0,"0,6375",100,0,"0,6375","0,0275","0,162","0,0015","0,00825","0,0025","0,11","0,06625",Seasoning,Ground black pepper,Kruiden,Gemalen zwarte peper,Würzen,Gemahlener schwarzer Pfeffer,Assaisonnement,Poivre noir moulu
-it_prosciutto_e_melone,i1,g1,1,200,weight,200,0,"3,3",0,68,100,0,68,"1,6","16,4","15,8","0,4",0,32,"1,8",Main,Ripe melon,Hoofd,Rijpe meloen,Haupt,Reife Melone,Principal,Melon mûr
-it_prosciutto_e_melone,i2,g1,2,50,weight,50,0,0,0,"97,5",100,0,"97,5","13,9",0,0,"4,15","1,45","1347,5",0,Main,Prosciutto,Hoofd,Prosciutto,Haupt,Prosciutto,Principal,Prosciutto
+it_prosciutto_e_melone,i1,g1,1,375,weight,375,0,"3,3",0,"127,5",100,0,"127,5",3,"30,75","29,625","0,75",0,60,"3,375",Main,Ripe melon,Hoofd,Rijpe meloen,Haupt,Reife Melone,Principal,Melon mûr
+it_prosciutto_e_melone,i2,g1,2,125,weight,125,0,0,0,"243,75",100,0,"243,75","34,75",0,0,"10,375","3,625","3368,75",0,Main,Prosciutto,Hoofd,Prosciutto,Haupt,Prosciutto,Principal,Prosciutto
 it_vitello_tonnato,i1,g1,1,200,weight,200,0,0,0,344,100,0,344,"48,8",0,0,"15,2","5,6",166,0,Veal,Veal roast,Kalf,Kalfsgebraad,Kalb,Kalbsbraten,Veau,Rôti de veau
 it_vitello_tonnato,i2,g1,2,30,weight,30,0,"3,3",0,"12,6",100,0,"12,6","0,27","3,03","1,29","0,03",0,"0,9","0,42",Veal,Yellow onion,Kalf,Gele ui,Kalb,Gelbe Zwiebel,Veau,Oignon jaune
 it_vitello_tonnato,i3,g1,3,20,weight,20,0,"2,7",0,"8,2",100,0,"8,2","0,18","1,92","0,9","0,04",0,"13,8","0,56",Veal,Carrot,Kalf,Wortel,Kalb,Karotte,Veau,Carotte
@@ -188,10 +188,10 @@ it_panettone,i11,g2,11,"0,75",weight,"0,75",0,0,0,"0,7275",100,0,"0,7275","0,011
 it_panettone,i12,g2,12,30,weight,30,0,"3,3",0,"89,7",100,0,"89,7","0,93","23,76","17,76","0,15","0,06","3,3","1,11",Aromatics and fruit,Raisins,Aroma en fruit,Rozijnen,Aromen und Früchte,Rosinen,Arômes et fruits,Raisins secs
 it_panettone,i13,g2,13,20,weight,20,0,3,0,"70,4",100,0,"70,4","0,1","15,6","11,6","0,1","0,02",0,"0,4",Aromatics and fruit,Candied orange peel,Aroma en fruit,Gekonfijte sinaasappelschil,Aromen und Früchte,Kandierte Orangenschale,Arômes et fruits,Écorces d’orange confites
 it_panettone,i14,g2,14,10,weight,10,0,3,0,"32,1",100,0,"32,1","0,03","8,27",7,"0,01",0,4,"0,1",Aromatics and fruit,Candied citron,Aroma en fruit,Gekonfijte citroen,Aromen und Früchte,Kandierte Zitronatwürfel,Arômes et fruits,Cédrat confit
-it_zabaione,i1,g1,1,50,pcs,50,0,0,20,161,100,0,161,"7,95","1,8","0,3","13,25","4,8",24,0,Custard,Egg yolks,Custard,Eidooiers,Creme (Custard),Eigelb,Crème anglaise,Jaunes d’œufs
-it_zabaione,i2,g1,2,20,weight,20,0,"4,2",0,"77,4",100,0,"77,4",0,20,20,0,0,0,0,Custard,Granulated sugar,Custard,Kristalsuiker,Creme (Custard),Kristallzucker,Crème anglaise,Sucre en poudre
-it_zabaione,i3,g1,3,30,liquid,30,"0,99",5,0,"46,2",100,0,"46,2",0,"3,21","3,21",0,0,"0,9",0,Custard,Marsala wine,Custard,Marsala-wijn,Creme (Custard),Marsala,Crème anglaise,Vin de Marsala
-it_zabaione,i4,g2,4,"0,5",weight,"0,5",0,0,0,"1,305",100,0,"1,305","0,0195","0,3995","0,011","0,016","0,0035","0,13","0,2715",Finish,Ground cinnamon,Afwerking,Gemalen kaneel,Finish,Gemahlener Zimt,Finition,Cannelle moulue
+it_zabaione,i1,g1,1,100,pcs,100,0,0,20,322,100,0,322,"15,9","3,6","0,6","26,5","9,6",48,0,Custard,Egg yolks,Custard,Eidooiers,Creme (Custard),Eigelb,Crème anglaise,Jaunes d’œufs
+it_zabaione,i2,g1,2,40,weight,40,0,"4,2",0,"154,8",100,0,"154,8",0,40,40,0,0,0,0,Custard,Granulated sugar,Custard,Kristalsuiker,Creme (Custard),Kristallzucker,Crème anglaise,Sucre en poudre
+it_zabaione,i3,g1,3,60,liquid,60,"0,99",5,0,"92,4",100,0,"92,4",0,"6,42","6,42",0,0,"1,8",0,Custard,Marsala wine,Custard,Marsala-wijn,Creme (Custard),Marsala,Crème anglaise,Vin de Marsala
+it_zabaione,i4,g2,4,1,weight,1,0,0,0,"2,61",100,0,"2,61","0,039","0,799","0,022","0,032","0,007","0,26","0,543",Finish,Ground cinnamon,Afwerking,Gemalen kaneel,Finish,Gemahlener Zimt,Finition,Cannelle moulue
 it_crostata_di_marmellata,i1,g1,1,"62,5",weight,"62,5",0,"2,6",0,"227,5",100,0,"227,5","6,4375","47,6875","0,1875","0,625","0,125","1,25","1,6875",Pasta frolla,All-purpose flour,Pasta frolla,Tarwebloem,Pasta frolla,Weizenmehl,Pasta frolla,Farine de blé
 it_crostata_di_marmellata,i2,g1,2,"31,25",weight,"31,25",0,0,0,"224,0625",100,0,"224,0625","0,28125","0,03125","0,03125","25,34375","15,78125","3,4375",0,Pasta frolla,Unsalted butter,Pasta frolla,Ongezouten boter,Pasta frolla,Ungesalzene Butter,Pasta frolla,Beurre doux
 it_crostata_di_marmellata,i3,g1,3,25,weight,25,0,"4,2",0,"96,75",100,0,"96,75",0,25,25,0,0,0,0,Pasta frolla,Granulated sugar,Pasta frolla,Kristalsuiker,Pasta frolla,Kristallzucker,Pasta frolla,Sucre en poudre
