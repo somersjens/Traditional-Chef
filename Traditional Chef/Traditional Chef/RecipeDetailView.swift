@@ -822,10 +822,20 @@ struct RecipeDetailView: View {
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            let dynamicValue = "\(amount.value) \(amount.unit) \(ingredientName)".lowercased(with: locale)
+            let unit = stepDescriptionUnitLabel(for: amount.unit)
+            let dynamicValue = "\(amount.value) \(unit) \(ingredientName)".lowercased(with: locale)
             output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
+    }
+
+    private func stepDescriptionUnitLabel(for unit: String) -> String {
+        switch unit.lowercased() {
+        case "l":
+            return "liter"
+        default:
+            return unit
+        }
     }
 
     private func stopStepReadAloud() {
@@ -1167,11 +1177,21 @@ private struct StepRowView: View {
                 localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
             )
             let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            let dynamicValue = "\(amount.value) \(amount.unit) \(ingredientName)".lowercased(with: locale)
+            let unit = stepDescriptionUnitLabel(for: amount.unit)
+            let dynamicValue = "\(amount.value) \(unit) \(ingredientName)".lowercased(with: locale)
             output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
     }
+    private func stepDescriptionUnitLabel(for unit: String) -> String {
+        switch unit.lowercased() {
+        case "l":
+            return "liter"
+        default:
+            return unit
+        }
+    }
+
     private func handleTimerTap() {
         if isRunning {
             if secondsLeft > 0 {
