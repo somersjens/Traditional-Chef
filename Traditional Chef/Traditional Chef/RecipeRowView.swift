@@ -40,6 +40,7 @@ struct RecipeRowView: View {
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)
+        .contentShape(Rectangle())
         .task {
             RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
         }
