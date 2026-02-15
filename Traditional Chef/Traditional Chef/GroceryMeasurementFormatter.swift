@@ -12,7 +12,7 @@ struct GroceryMeasurementFormatter {
         baseServings: Int,
         measurementUnit: MeasurementUnit,
         showAllMeasurements: Bool,
-        locale: Locale,
+        locale: Locale = .current,
         localizedCustomLabel: (String) -> String
     ) -> DisplayAmount {
         let grams = scaledGrams(ingredient.grams, servings: servings, baseServings: baseServings)
@@ -35,6 +35,61 @@ struct GroceryMeasurementFormatter {
         case .us, .ukImp, .auNz, .jp:
             return nonMetricAmount(for: ingredient, grams: grams, unit: measurementUnit, locale: locale)
         }
+    }
+
+    static func sortableValue(from value: String, locale: Locale) -> Double {
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedValue.isEmpty else { return 0 }
+
+        let fractionMap: [String: Double] = [
+            "¼": 0.25,
+            "½": 0.5,
+            "¾": 0.75,
+            "⅐": 1.0 / 7.0,
+            "⅑": 1.0 / 9.0,
+            "⅒": 0.1,
+            "⅓": 1.0 / 3.0,
+            "⅔": 2.0 / 3.0,
+            "⅕": 0.2,
+            "⅖": 0.4,
+            "⅗": 0.6,
+            "⅘": 0.8,
+            "⅙": 1.0 / 6.0,
+            "⅚": 5.0 / 6.0,
+            "⅛": 0.125,
+            "⅜": 0.375,
+            "⅝": 0.625,
+            "⅞": 0.875
+        ]
+
+        var parsedValue = 0.0
+        let tokens = trimmedValue.split(whereSeparator: { $0.isWhitespace })
+
+        for tokenPart in tokens {
+            let token = String(tokenPart)
+
+            if let mappedFraction = fractionMap[token] {
+                parsedValue += mappedFraction
+                continue
+            }
+
+            if let slashFraction = slashFractionValue(from: token) {
+                parsedValue += slashFraction
+                continue
+            }
+
+            if let number = decimalNumberFormatter(locale: locale, fractionDigits: 2).number(from: token)?.doubleValue {
+                parsedValue += number
+                continue
+            }
+
+            let normalizedToken = token.replacingOccurrences(of: ",", with: ".")
+            if let number = Double(normalizedToken) {
+                parsedValue += number
+            }
+        }
+
+        return parsedValue
     }
 
     private static func metricAmount(for ingredient: Ingredient, grams: Double, locale: Locale) -> DisplayAmount {
@@ -165,6 +220,17 @@ struct GroceryMeasurementFormatter {
         formatter.maximumFractionDigits = fractionDigits
         formatter.usesGroupingSeparator = true
         return formatter
+    }
+
+    private static func slashFractionValue(from token: String) -> Double? {
+        let pieces = token.split(separator: "/")
+        guard pieces.count == 2,
+              let numerator = Double(pieces[0]),
+              let denominator = Double(pieces[1]),
+              denominator != 0 else {
+            return nil
+        }
+        return numerator / denominator
     }
 
     private static func formatQuarterFraction(_ value: Double, locale: Locale) -> String {

@@ -23,7 +23,7 @@ struct GroceryListCard: View {
         case supermarket
     }
 
-    @State private var sortMode: SortMode = .useOrder
+    @State private var sortMode: SortMode = .gramsDesc
     @State private var checked: Set<String> = []
     @State private var isResettingChecks: Bool = false
     @State private var resetDisplayIngredients: [Ingredient] = []
@@ -352,9 +352,9 @@ struct GroceryListCard: View {
             }
         case .gramsDesc:
             return sourceIngredients.sorted { lhs, rhs in
-                let leftGrams = scaledGrams(lhs.grams)
-                let rightGrams = scaledGrams(rhs.grams)
-                if leftGrams != rightGrams { return leftGrams > rightGrams }
+                let leftAmount = sortableAmount(for: lhs)
+                let rightAmount = sortableAmount(for: rhs)
+                if leftAmount != rightAmount { return leftAmount > rightAmount }
                 if lhs.nameKey != rhs.nameKey { return lhs.nameKey < rhs.nameKey }
                 return lhs.id < rhs.id
             }
@@ -547,6 +547,17 @@ struct GroceryListCard: View {
 
     private func scaledGrams(_ grams: Double) -> Double {
         grams * Double(servings) / Double(baseServings)
+    }
+
+    private func sortableAmount(for ingredient: Ingredient) -> Double {
+        if showAllMeasurements {
+            return scaledGrams(ingredient.grams)
+        }
+
+        return GroceryMeasurementFormatter.sortableValue(
+            from: formattedAmount(for: ingredient).value,
+            locale: locale
+        )
     }
 
     private var grocerySummary: String {

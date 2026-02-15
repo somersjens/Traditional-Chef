@@ -22,7 +22,7 @@ struct RecipeDetailView: View {
     private var measurementUnit: MeasurementUnit {
         MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
     }
-    @State private var isInfoExpanded: Bool = true
+    @State private var isInfoExpanded: Bool = false
     @State private var isStepsExpanded: Bool = false
     @State private var servings: Int = 4
     @State private var stepTimerSnapshots: [String: StepTimerSnapshot] = [:]

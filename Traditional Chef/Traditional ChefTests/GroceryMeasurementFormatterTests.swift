@@ -278,4 +278,17 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
         XCTAssertEqual(amount.value, "100")
         XCTAssertEqual(amount.unit, "g")
     }
+
+    func testSortableValueParsesUnicodeFractions() {
+        let value = GroceryMeasurementFormatter.sortableValue(from: "1 ¼", locale: Locale(identifier: "en_US"))
+
+        XCTAssertEqual(value, 1.25, accuracy: 0.0001)
+    }
+
+    func testSortableValueParsesLocalizedCommaDecimals() {
+        let value = GroceryMeasurementFormatter.sortableValue(from: "2,5", locale: Locale(identifier: "nl_NL"))
+
+        XCTAssertEqual(value, 2.5, accuracy: 0.0001)
+    }
+
 }
