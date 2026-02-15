@@ -37,14 +37,9 @@ final class RecipeListViewModel: ObservableObject {
 
     func toggleCategory(_ cat: RecipeCategory) {
         if selectedCategories.contains(cat) {
-            selectedCategories.remove(cat)
-        } else {
-            selectedCategories.insert(cat)
-        }
-
-        let filterSet = Set(RecipeCategory.filterCategories)
-        if selectedCategories == filterSet {
             selectedCategories.removeAll()
+        } else {
+            selectedCategories = [cat]
         }
     }
 
