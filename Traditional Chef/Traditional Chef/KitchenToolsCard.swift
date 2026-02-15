@@ -70,9 +70,10 @@ struct KitchenToolsCard: View {
                         isExpanded.toggle()
                     }
                 } label: {
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                    Image(systemName: "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
                         .frame(width: 24, height: 24, alignment: .center)
                 }
                 .buttonStyle(.plain)

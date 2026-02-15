@@ -576,9 +576,10 @@ struct RecipeDetailView: View {
                         isInfoExpanded.toggle()
                     }
                 } label: {
-                    Image(systemName: isInfoExpanded ? "chevron.down" : "chevron.right")
+                    Image(systemName: "chevron.right")
                         .font(.headline)
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .rotationEffect(.degrees(isInfoExpanded ? 90 : 0))
                         .frame(width: 24, height: 24, alignment: .center)
                 }
                 .buttonStyle(.plain)
@@ -720,9 +721,10 @@ struct RecipeDetailView: View {
                     isStepsExpanded.toggle()
                 }
             } label: {
-                Image(systemName: isStepsExpanded ? "chevron.down" : "chevron.right")
+                Image(systemName: "chevron.right")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryBlue)
+                    .rotationEffect(.degrees(isStepsExpanded ? 90 : 0))
                     .frame(width: 24, height: 24, alignment: .center)
             }
             .buttonStyle(.plain)
