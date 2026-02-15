@@ -38,14 +38,8 @@ struct RecipeRowView: View {
             .buttonStyle(.plain)
             .padding(.trailing, 4)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .padding(.horizontal, 4)
-        .background(AppTheme.searchBarBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
-        )
         .task {
             RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
         }

@@ -59,28 +59,48 @@ struct RecipeListView: View {
                                     .frame(maxWidth: contentMaxWidth, alignment: .center)
                                     .frame(maxWidth: .infinity, alignment: .center)
                             } else {
-                                ForEach(visibleRecipes) { recipe in
-                                    NavigationLink(value: recipe) {
-                                        RecipeRowView(
-                                            recipe: recipe,
-                                            listViewValue: listViewValue,
-                                            metricColumnWidth: metricColumnWidth,
-                                            isFavorite: recipeStore.isFavorite(recipe),
-                                            onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
-                                            searchText: vm.debouncedSearchText
+                                LazyVStack(spacing: 0) {
+                                    ForEach(visibleRecipes) { recipe in
+                                        NavigationLink(value: recipe) {
+                                            RecipeRowView(
+                                                recipe: recipe,
+                                                listViewValue: listViewValue,
+                                                metricColumnWidth: metricColumnWidth,
+                                                isFavorite: recipeStore.isFavorite(recipe),
+                                                onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
+                                                searchText: vm.debouncedSearchText
+                                            )
+                                        }
+                                        .transition(
+                                            .asymmetric(
+                                                insertion: .opacity,
+                                                removal: .opacity
+                                            )
                                         )
+                                        .simultaneousGesture(TapGesture().onEnded {
+                                            RecipeImagePrefetcher.prefetch(
+                                                urlString: recipe.imageURL,
+                                                priority: URLSessionTask.highPriority
+                                            )
+                                        })
+                                        .buttonStyle(.plain)
+
+                                        if recipe.id != visibleRecipes.last?.id {
+                                            Rectangle()
+                                                .fill(AppTheme.primaryBlue.opacity(0.14))
+                                                .frame(height: 0.5)
+                                                .padding(.leading, 21)
+                                                .padding(.trailing, 21)
+                                        }
                                     }
-                                    .transaction { transaction in
-                                        transaction.disablesAnimations = true
-                                    }
-                                    .simultaneousGesture(TapGesture().onEnded {
-                                        RecipeImagePrefetcher.prefetch(
-                                            urlString: recipe.imageURL,
-                                            priority: URLSessionTask.highPriority
-                                        )
-                                    })
-                                    .buttonStyle(.plain)
                                 }
+                                .background(AppTheme.searchBarBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+                                )
+                                .animation(.snappy(duration: 0.24, extraBounce: 0.03), value: visibleRecipes.count)
                                 .padding(.horizontal, listSideInset)
                                 .padding(.bottom, 16)
                                 .frame(maxWidth: contentMaxWidth, alignment: .leading)
