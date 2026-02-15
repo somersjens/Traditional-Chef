@@ -120,6 +120,7 @@ struct RecipeListView: View {
             .toolbar(.hidden, for: .navigationBar)
             .onAppear {
                 ensureMeasurementUnit()
+                _ = RecipeDetailView.preparedKnifeImage
             }
             .onChange(of: appLanguage) { _, _ in
                 ensureMeasurementUnit()

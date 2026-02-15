@@ -10,6 +10,14 @@ import UIKit
 import AVFoundation
 
 struct RecipeDetailView: View {
+    static let preparedKnifeImage: UIImage? = {
+        guard let image = UIImage(named: "Knife_no_background") else {
+            return nil
+        }
+
+        return image.preparingForDisplay() ?? image
+    }()
+
     @EnvironmentObject private var recipeStore: RecipeStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.displayScale) private var displayScale
@@ -152,11 +160,19 @@ struct RecipeDetailView: View {
                 .padding(.bottom, -proxy.safeAreaInsets.bottom)
                 .frame(maxWidth: .infinity, alignment: .top)
 
-            Image("Knife_no_background")
-                .resizable()
-                .scaledToFit()
-                .frame(width: fullWidth)
-                .position(x: fullWidthCenterX, y: knifeCenterY)
+            Group {
+                if let preparedKnifeImage = Self.preparedKnifeImage {
+                    Image(uiImage: preparedKnifeImage)
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Image("Knife_no_background")
+                        .resizable()
+                        .scaledToFit()
+                }
+            }
+            .frame(width: fullWidth)
+            .position(x: fullWidthCenterX, y: knifeCenterY)
         }
         .ignoresSafeArea()
         .allowsHitTesting(false)
