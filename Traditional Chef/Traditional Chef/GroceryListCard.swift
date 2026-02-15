@@ -198,9 +198,6 @@ struct GroceryListCard: View {
                             .frame(width: largeButtonWidth)
                     }
                 }
-                .transaction { transaction in
-                    transaction.animation = nil
-                }
                 .frame(minHeight: headerRowHeight)
             }
         }
