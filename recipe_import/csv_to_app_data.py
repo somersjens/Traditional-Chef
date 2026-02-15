@@ -46,7 +46,7 @@ class LocalizedStrings:
     def add(self, key: str, lang: str, value: Optional[str]) -> None:
         if not value:
             return
-        self.values[lang][key] = value
+        self.values[lang][key] = capitalize_first_text_character(value)
 
     def write(self, output_dir: Path) -> None:
         for lang, entries in self.values.items():
@@ -75,6 +75,15 @@ class LocalizedStrings:
 
 def parse_bool(value: str) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "y"}
+
+
+def capitalize_first_text_character(value: str) -> str:
+    for index, char in enumerate(value):
+        if char.isalpha():
+            if char.islower():
+                return f"{value[:index]}{char.upper()}{value[index + 1:]}"
+            return value
+    return value
 
 
 def parse_int(value: str) -> Optional[int]:
