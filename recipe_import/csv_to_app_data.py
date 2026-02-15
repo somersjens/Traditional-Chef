@@ -239,6 +239,7 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                     "display_mode",
                     "amount_g",
                     "allow_cup",
+                    "pct_in_end_product",
                     "is_invisible",
                     "group_en",
                     "group_nl",
@@ -297,14 +298,17 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                 "allowCup": parse_bool(row.get("allow_cup", "")),
                 "isInvisible": parse_bool(row.get("is_invisible", "")),
             })
-            recipe["nutrition"]["energyKcal"] += parse_int(row.get("kcal", "")) or 0
-            recipe["nutrition"]["proteinGrams"] += parse_float(row.get("protein", "")) or 0.0
-            recipe["nutrition"]["carbohydratesGrams"] += parse_float(row.get("carbs", "")) or 0.0
-            recipe["nutrition"]["sugarsGrams"] += parse_float(row.get("sugars", "")) or 0.0
-            recipe["nutrition"]["fatGrams"] += parse_float(row.get("fat", "")) or 0.0
-            recipe["nutrition"]["saturatedFatGrams"] += parse_float(row.get("saturated_fat", "")) or 0.0
-            recipe["nutrition"]["sodiumMilligrams"] += parse_float(row.get("sodium", "")) or 0.0
-            recipe["nutrition"]["fiberGrams"] += parse_float(row.get("fiber", "")) or 0.0
+            pct_in_end_product = parse_float(row.get("pct_in_end_product", ""))
+            nutrition_factor = (pct_in_end_product if pct_in_end_product is not None else 100.0) / 100.0
+
+            recipe["nutrition"]["energyKcal"] += (parse_float(row.get("kcal", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["proteinGrams"] += (parse_float(row.get("protein", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["carbohydratesGrams"] += (parse_float(row.get("carbs", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["sugarsGrams"] += (parse_float(row.get("sugars", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["fatGrams"] += (parse_float(row.get("fat", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["saturatedFatGrams"] += (parse_float(row.get("saturated_fat", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["sodiumMilligrams"] += (parse_float(row.get("sodium", "")) or 0.0) * nutrition_factor
+            recipe["nutrition"]["fiberGrams"] += (parse_float(row.get("fiber", "")) or 0.0) * nutrition_factor
 
 
 def infer_display_mode(row: Dict[str, str]) -> str:
@@ -386,6 +390,7 @@ def cleanup_nutrition(recipes: Iterable[dict]) -> None:
         if all(value in (0, 0.0, None) for value in nutrition.values()):
             recipe["nutrition"] = None
             continue
+        nutrition["energyKcal"] = int(round(nutrition.get("energyKcal") or 0))
         recipe["calories"] = nutrition.get("energyKcal") or recipe.get("calories", 0)
 
 
