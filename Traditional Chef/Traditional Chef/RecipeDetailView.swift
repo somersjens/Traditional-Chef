@@ -10,6 +10,16 @@ import UIKit
 import AVFoundation
 
 struct RecipeDetailView: View {
+    private static let heroImageSession: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.urlCache = nil
+        configuration.waitsForConnectivity = true
+        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForResource = 120
+        return URLSession(configuration: configuration)
+    }()
+
     static let preparedKnifeImage: UIImage? = {
         guard let image = UIImage(named: "Knife_no_background") else {
             return nil
@@ -339,13 +349,15 @@ struct RecipeDetailView: View {
         .clipped()
         .accessibilityLabel(Text(AppLanguage.string("recipe.detail.image", locale: locale)))
         .task(id: heroImageLoadAttempt, priority: .userInitiated) {
-            async let fallbackTimer: Void = startHeroImageFallbackTimer()
+            await MainActor.run {
+                showHeroImageOfflineFallback = false
+                hasHeroFallbackEntered = false
+            }
             RecipeImagePrefetcher.prefetch(
                 urlString: recipe.imageURL,
                 priority: URLSessionTask.highPriority
             )
             await loadHeroImage(targetPixelSize: targetPixelSize)
-            _ = await fallbackTimer
         }
     }
 
@@ -373,25 +385,6 @@ struct RecipeDetailView: View {
         .onTapGesture {
             guard showHeroImageOfflineFallback && heroUIImage == nil else { return }
             retryHeroImageLoad()
-        }
-    }
-
-    private func startHeroImageFallbackTimer() async {
-        await MainActor.run {
-            showHeroImageOfflineFallback = false
-            hasHeroFallbackEntered = false
-        }
-
-        try? await Task.sleep(for: .seconds(1.5))
-        guard !Task.isCancelled else { return }
-
-        await MainActor.run {
-            if heroUIImage == nil {
-                showHeroImageOfflineFallback = true
-                withAnimation(.easeOut(duration: 0.5)) {
-                    hasHeroFallbackEntered = true
-                }
-            }
         }
     }
 
@@ -434,17 +427,52 @@ struct RecipeDetailView: View {
             return
         }
 
-        let request = URLRequest(
+        var request = URLRequest(
             url: url,
-            cachePolicy: .returnCacheDataElseLoad,
-            timeoutInterval: 30
+            cachePolicy: .reloadIgnoringLocalCacheData,
+            timeoutInterval: 60
         )
+        request.setValue("image/*,*/*;q=0.8", forHTTPHeaderField: "Accept")
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+            let (data, response) = try await Self.heroImageSession.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode),
+                  !data.isEmpty
+            else {
                 await MainActor.run {
                     heroImageFailed = true
+                    showHeroImageOfflineFallback = true
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        hasHeroFallbackEntered = true
+                    }
+                    hasHeroImageEntered = true
+                }
+                return
+            }
+
+            guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+                if let fallbackImage = UIImage(data: data) {
+                    await MainActor.run {
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            heroUIImage = fallbackImage
+                            hasHeroImageEntered = true
+                        }
+                        showHeroImageOfflineFallback = false
+                        hasHeroFallbackEntered = false
+                        heroTargetPixelSize = targetPixelSize
+                        isHeroImageDark = false
+                    }
+                    return
+                }
+
+                await MainActor.run {
+                    heroImageFailed = true
+                    showHeroImageOfflineFallback = true
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        hasHeroFallbackEntered = true
+                    }
                     hasHeroImageEntered = true
                 }
                 return
@@ -460,6 +488,10 @@ struct RecipeDetailView: View {
             guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
                 await MainActor.run {
                     heroImageFailed = true
+                    showHeroImageOfflineFallback = true
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        hasHeroFallbackEntered = true
+                    }
                     hasHeroImageEntered = true
                 }
                 return
@@ -481,6 +513,10 @@ struct RecipeDetailView: View {
         } catch {
             await MainActor.run {
                 heroImageFailed = true
+                showHeroImageOfflineFallback = true
+                withAnimation(.easeOut(duration: 0.5)) {
+                    hasHeroFallbackEntered = true
+                }
                 hasHeroImageEntered = true
             }
         }
