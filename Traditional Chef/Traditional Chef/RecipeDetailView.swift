@@ -681,8 +681,16 @@ struct RecipeDetailView: View {
     }
 
     private var stepsCard: some View {
+        let totalActiveMinutes = recipe.totalActiveMinutes
+        let totalPassiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
         let format = AppLanguage.string("recipe.steps.summary", locale: locale)
-        let summary = String(format: format, locale: locale, recipe.approximateMinutes)
+        let summary = String(
+            format: format,
+            locale: locale,
+            totalActiveMinutes,
+            totalPassiveMinutes,
+            recipe.totalMinutes
+        )
         let headerText = stepsHeaderText(summary: summary)
         let contentSpacing: CGFloat = isStepsExpanded ? 9 : 0
 

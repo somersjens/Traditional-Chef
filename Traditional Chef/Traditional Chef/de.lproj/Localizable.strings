@@ -118,7 +118,7 @@
 
 "recipe.tools.summary" = "%d Artikel";
 "recipe.grocery.summary" = "%d Zutaten";
-"recipe.steps.summary" = "%d Minuten";
+"recipe.steps.summary" = "%d + %d = %d Min.";
 "recipe.detail.back" = "Zurück";
 "recipe.detail.favorite" = "Favorit";
 "recipe.detail.shareText" = "Probiere dieses Rezept in Famous Chef aus.";

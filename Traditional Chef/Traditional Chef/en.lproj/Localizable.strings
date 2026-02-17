@@ -29,7 +29,7 @@
 "recipes.column.name" = "Recipe";
 "recipes.column.time" = "Total time";
 "recipes.column.timeShort" = "Time";
-"recipes.column.prepTime" = "Preparing time";
+"recipes.column.prepTime" = "Preparation time";
 "recipes.column.prepTimeShort" = "Time (p)";
 "recipes.column.ingredients" = "Ingredients";
 "recipes.column.calories" = "Calories";
@@ -118,7 +118,7 @@
 
 "recipe.tools.summary" = "%d items";
 "recipe.grocery.summary" = "%d ingredients";
-"recipe.steps.summary" = "%d minutes";
+"recipe.steps.summary" = "%d + %d = %d min";
 "recipe.detail.back" = "Back";
 "recipe.detail.favorite" = "Favorite";
 "recipe.detail.shareText" = "Try this recipe in Famous Chef.";
