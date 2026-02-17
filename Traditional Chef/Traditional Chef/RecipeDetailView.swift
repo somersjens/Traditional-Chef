@@ -12,8 +12,8 @@ import AVFoundation
 struct RecipeDetailView: View {
     private static let heroImageSession: URLSession = {
         let configuration = URLSessionConfiguration.default
-        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        configuration.urlCache = nil
+        configuration.requestCachePolicy = .useProtocolCachePolicy
+        configuration.urlCache = URLCache.shared
         configuration.waitsForConnectivity = true
         configuration.timeoutIntervalForRequest = 60
         configuration.timeoutIntervalForResource = 120
@@ -429,7 +429,7 @@ struct RecipeDetailView: View {
 
         var request = URLRequest(
             url: url,
-            cachePolicy: .reloadIgnoringLocalCacheData,
+            cachePolicy: .useProtocolCachePolicy,
             timeoutInterval: 60
         )
         request.setValue("image/*,*/*;q=0.8", forHTTPHeaderField: "Accept")
@@ -437,8 +437,11 @@ struct RecipeDetailView: View {
         do {
             let (data, response) = try await Self.heroImageSession.data(for: request)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode),
+            let hasSuccessfulStatusCode = (response as? HTTPURLResponse).map { (200...299).contains($0.statusCode) } ?? true
+            let hasImageMimeType = response.mimeType?.lowercased().hasPrefix("image/") ?? true
+
+            guard hasSuccessfulStatusCode,
+                  hasImageMimeType,
                   !data.isEmpty
             else {
                 await MainActor.run {
