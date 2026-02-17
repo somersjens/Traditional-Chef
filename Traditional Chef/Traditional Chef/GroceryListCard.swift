@@ -556,7 +556,12 @@ struct GroceryListCard: View {
 
     private var grocerySummary: String {
         let format = AppLanguage.string("recipe.grocery.summary", locale: locale)
-        return String(format: format, locale: locale, recipe.ingredients.count)
+        return String(format: format, locale: locale, uniqueVisibleIngredientCount)
+    }
+
+    private var uniqueVisibleIngredientCount: Int {
+        let visibleIngredients = recipe.ingredients.filter { !($0.isInvisible ?? false) }
+        return Set(visibleIngredients.map(\.id)).count
     }
 
     private var checkedStorageKey: String {
