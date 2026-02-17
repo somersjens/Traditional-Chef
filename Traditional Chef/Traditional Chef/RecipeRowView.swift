@@ -59,6 +59,9 @@ struct RecipeRowView: View {
             return "\(recipe.totalMinutes)"
         case .prepTime:
             return "\(recipe.totalActiveMinutes)"
+        case .prepAndWaitingTime:
+            let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
+            return "\(recipe.totalActiveMinutes) | \(passiveMinutes)"
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:

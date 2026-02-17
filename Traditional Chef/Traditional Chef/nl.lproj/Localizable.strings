@@ -31,6 +31,9 @@
 "recipes.column.timeShort" = "Tijd";
 "recipes.column.prepTime" = "Bereidingstijd";
 "recipes.column.prepTimeShort" = "Tijd (b)";
+
+"recipes.column.prepAndWaitingTime" = "Maken & Wachten";
+"recipes.column.prepAndWaitingTimeShort" = "m | w";
 "recipes.column.ingredients" = "Ingredienten";
 "recipes.column.calories" = "Calorieën";
 "recipes.column.ingredientsShort" = "#";

@@ -56,6 +56,7 @@ final class RecipeListViewModel: ObservableObject {
 enum RecipeListValue: String, CaseIterable, Identifiable {
     case totalTime
     case prepTime
+    case prepAndWaitingTime
     case ingredients
     case calories
 
@@ -67,6 +68,8 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
             return "recipes.column.time"
         case .prepTime:
             return "recipes.column.prepTime"
+        case .prepAndWaitingTime:
+            return "recipes.column.prepAndWaitingTime"
         case .ingredients:
             return "recipes.column.ingredients"
         case .calories:
@@ -80,6 +83,8 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
             return "recipes.column.timeShort"
         case .prepTime:
             return "recipes.column.prepTimeShort"
+        case .prepAndWaitingTime:
+            return "recipes.column.prepAndWaitingTimeShort"
         case .ingredients:
             return "recipes.column.ingredientsShort"
         case .calories:
@@ -92,6 +97,8 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
         case .totalTime:
             return .totalTime
         case .prepTime:
+            return .prepTime
+        case .prepAndWaitingTime:
             return .prepTime
         case .ingredients:
             return .ingredients
