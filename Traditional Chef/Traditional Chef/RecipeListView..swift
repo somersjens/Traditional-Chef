@@ -122,7 +122,7 @@ struct RecipeListView: View {
                 ensureMeasurementUnit()
                 _ = RecipeDetailView.preparedKnifeImage
             }
-            .onChange(of: appLanguage) { _, _ in
+            .onChange(of: appLanguage) { _ in
                 ensureMeasurementUnit()
             }
             .sheet(isPresented: $showCountryPicker) {
@@ -285,7 +285,7 @@ struct RecipeListView: View {
                 AppLanguage.string("recipes.search", locale: locale),
                 text: $vm.searchText,
                 prompt: Text(AppLanguage.string("recipes.search", locale: locale))
-                    .foregroundStyle(AppTheme.searchPlaceholder)
+                    .foregroundColor(AppTheme.searchPlaceholder)
             )
                 .textFieldStyle(.plain)
                 .focused($isSearchFocused)
@@ -463,7 +463,7 @@ struct RecipeListView: View {
                         }
                         .frame(width: 330)
                         .padding(.vertical, 4)
-                        .presentationCompactAdaptation(.popover)
+                        .modifier(PopoverCompactAdaptationModifier())
                     }
                 }
                 .padding(.vertical, rowVerticalPadding)
@@ -769,5 +769,17 @@ private struct SettingsCardHeightPreferenceKey: PreferenceKey {
 
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = max(value, nextValue())
+    }
+}
+
+
+private struct PopoverCompactAdaptationModifier: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, *) {
+            content.presentationCompactAdaptation(.popover)
+        } else {
+            content
+        }
     }
 }

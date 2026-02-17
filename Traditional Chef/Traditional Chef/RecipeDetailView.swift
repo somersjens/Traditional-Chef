@@ -126,9 +126,9 @@ struct RecipeDetailView: View {
                 .padding(.bottom, 12)
                 .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
             }
-            .contentMargins(.horizontal, 0, for: .scrollContent)
+            
             .ignoresSafeArea(edges: .top)
-            .onChange(of: scrollOffset) { _, offset in
+            .onChange(of: scrollOffset) { offset in
                 let shouldHide = offset > (heroHeight * 0.5)
                 if shouldHide != isTopBarHidden {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -673,7 +673,7 @@ struct RecipeDetailView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
-        .onChange(of: isInfoExpanded) { _, expanded in
+        .onChange(of: isInfoExpanded) { expanded in
             if !expanded {
                 cardSpeaker.stop()
             }
@@ -701,7 +701,7 @@ struct RecipeDetailView: View {
             stepSpeaker.stop()
             cardSpeaker.stop()
         }
-        .onChange(of: isStepsExpanded) { _, expanded in
+        .onChange(of: isStepsExpanded) { expanded in
             if !expanded {
                 stepSpeaker.stop()
                 selectedStepID = nil
@@ -1172,7 +1172,7 @@ private struct StepRowView: View {
         .onReceive(tick) { _ in
             updateRemainingFromEndDate()
         }
-        .onChange(of: scenePhase) { _, newPhase in
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 updateRemainingFromEndDate()
             }
@@ -1180,13 +1180,13 @@ private struct StepRowView: View {
         .onAppear {
             notifyTimerUpdate()
         }
-        .onChange(of: isRunning) { _, _ in
+        .onChange(of: isRunning) { _ in
             notifyTimerUpdate()
         }
-        .onChange(of: secondsLeft) { _, _ in
+        .onChange(of: secondsLeft) { _ in
             notifyTimerUpdate()
         }
-        .onChange(of: sessionInitialSeconds) { _, _ in
+        .onChange(of: sessionInitialSeconds) { _ in
             notifyTimerUpdate()
         }
     }

@@ -80,12 +80,12 @@ struct ServingsCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
-        .onChange(of: isServingsFocused) { _, isFocused in
+        .onChange(of: isServingsFocused) { isFocused in
             if !isFocused {
                 commitServingsInput()
             }
         }
-        .onChange(of: servingsInput) { _, newValue in
+        .onChange(of: servingsInput) { newValue in
             let filtered = newValue.filter { $0.isNumber }
             if filtered != newValue {
                 servingsInput = filtered
@@ -93,7 +93,7 @@ struct ServingsCard: View {
                 servingsInput = String(filtered.prefix(2))
             }
         }
-        .onChange(of: servings) { _, newValue in
+        .onChange(of: servings) { newValue in
             if !isServingsFocused {
                 servingsInput = "\(newValue)"
             }

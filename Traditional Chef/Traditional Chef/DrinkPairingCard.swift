@@ -123,7 +123,7 @@ struct DrinkPairingCard: View {
                 .onDisappear {
                     cardSpeaker.stop()
                 }
-                .onChange(of: isExpanded) { _, expanded in
+                .onChange(of: isExpanded) { expanded in
                     if !expanded {
                         cardSpeaker.stop()
                     }

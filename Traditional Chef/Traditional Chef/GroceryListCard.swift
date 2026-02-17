@@ -214,7 +214,7 @@ struct GroceryListCard: View {
         .animation(nil, value: checked)
         .animation(nil, value: groupByDishPart)
         .allowsHitTesting(!isResettingChecks)
-        .onChange(of: checked) { _, newValue in
+        .onChange(of: checked) { newValue in
             saveChecked(newValue)
             let checkedVisibleCount = newValue.intersection(visibleIngredientIds).count
             if checkedVisibleCount == visibleIngredientIds.count && !isResettingChecks {
@@ -228,7 +228,7 @@ struct GroceryListCard: View {
         .onDisappear {
             cardSpeaker.stop()
         }
-        .onChange(of: isExpanded) { _, expanded in
+        .onChange(of: isExpanded) { expanded in
             if !expanded {
                 cardSpeaker.stop()
             }
