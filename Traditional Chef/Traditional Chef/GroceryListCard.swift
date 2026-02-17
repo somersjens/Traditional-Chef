@@ -551,14 +551,7 @@ struct GroceryListCard: View {
     }
 
     private func sortableAmount(for ingredient: Ingredient) -> Double {
-        if showAllMeasurements {
-            return scaledGrams(ingredient.grams)
-        }
-
-        return GroceryMeasurementFormatter.sortableValue(
-            from: formattedAmount(for: ingredient).value,
-            locale: locale
-        )
+        scaledGrams(ingredient.grams)
     }
 
     private var grocerySummary: String {
