@@ -219,7 +219,7 @@ struct RecipeListView: View {
             } action: {
                 vm.setSort(listViewValue.sortKey)
             }
-            .frame(width: metricColumnWidth, alignment: .trailing)
+            .frame(minWidth: metricColumnWidth, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
