@@ -7,6 +7,7 @@ import SwiftUI
 
 struct TimerBadgeView: View {
     let displayText: String
+    let widthReferenceText: String
     let isRunning: Bool
     let isOverdue: Bool
     let onTap: () -> Void
@@ -14,8 +15,16 @@ struct TimerBadgeView: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 6) {
-                Text(displayText)
-                    .monospacedDigit()
+                ZStack {
+                    Text(widthReferenceText)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .opacity(0)
+                        .accessibilityHidden(true)
+                    Text(displayText)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                }
             }
             .font(.caption2.weight(.semibold))
             .foregroundStyle(badgeForeground)

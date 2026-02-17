@@ -1108,6 +1108,7 @@ private struct StepRowView: View {
                 if step.timerSeconds != nil {
                     TimerBadgeView(
                         displayText: timerDisplayText,
+                        widthReferenceText: timerWidthReferenceText,
                         isRunning: isRunning,
                         isOverdue: secondsLeft < 0
                     ) {
@@ -1144,6 +1145,7 @@ private struct StepRowView: View {
                 if step.timerSeconds != nil {
                     TimerBadgeView(
                         displayText: timerDisplayText,
+                        widthReferenceText: timerWidthReferenceText,
                         isRunning: isRunning,
                         isOverdue: secondsLeft < 0
                     ) {}
@@ -1200,6 +1202,15 @@ private struct StepRowView: View {
 
     private var timeText: String {
         formattedTimerText(secondsLeft)
+    }
+
+    private var timerWidthReferenceText: String {
+        if secondsLeft < 0 {
+            let longestOverdue = max(abs(secondsLeft), sessionInitialSeconds)
+            return formattedTimerText(-longestOverdue)
+        }
+
+        return formattedTimerText(sessionInitialSeconds)
     }
 
     private func formattedTimerText(_ totalSeconds: Int) -> String {
