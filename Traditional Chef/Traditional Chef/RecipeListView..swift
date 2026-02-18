@@ -7,6 +7,10 @@ import SwiftUI
 import UIKit
 
 struct RecipeListView: View {
+    private enum ScrollAnchor {
+        static let top = "recipe-list-top"
+    }
+
     @EnvironmentObject private var recipeStore: RecipeStore
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -22,6 +26,7 @@ struct RecipeListView: View {
     @State private var showSettings: Bool = false
     @State private var settingsCardMeasuredHeight: CGFloat = 0
     @State private var showMeasurementOptions: Bool = false
+    @State private var scrollToTopRequest: Int = 0
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -40,74 +45,79 @@ struct RecipeListView: View {
 
                     searchBar
 
-                    FilterChipsView(
-                        selected: vm.selectedCategories,
-                        onToggle: { cat in
-                            vm.toggleCategory(cat)
-                        },
-                        locale: locale
-                    )
-                    .frame(maxWidth: contentMaxWidth, alignment: .leading)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                    ScrollViewReader { proxy in
+                        FilterChipsView(
+                            selected: vm.selectedCategories,
+                            onToggle: { cat in
+                                vm.toggleCategory(cat)
+                                requestScrollToTop()
+                            },
+                            locale: locale
+                        )
+                        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .center)
 
-                    headerRow(metricColumnWidth: metricColumnWidth)
+                        headerRow(metricColumnWidth: metricColumnWidth, onFilterOrSortChange: {
+                            requestScrollToTop()
+                        })
 
-                    ScrollView {
-                        LazyVStack(spacing: 10) {
-                            if visibleRecipes.isEmpty {
-                                emptyState
-                                    .frame(maxWidth: contentMaxWidth, alignment: .center)
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            } else {
-                                LazyVStack(spacing: 0) {
-                                    ForEach(visibleRecipes) { recipe in
-                                        NavigationLink(value: recipe) {
-                                            RecipeRowView(
-                                                recipe: recipe,
-                                                listViewValue: listViewValue,
-                                                metricColumnWidth: metricColumnWidth,
-                                                isFavorite: recipeStore.isFavorite(recipe),
-                                                onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
-                                                searchText: vm.debouncedSearchText
-                                            )
-                                        }
-                                        .transition(
-                                            .asymmetric(
-                                                insertion: .opacity,
-                                                removal: .opacity
-                                            )
-                                        )
-                                        .simultaneousGesture(TapGesture().onEnded {
-                                            RecipeImagePrefetcher.prefetch(
-                                                urlString: recipe.imageURL,
-                                                priority: URLSessionTask.highPriority
-                                            )
-                                        })
-                                        .buttonStyle(.plain)
+                        ScrollView {
+                            Color.clear
+                                .frame(height: 1)
+                                .id(ScrollAnchor.top)
 
-                                        if recipe.id != visibleRecipes.last?.id {
-                                            Rectangle()
-                                                .fill(AppTheme.primaryBlue.opacity(0.14))
-                                                .frame(height: 0.5)
-                                                .padding(.leading, 21)
-                                                .padding(.trailing, 21)
+                            LazyVStack(spacing: 10) {
+                                if visibleRecipes.isEmpty {
+                                    emptyState
+                                        .frame(maxWidth: contentMaxWidth, alignment: .center)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                } else {
+                                    LazyVStack(spacing: 0) {
+                                        ForEach(visibleRecipes) { recipe in
+                                            NavigationLink(value: recipe) {
+                                                RecipeRowView(
+                                                    recipe: recipe,
+                                                    listViewValue: listViewValue,
+                                                    metricColumnWidth: metricColumnWidth,
+                                                    isFavorite: recipeStore.isFavorite(recipe),
+                                                    onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
+                                                    searchText: vm.debouncedSearchText
+                                                )
+                                            }
+                                            .simultaneousGesture(TapGesture().onEnded {
+                                                RecipeImagePrefetcher.prefetch(
+                                                    urlString: recipe.imageURL,
+                                                    priority: URLSessionTask.highPriority
+                                                )
+                                            })
+                                            .buttonStyle(.plain)
+
+                                            if recipe.id != visibleRecipes.last?.id {
+                                                Rectangle()
+                                                    .fill(AppTheme.primaryBlue.opacity(0.14))
+                                                    .frame(height: 0.5)
+                                                    .padding(.leading, 21)
+                                                    .padding(.trailing, 21)
+                                            }
                                         }
                                     }
+                                    .background(AppTheme.searchBarBackground)
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+                                    )
+                                    .padding(.horizontal, listSideInset)
+                                    .padding(.bottom, 16)
+                                    .frame(maxWidth: contentMaxWidth, alignment: .leading)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                                 }
-                                .background(AppTheme.searchBarBackground)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
-                                )
-                                .animation(.snappy(duration: 0.24, extraBounce: 0.03), value: visibleRecipes.count)
-                                .padding(.horizontal, listSideInset)
-                                .padding(.bottom, 16)
-                                .frame(maxWidth: contentMaxWidth, alignment: .leading)
-                                .frame(maxWidth: .infinity, alignment: .center)
                             }
+                            .padding(.top, 6)
                         }
-                        .padding(.top, 6)
+                        .onChange(of: scrollToTopRequest) { _ in
+                            scrollToTop(using: proxy)
+                        }
                     }
                 }
             }
@@ -133,9 +143,20 @@ struct RecipeListView: View {
                     onSelect: { countryCode, continent in
                         vm.selectedCountryCode = countryCode
                         vm.selectedContinent = continent
+                        requestScrollToTop()
                     }
                 )
             }
+        }
+    }
+
+    private func requestScrollToTop() {
+        scrollToTopRequest += 1
+    }
+
+    private func scrollToTop(using proxy: ScrollViewProxy) {
+        withAnimation(.snappy(duration: 0.24, extraBounce: 0.03)) {
+            proxy.scrollTo(ScrollAnchor.top, anchor: .top)
         }
     }
 
@@ -184,10 +205,11 @@ struct RecipeListView: View {
     private var listSideInset: CGFloat {
         16
     }
-    private func headerRow(metricColumnWidth: CGFloat) -> some View {
+    private func headerRow(metricColumnWidth: CGFloat, onFilterOrSortChange: @escaping () -> Void) -> some View {
         HStack(spacing: 6) {
             Button {
                 vm.setSort(.country)
+                onFilterOrSortChange()
                 showCountryPicker = true
             } label: {
                 Text(countryFilterEmoji)
@@ -206,6 +228,7 @@ struct RecipeListView: View {
                 Text(AppLanguage.string("recipes.column.name", locale: locale))
             } action: {
                 vm.setSort(.name)
+                onFilterOrSortChange()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -221,12 +244,14 @@ struct RecipeListView: View {
                     .multilineTextAlignment(.trailing)
             } action: {
                 vm.setSort(listViewValue.sortKey)
+                onFilterOrSortChange()
             }
             .frame(minWidth: metricColumnWidth, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
                 vm.favoritesOnly.toggle()
+                onFilterOrSortChange()
             } label: {
                 Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
                     .font(.system(size: 16, weight: .semibold))
