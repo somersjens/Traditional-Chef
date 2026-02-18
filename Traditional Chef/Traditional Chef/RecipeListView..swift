@@ -191,6 +191,10 @@ struct RecipeListView: View {
     private func metricColumnWidths(for recipes: [Recipe]) -> MetricColumnWidths {
         let headlineFont = UIFont.preferredFont(forTextStyle: .headline)
         let standardMinWidth: CGFloat = dynamicTypeSize.isAccessibilitySize ? 56 : 48
+        let splitMetricMinDigits = dynamicTypeSize.isAccessibilitySize ? "888" : "88"
+        let splitMetricMinWidth = ceil((splitMetricMinDigits as NSString)
+            .size(withAttributes: [.font: headlineFont]).width) + 2
+        let splitSecondaryLeadingRoom: CGFloat = dynamicTypeSize.isAccessibilitySize ? 12 : 8
 
         func width(for values: [String], minWidth: CGFloat) -> CGFloat {
             let measuredWidth = values
@@ -206,11 +210,11 @@ struct RecipeListView: View {
             return MetricColumnWidths(
                 primary: width(
                     for: primaryValues + [AppLanguage.string("recipes.column.prepShort", locale: locale)],
-                    minWidth: 0
+                    minWidth: splitMetricMinWidth
                 ),
                 secondary: width(
                     for: secondaryValues + [AppLanguage.string("recipes.column.waitingShort", locale: locale)],
-                    minWidth: 0
+                    minWidth: splitMetricMinWidth + splitSecondaryLeadingRoom
                 ),
                 columnSpacing: 6
             )
@@ -319,7 +323,6 @@ struct RecipeListView: View {
             }
 
             Button {
-                // Favorites only: if no favorites exist, keep showing all (rule)
                 vm.favoritesOnly.toggle()
                 onFilterOrSortChange()
             } label: {
@@ -704,6 +707,7 @@ struct RecipeListView: View {
         vm.selectedCountryCode = nil
         vm.selectedContinent = nil
         vm.selectedCategories.removeAll()
+        vm.favoritesOnly = false
         vm.searchText = ""
         isSearchFocused = false
     }
@@ -740,8 +744,8 @@ struct RecipeListView: View {
             list = list.filter { $0.countryCode == cc }
         }
 
-        // Favorites filter (rule: if none yet, keep showing all)
-        if vm.favoritesOnly, !recipeStore.favorites.isEmpty {
+        // Favorites filter
+        if vm.favoritesOnly {
             list = list.filter { recipeStore.isFavorite($0) }
         }
 
