@@ -80,6 +80,7 @@ struct RecipeListView: View {
                                                     listViewValue: listViewValue,
                                                     primaryMetricColumnWidth: metricColumnWidths.primary,
                                                     secondaryMetricColumnWidth: metricColumnWidths.secondary,
+                                                    metricColumnSpacing: metricColumnWidths.columnSpacing,
                                                     isFavorite: recipeStore.isFavorite(recipe),
                                                     onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                                     searchText: vm.debouncedSearchText
@@ -182,15 +183,18 @@ struct RecipeListView: View {
     private struct MetricColumnWidths {
         let primary: CGFloat
         let secondary: CGFloat?
+        let columnSpacing: CGFloat
     }
 
     private func metricColumnWidths(for recipes: [Recipe]) -> MetricColumnWidths {
-        let headlineCharacterWidth = UIFont.preferredFont(forTextStyle: .headline).pointSize * 0.62
-        let minWidth: CGFloat = dynamicTypeSize.isAccessibilitySize ? 56 : 48
+        let headlineFont = UIFont.preferredFont(forTextStyle: .headline)
+        let standardMinWidth: CGFloat = dynamicTypeSize.isAccessibilitySize ? 56 : 48
 
-        func width(for values: [String]) -> CGFloat {
-            let maxValueLength = (values.map(\.count).max() ?? 1) + 1
-            let computedWidth = ceil(CGFloat(maxValueLength) * headlineCharacterWidth)
+        func width(for values: [String], minWidth: CGFloat) -> CGFloat {
+            let measuredWidth = values
+                .map { ($0 as NSString).size(withAttributes: [.font: headlineFont]).width }
+                .max() ?? headlineFont.pointSize
+            let computedWidth = ceil(measuredWidth) + 2
             return max(minWidth, computedWidth)
         }
 
@@ -198,14 +202,22 @@ struct RecipeListView: View {
             let primaryValues = recipes.map { "\($0.totalActiveMinutes)" }
             let secondaryValues = recipes.map { "\(max(0, $0.totalMinutes - $0.totalActiveMinutes))" }
             return MetricColumnWidths(
-                primary: width(for: primaryValues + [AppLanguage.string("recipes.column.prepShort", locale: locale)]),
-                secondary: width(for: secondaryValues + [AppLanguage.string("recipes.column.waitingShort", locale: locale)])
+                primary: width(
+                    for: primaryValues + [AppLanguage.string("recipes.column.prepShort", locale: locale)],
+                    minWidth: 0
+                ),
+                secondary: width(
+                    for: secondaryValues + [AppLanguage.string("recipes.column.waitingShort", locale: locale)],
+                    minWidth: 0
+                ),
+                columnSpacing: 6
             )
         }
 
         return MetricColumnWidths(
-            primary: width(for: recipes.map(listValueText(for:))),
-            secondary: nil
+            primary: width(for: recipes.map(listValueText(for:)), minWidth: standardMinWidth),
+            secondary: nil,
+            columnSpacing: 4
         )
     }
 
@@ -255,7 +267,7 @@ struct RecipeListView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if listViewValue == .prepAndWaitingTime {
-                HStack(spacing: 4) {
+                HStack(spacing: metricColumnWidths.columnSpacing) {
                     SortHeaderButton(
                         isActive: vm.sortKey == .prepTime,
                         isAscending: vm.ascending,

@@ -10,6 +10,7 @@ struct RecipeRowView: View {
     let listViewValue: RecipeListValue
     let primaryMetricColumnWidth: CGFloat
     let secondaryMetricColumnWidth: CGFloat?
+    let metricColumnSpacing: CGFloat
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
@@ -51,6 +52,7 @@ struct RecipeRowView: View {
         Text(text)
             .font(.headline.weight(.semibold))
             .foregroundStyle(AppTheme.primaryBlue)
+            .lineLimit(1)
             .frame(width: width, alignment: .trailing)
     }
 
@@ -59,8 +61,10 @@ struct RecipeRowView: View {
         switch listViewValue {
         case .prepAndWaitingTime:
             let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
-            meta("\(recipe.totalActiveMinutes)", width: primaryMetricColumnWidth)
-            meta("\(passiveMinutes)", width: secondaryMetricColumnWidth ?? primaryMetricColumnWidth)
+            HStack(spacing: metricColumnSpacing) {
+                meta("\(recipe.totalActiveMinutes)", width: primaryMetricColumnWidth)
+                meta("\(passiveMinutes)", width: secondaryMetricColumnWidth ?? primaryMetricColumnWidth)
+            }
         default:
             meta(listValueText, width: primaryMetricColumnWidth)
         }
