@@ -79,8 +79,8 @@
 
 "grocery.option.partOfDish" = "Part of dish";
 "settings.title" = "Settings";
-"settings.language" = "Language";
-"settings.measurement" = "Measurement";
+"settings.language" = "Language for recipes";
+"settings.measurement" = "Standard measurement";
 "settings.measurement.metric.short" = "International";
 "settings.measurement.metric.long" = "Metric: g/ml";
 "settings.measurement.us.short" = "US Cups";
@@ -92,7 +92,7 @@
 "settings.measurement.jp.short" = "Japanese Cups";
 "settings.measurement.jp.long" = "JP: cup 200 ml · tbsp 15 · tsp 5";
 
-"settings.servings" = "People";
+"settings.servings" = "Number of servings";
 "settings.listViewValue" = "Value in listview";
 "settings.timerAutoStop" = "Timer auto stop";
 
