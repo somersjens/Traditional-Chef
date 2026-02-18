@@ -62,60 +62,62 @@ struct RecipeListView: View {
                         })
 
                         ScrollView {
-                            Color.clear
-                                .frame(height: 1)
-                                .id(ScrollAnchor.top)
+                            VStack(spacing: 0) {
+                                Color.clear
+                                    .frame(height: 1)
+                                    .id(ScrollAnchor.top)
 
-                            LazyVStack(spacing: 10) {
-                                if visibleRecipes.isEmpty {
-                                    emptyState
-                                        .frame(maxWidth: contentMaxWidth, alignment: .center)
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                } else {
-                                    LazyVStack(spacing: 0) {
-                                        ForEach(visibleRecipes) { recipe in
-                                            NavigationLink(value: recipe) {
-                                                RecipeRowView(
-                                                    recipe: recipe,
-                                                    listViewValue: listViewValue,
-                                                    primaryMetricColumnWidth: metricColumnWidths.primary,
-                                                    secondaryMetricColumnWidth: metricColumnWidths.secondary,
-                                                    metricColumnSpacing: metricColumnWidths.columnSpacing,
-                                                    isFavorite: recipeStore.isFavorite(recipe),
-                                                    onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
-                                                    searchText: vm.debouncedSearchText
-                                                )
-                                            }
-                                            .simultaneousGesture(TapGesture().onEnded {
-                                                RecipeImagePrefetcher.prefetch(
-                                                    urlString: recipe.imageURL,
-                                                    priority: URLSessionTask.highPriority
-                                                )
-                                            })
-                                            .buttonStyle(.plain)
+                                LazyVStack(spacing: 10) {
+                                    if visibleRecipes.isEmpty {
+                                        emptyState
+                                            .frame(maxWidth: contentMaxWidth, alignment: .center)
+                                            .frame(maxWidth: .infinity, alignment: .center)
+                                    } else {
+                                        LazyVStack(spacing: 0) {
+                                            ForEach(visibleRecipes) { recipe in
+                                                NavigationLink(value: recipe) {
+                                                    RecipeRowView(
+                                                        recipe: recipe,
+                                                        listViewValue: listViewValue,
+                                                        primaryMetricColumnWidth: metricColumnWidths.primary,
+                                                        secondaryMetricColumnWidth: metricColumnWidths.secondary,
+                                                        metricColumnSpacing: metricColumnWidths.columnSpacing,
+                                                        isFavorite: recipeStore.isFavorite(recipe),
+                                                        onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
+                                                        searchText: vm.debouncedSearchText
+                                                    )
+                                                }
+                                                .simultaneousGesture(TapGesture().onEnded {
+                                                    RecipeImagePrefetcher.prefetch(
+                                                        urlString: recipe.imageURL,
+                                                        priority: URLSessionTask.highPriority
+                                                    )
+                                                })
+                                                .buttonStyle(.plain)
 
-                                            if recipe.id != visibleRecipes.last?.id {
-                                                Rectangle()
-                                                    .fill(AppTheme.primaryBlue.opacity(0.14))
-                                                    .frame(height: 0.5)
-                                                    .padding(.leading, 21)
-                                                    .padding(.trailing, 21)
+                                                if recipe.id != visibleRecipes.last?.id {
+                                                    Rectangle()
+                                                        .fill(AppTheme.primaryBlue.opacity(0.14))
+                                                        .frame(height: 0.5)
+                                                        .padding(.leading, 21)
+                                                        .padding(.trailing, 21)
+                                                }
                                             }
                                         }
+                                        .background(AppTheme.searchBarBackground)
+                                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+                                        )
+                                        .padding(.horizontal, listSideInset)
+                                        .padding(.bottom, 16)
+                                        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+                                        .frame(maxWidth: .infinity, alignment: .center)
                                     }
-                                    .background(AppTheme.searchBarBackground)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
-                                    )
-                                    .padding(.horizontal, listSideInset)
-                                    .padding(.bottom, 16)
-                                    .frame(maxWidth: contentMaxWidth, alignment: .leading)
-                                    .frame(maxWidth: .infinity, alignment: .center)
                                 }
+                                .padding(.top, 6)
                             }
-                            .padding(.top, 6)
                         }
                         .onChange(of: scrollToTopRequest) { _ in
                             scrollToTop(using: proxy)
