@@ -842,11 +842,11 @@ private struct SortHeaderButton<Label: View>: View {
         Button(action: action) {
             HStack(spacing: arrowSpacing) {
                 if arrowPlacement == .leading, arrowLayout == .inline {
-                    arrowView
+                    inlineArrowSlot
                 }
                 label()
                 if arrowPlacement == .trailing, arrowLayout == .inline {
-                    arrowView
+                    inlineArrowSlot
                 }
             }
             .frame(maxWidth: .infinity, alignment: textAlignment)
@@ -863,6 +863,14 @@ private struct SortHeaderButton<Label: View>: View {
 
     private var arrowAlignment: Alignment {
         arrowPlacement == .leading ? .leading : .trailing
+    }
+
+    private var inlineArrowSlot: some View {
+        Image(systemName: isAscending ? "arrow.up" : "arrow.down")
+            .font(.caption2)
+            .opacity(isActive ? 1 : 0)
+            .frame(width: 10)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
