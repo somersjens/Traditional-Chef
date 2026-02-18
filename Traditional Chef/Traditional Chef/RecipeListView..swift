@@ -488,6 +488,8 @@ struct RecipeListView: View {
                     Text(AppLanguage.string("settings.language", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
                     Spacer()
                     Menu {
                         ForEach(AppLanguage.supported) { option in
@@ -504,7 +506,7 @@ struct RecipeListView: View {
                         }
                         .font(controlFont)
                         .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize(horizontal: true, vertical: false)
                     }
                     .menuIndicator(.hidden)
                 }
@@ -518,6 +520,8 @@ struct RecipeListView: View {
                     Text(AppLanguage.string("settings.measurement", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
                     Spacer()
                     Button {
                         showMeasurementOptions = true
@@ -528,7 +532,7 @@ struct RecipeListView: View {
                         }
                         .font(controlFont)
                         .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize(horizontal: true, vertical: false)
                     }
                     .buttonStyle(.plain)
                     .popover(isPresented: $showMeasurementOptions, arrowEdge: .top) {
@@ -572,6 +576,8 @@ struct RecipeListView: View {
                     Text(AppLanguage.string("settings.servings", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
                     Spacer()
                     Menu {
                         ForEach(1...12, id: \.self) { servings in
@@ -588,7 +594,7 @@ struct RecipeListView: View {
                         }
                         .font(controlFont)
                         .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize(horizontal: true, vertical: false)
                     }
                     .menuIndicator(.hidden)
                 }
@@ -602,6 +608,8 @@ struct RecipeListView: View {
                     Text(AppLanguage.string("settings.listViewValue", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
                     Spacer()
                     Menu {
                         ForEach(RecipeListValue.allCases) { option in
@@ -619,7 +627,7 @@ struct RecipeListView: View {
                         }
                         .font(controlFont)
                         .foregroundStyle(AppTheme.primaryBlue)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize(horizontal: true, vertical: false)
                     }
                     .menuIndicator(.hidden)
                 }
@@ -633,6 +641,8 @@ struct RecipeListView: View {
                     Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
                     Spacer()
                     Toggle("", isOn: $timerAutoStop)
                         .labelsHidden()
