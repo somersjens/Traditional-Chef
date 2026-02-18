@@ -18,7 +18,7 @@ final class RecipeListViewModel: ObservableObject {
     @Published var favoritesOnly: Bool = false
 
     enum SortKey: String {
-        case country, name, totalTime, prepTime, calories, ingredients
+        case country, name, totalTime, prepTime, waitingTime, calories, ingredients
     }
 
     @Published var sortKey: SortKey = .country

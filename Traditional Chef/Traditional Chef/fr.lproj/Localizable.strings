@@ -33,7 +33,9 @@
 "recipes.column.prepTimeShort" = "Temps (p)";
 
 "recipes.column.prepAndWaitingTime" = "Préparation + attente";
-"recipes.column.prepAndWaitingTimeShort" = "p | a";
+"recipes.column.prepAndWaitingTimeShort" = "P+A";
+"recipes.column.prepShort" = "P";
+"recipes.column.waitingShort" = "A";
 "recipes.column.ingredients" = "Ingrédients";
 "recipes.column.calories" = "Calories";
 "recipes.column.ingredientsShort" = "#";

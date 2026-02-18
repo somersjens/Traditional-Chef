@@ -32,7 +32,7 @@ struct RecipeListView: View {
 
     var body: some View {
         let visibleRecipes = filteredAndSortedRecipes
-        let metricColumnWidth = metricColumnWidth(for: visibleRecipes)
+        let metricColumnWidths = metricColumnWidths(for: visibleRecipes)
 
         NavigationStack {
             ZStack {
@@ -57,7 +57,7 @@ struct RecipeListView: View {
                         .frame(maxWidth: contentMaxWidth, alignment: .leading)
                         .frame(maxWidth: .infinity, alignment: .center)
 
-                        headerRow(metricColumnWidth: metricColumnWidth, onFilterOrSortChange: {
+                        headerRow(metricColumnWidths: metricColumnWidths, onFilterOrSortChange: {
                             requestScrollToTop()
                         })
 
@@ -78,7 +78,8 @@ struct RecipeListView: View {
                                                 RecipeRowView(
                                                     recipe: recipe,
                                                     listViewValue: listViewValue,
-                                                    metricColumnWidth: metricColumnWidth,
+                                                    primaryMetricColumnWidth: metricColumnWidths.primary,
+                                                    secondaryMetricColumnWidth: metricColumnWidths.secondary,
                                                     isFavorite: recipeStore.isFavorite(recipe),
                                                     onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                                     searchText: vm.debouncedSearchText
@@ -178,12 +179,34 @@ struct RecipeListView: View {
         horizontalSizeClass == .regular ? 760 : .infinity
     }
 
-    private func metricColumnWidth(for recipes: [Recipe]) -> CGFloat {
-        let maxValueLength = (recipes.map(listValueText(for:)).map(\.count).max() ?? 1) + 1
+    private struct MetricColumnWidths {
+        let primary: CGFloat
+        let secondary: CGFloat?
+    }
+
+    private func metricColumnWidths(for recipes: [Recipe]) -> MetricColumnWidths {
         let headlineCharacterWidth = UIFont.preferredFont(forTextStyle: .headline).pointSize * 0.62
-        let computedWidth = ceil(CGFloat(maxValueLength) * headlineCharacterWidth)
         let minWidth: CGFloat = dynamicTypeSize.isAccessibilitySize ? 56 : 48
-        return max(minWidth, computedWidth)
+
+        func width(for values: [String]) -> CGFloat {
+            let maxValueLength = (values.map(\.count).max() ?? 1) + 1
+            let computedWidth = ceil(CGFloat(maxValueLength) * headlineCharacterWidth)
+            return max(minWidth, computedWidth)
+        }
+
+        if listViewValue == .prepAndWaitingTime {
+            let primaryValues = recipes.map { "\($0.totalActiveMinutes)" }
+            let secondaryValues = recipes.map { "\(max(0, $0.totalMinutes - $0.totalActiveMinutes))" }
+            return MetricColumnWidths(
+                primary: width(for: primaryValues + [AppLanguage.string("recipes.column.prepShort", locale: locale)]),
+                secondary: width(for: secondaryValues + [AppLanguage.string("recipes.column.waitingShort", locale: locale)])
+            )
+        }
+
+        return MetricColumnWidths(
+            primary: width(for: recipes.map(listValueText(for:))),
+            secondary: nil
+        )
     }
 
     private func listValueText(for recipe: Recipe) -> String {
@@ -193,8 +216,7 @@ struct RecipeListView: View {
         case .prepTime:
             return "\(recipe.totalActiveMinutes)"
         case .prepAndWaitingTime:
-            let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
-            return "\(recipe.totalActiveMinutes) | \(passiveMinutes)"
+            return "\(recipe.totalActiveMinutes)"
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:
@@ -205,7 +227,7 @@ struct RecipeListView: View {
     private var listSideInset: CGFloat {
         16
     }
-    private func headerRow(metricColumnWidth: CGFloat, onFilterOrSortChange: @escaping () -> Void) -> some View {
+    private func headerRow(metricColumnWidths: MetricColumnWidths, onFilterOrSortChange: @escaping () -> Void) -> some View {
         HStack(spacing: 6) {
             Button {
                 vm.setSort(.country)
@@ -232,21 +254,55 @@ struct RecipeListView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            SortHeaderButton(
-                isActive: vm.sortKey == listViewValue.sortKey,
-                isAscending: vm.ascending,
-                textAlignment: .trailing,
-                arrowPlacement: .leading,
-                arrowSpacing: 4
-            ) {
-                Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
-                    .lineLimit(1)
-                    .multilineTextAlignment(.trailing)
-            } action: {
-                vm.setSort(listViewValue.sortKey)
-                onFilterOrSortChange()
+            if listViewValue == .prepAndWaitingTime {
+                HStack(spacing: 4) {
+                    SortHeaderButton(
+                        isActive: vm.sortKey == .prepTime,
+                        isAscending: vm.ascending,
+                        textAlignment: .trailing,
+                        arrowPlacement: .leading,
+                        arrowSpacing: 3
+                    ) {
+                        Text(AppLanguage.string("recipes.column.prepShort", locale: locale))
+                            .lineLimit(1)
+                    } action: {
+                        vm.setSort(.prepTime)
+                        onFilterOrSortChange()
+                    }
+                    .frame(width: metricColumnWidths.primary, alignment: .trailing)
+
+                    SortHeaderButton(
+                        isActive: vm.sortKey == .waitingTime,
+                        isAscending: vm.ascending,
+                        textAlignment: .trailing,
+                        arrowPlacement: .leading,
+                        arrowSpacing: 3
+                    ) {
+                        Text(AppLanguage.string("recipes.column.waitingShort", locale: locale))
+                            .lineLimit(1)
+                    } action: {
+                        vm.setSort(.waitingTime)
+                        onFilterOrSortChange()
+                    }
+                    .frame(width: metricColumnWidths.secondary ?? metricColumnWidths.primary, alignment: .trailing)
+                }
+            } else {
+                SortHeaderButton(
+                    isActive: vm.sortKey == listViewValue.sortKey,
+                    isAscending: vm.ascending,
+                    textAlignment: .trailing,
+                    arrowPlacement: .leading,
+                    arrowSpacing: 4
+                ) {
+                    Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
+                        .lineLimit(1)
+                        .multilineTextAlignment(.trailing)
+                } action: {
+                    vm.setSort(listViewValue.sortKey)
+                    onFilterOrSortChange()
+                }
+                .frame(minWidth: metricColumnWidths.primary, alignment: .trailing)
             }
-            .frame(minWidth: metricColumnWidth, alignment: .trailing)
 
             Button {
                 // Favorites only: if no favorites exist, keep showing all (rule)
@@ -681,6 +737,8 @@ struct RecipeListView: View {
                 result = a.totalMinutes < b.totalMinutes
             case .prepTime:
                 result = a.totalActiveMinutes < b.totalActiveMinutes
+            case .waitingTime:
+                result = max(0, a.totalMinutes - a.totalActiveMinutes) < max(0, b.totalMinutes - b.totalActiveMinutes)
             case .calories:
                 result = a.calories < b.calories
             case .ingredients:

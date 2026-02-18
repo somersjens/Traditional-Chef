@@ -8,7 +8,8 @@ import SwiftUI
 struct RecipeRowView: View {
     let recipe: Recipe
     let listViewValue: RecipeListValue
-    let metricColumnWidth: CGFloat
+    let primaryMetricColumnWidth: CGFloat
+    let secondaryMetricColumnWidth: CGFloat?
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     let searchText: String
@@ -27,7 +28,7 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            meta(listValueText, width: metricColumnWidth)
+            metrics
 
             Button(action: onToggleFavorite) {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
@@ -53,6 +54,18 @@ struct RecipeRowView: View {
             .frame(width: width, alignment: .trailing)
     }
 
+    @ViewBuilder
+    private var metrics: some View {
+        switch listViewValue {
+        case .prepAndWaitingTime:
+            let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
+            meta("\(recipe.totalActiveMinutes)", width: primaryMetricColumnWidth)
+            meta("\(passiveMinutes)", width: secondaryMetricColumnWidth ?? primaryMetricColumnWidth)
+        default:
+            meta(listValueText, width: primaryMetricColumnWidth)
+        }
+    }
+
     private var listValueText: String {
         switch listViewValue {
         case .totalTime:
@@ -60,8 +73,7 @@ struct RecipeRowView: View {
         case .prepTime:
             return "\(recipe.totalActiveMinutes)"
         case .prepAndWaitingTime:
-            let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
-            return "\(recipe.totalActiveMinutes) | \(passiveMinutes)"
+            return "\(recipe.totalActiveMinutes)"
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:
