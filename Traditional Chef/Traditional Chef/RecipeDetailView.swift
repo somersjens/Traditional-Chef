@@ -167,16 +167,26 @@ struct RecipeDetailView: View {
         let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
         let revealBoundaryY = knifeCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
         let coverHeight = min(max(revealBoundaryY, 0), fullHeight)
+        let listSnapshot = OpeningTransitionSnapshotStore.listSnapshot
 
         return ZStack(alignment: .top) {
-            AppTheme.pageBackground
-                .frame(height: coverHeight)
-                .frame(width: fullWidth)
-                .padding(.leading, -proxy.safeAreaInsets.leading)
-                .padding(.trailing, -proxy.safeAreaInsets.trailing)
-                .padding(.top, -proxy.safeAreaInsets.top)
-                .padding(.bottom, -proxy.safeAreaInsets.bottom)
-                .frame(maxWidth: .infinity, alignment: .top)
+            Group {
+                if let listSnapshot {
+                    Image(uiImage: listSnapshot)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    AppTheme.pageBackground
+                }
+            }
+            .frame(height: coverHeight)
+            .frame(width: fullWidth)
+            .clipped()
+            .padding(.leading, -proxy.safeAreaInsets.leading)
+            .padding(.trailing, -proxy.safeAreaInsets.trailing)
+            .padding(.top, -proxy.safeAreaInsets.top)
+            .padding(.bottom, -proxy.safeAreaInsets.bottom)
+            .frame(maxWidth: .infinity, alignment: .top)
 
             Group {
                 if let preparedKnifeImage = Self.preparedKnifeImage {
@@ -982,6 +992,28 @@ struct RecipeDetailView: View {
                 .padding(.vertical, 6)
         }
         .buttonStyle(.plain)
+    }
+}
+
+enum OpeningTransitionSnapshotStore {
+    @MainActor static var listSnapshot: UIImage?
+}
+
+extension UIApplication {
+    var firstKeyWindow: UIWindow? {
+        connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)
+    }
+}
+
+extension UIWindow {
+    func snapshotImage() -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { context in
+            layer.render(in: context.cgContext)
+        }
     }
 }
 

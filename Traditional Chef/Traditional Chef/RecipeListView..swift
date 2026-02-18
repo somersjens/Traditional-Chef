@@ -24,6 +24,7 @@ struct RecipeListView: View {
 
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
+    @State private var navigationPath: [Recipe] = []
     @State private var settingsCardMeasuredHeight: CGFloat = 0
     @State private var showMeasurementOptions: Bool = false
     @State private var scrollToTopRequest: Int = 0
@@ -34,7 +35,7 @@ struct RecipeListView: View {
         let visibleRecipes = filteredAndSortedRecipes
         let metricColumnWidths = metricColumnWidths(for: visibleRecipes)
 
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ZStack {
                 AppTheme.pageBackground.ignoresSafeArea()
 
@@ -75,7 +76,9 @@ struct RecipeListView: View {
                                     } else {
                                         LazyVStack(spacing: 0) {
                                             ForEach(visibleRecipes) { recipe in
-                                                NavigationLink(value: recipe) {
+                                                Button {
+                                                    openRecipeDetail(recipe)
+                                                } label: {
                                                     RecipeRowView(
                                                         recipe: recipe,
                                                         listViewValue: listViewValue,
@@ -87,12 +90,6 @@ struct RecipeListView: View {
                                                         searchText: vm.debouncedSearchText
                                                     )
                                                 }
-                                                .simultaneousGesture(TapGesture().onEnded {
-                                                    RecipeImagePrefetcher.prefetch(
-                                                        urlString: recipe.imageURL,
-                                                        priority: URLSessionTask.highPriority
-                                                    )
-                                                })
                                                 .buttonStyle(.plain)
 
                                                 if recipe.id != visibleRecipes.last?.id {
@@ -175,6 +172,22 @@ struct RecipeListView: View {
     private func ensureMeasurementUnit() {
         if MeasurementUnit(rawValue: measurementUnitRaw) == nil {
             measurementUnitRaw = MeasurementUnit.default(for: appLanguage).rawValue
+        }
+    }
+
+    @MainActor
+    private func openRecipeDetail(_ recipe: Recipe) {
+        RecipeImagePrefetcher.prefetch(
+            urlString: recipe.imageURL,
+            priority: URLSessionTask.highPriority
+        )
+
+        OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
+
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            navigationPath.append(recipe)
         }
     }
 
