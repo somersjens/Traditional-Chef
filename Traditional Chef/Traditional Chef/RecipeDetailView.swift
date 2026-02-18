@@ -58,13 +58,14 @@ struct RecipeDetailView: View {
     @State private var selectedStepID: String? = nil
     @State private var knifeFlightProgress: CGFloat = 0
     @State private var showOpeningKnifeTransition: Bool = true
-    @State private var hasStartedOpeningKnifeTransition: Bool = false
+    @State private var openingTransitionHideWorkItem: DispatchWorkItem?
     @StateObject private var stepSpeaker = StepSpeaker()
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
-    private let knifeRevealBoundaryFraction: CGFloat = 0.45
-    private let knifeRevealFineTuneOffset: CGFloat = 0
+    private let knifeRevealBoundaryFraction: CGFloat = 0.62
+    private let knifeRevealFineTuneOffset: CGFloat = 14
     private let knifeImageAspectRatio: CGFloat = 6.4
+    private let knifeOffscreenStartMultiplier: CGFloat = 1.15
     private let openingTransitionDuration: TimeInterval = 0.936
     private let openingTransitionDelay: TimeInterval = 0.096
     private let openingTransitionHideBuffer: TimeInterval = 0.03
@@ -84,7 +85,14 @@ struct RecipeDetailView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             servings = defaultServings
-            startOpeningKnifeTransitionIfNeeded()
+            startOpeningKnifeTransition()
+        }
+        .onChange(of: recipe.id) { _ in
+            startOpeningKnifeTransition()
+        }
+        .onDisappear {
+            openingTransitionHideWorkItem?.cancel()
+            openingTransitionHideWorkItem = nil
         }
     }
 
@@ -153,7 +161,7 @@ struct RecipeDetailView: View {
         let fullHeight = proxy.size.height + verticalInset
         let fullWidthCenterX = (proxy.size.width / 2) + ((proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing) / 2)
         let knifeHeight = fullWidth / knifeImageAspectRatio
-        let knifeTravelStart = fullHeight + (knifeHeight / 2)
+        let knifeTravelStart = fullHeight + (knifeHeight * knifeOffscreenStartMultiplier)
         let knifeTravelEnd = knifeHeight * (0.5 - knifeRevealBoundaryFraction)
         let knifeCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
         let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
@@ -188,21 +196,27 @@ struct RecipeDetailView: View {
         .allowsHitTesting(false)
     }
 
-    private func startOpeningKnifeTransitionIfNeeded() {
-        guard !hasStartedOpeningKnifeTransition else { return }
+    private func startOpeningKnifeTransition() {
+        openingTransitionHideWorkItem?.cancel()
+        openingTransitionHideWorkItem = nil
 
-        hasStartedOpeningKnifeTransition = true
-        knifeFlightProgress = 0
-        showOpeningKnifeTransition = true
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            knifeFlightProgress = 0
+            showOpeningKnifeTransition = true
+        }
 
         withAnimation(.linear(duration: openingTransitionDuration).delay(openingTransitionDelay)) {
             knifeFlightProgress = 1
         }
 
         let hideDelay = openingTransitionDelay + openingTransitionDuration + openingTransitionHideBuffer
-        DispatchQueue.main.asyncAfter(deadline: .now() + hideDelay) {
+        let hideWorkItem = DispatchWorkItem {
             showOpeningKnifeTransition = false
         }
+        openingTransitionHideWorkItem = hideWorkItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + hideDelay, execute: hideWorkItem)
     }
 
     private var detailTopBar: some View {
