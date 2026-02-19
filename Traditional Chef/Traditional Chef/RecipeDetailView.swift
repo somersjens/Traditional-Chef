@@ -263,8 +263,8 @@ struct RecipeDetailView: View {
         .padding(.vertical, 8)
     }
 
-    private var shareRecipeURL: URL {
-        URL(string: "https://traditionalchef.app/recipes/\(recipe.id)") ?? URL(string: "https://traditionalchef.app")!
+    private var shareAppURL: URL {
+        appStoreProductURL
     }
 
     private var shareRecipeTitle: String {
@@ -276,7 +276,7 @@ struct RecipeDetailView: View {
     }
 
     private var appStoreID: String {
-        "0000000000"
+        "6758932844"
     }
 
     private var appStoreProductURL: URL {
@@ -288,7 +288,7 @@ struct RecipeDetailView: View {
     }
 
     private var feedbackMailURL: URL {
-        URL(string: "mailto:hello@traditionalchef.app")!
+        URL(string: "mailto:jens@hakketjak.nl")!
     }
 
     private func heroSection(
@@ -987,7 +987,7 @@ struct RecipeDetailView: View {
     }
 
     private var footerShareLink: some View {
-        ShareLink(item: shareRecipeURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
+        ShareLink(item: shareAppURL, subject: Text(shareRecipeTitle), message: Text(shareRecipeMessage)) {
             Text(AppLanguage.string("footer.share", locale: locale))
                 .padding(.vertical, 6)
         }

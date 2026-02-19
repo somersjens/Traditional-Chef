@@ -126,7 +126,7 @@
 "recipe.steps.summary" = "%d + %d = %d min";
 "recipe.detail.back" = "Terug";
 "recipe.detail.favorite" = "Favoriet";
-"recipe.detail.shareText" = "Probeer dit recept in Famous Chef.";
+"recipe.detail.shareText" = "Bekijk Famous Chef in de App Store.";
 "recipe.detail.image" = "Receptafbeelding";
 "recipe.detail.info.expand" = "Info uitklappen";
 "recipe.detail.info.collapse" = "Info inklappen";
