@@ -68,7 +68,7 @@ struct RecipeDetailView: View {
     private let knifeImageAspectRatio: CGFloat = 6.4
     private let knifeOffscreenStartMultiplier: CGFloat = 1.15
     private let openingRevealTransitionDuration: TimeInterval = 0.936
-    private let openingKnifeTransitionDuration: TimeInterval = 1.05
+    private let openingKnifeTransitionDuration: TimeInterval = 1.02
     private let openingTransitionDelay: TimeInterval = 0
     private let openingTransitionHideBuffer: TimeInterval = 0.03
     private let revealCoverCompletionLead: CGFloat = 0.05
