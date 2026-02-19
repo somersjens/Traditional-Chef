@@ -121,7 +121,7 @@
 "aisle.spices" = "Spices";
 "aisle.other" = "Other";
 
-"recipe.tools.summary" = "%d items";
+"recipe.tools.summary" = "%d tools";
 "recipe.grocery.summary" = "%d ingredients";
 "recipe.steps.summary" = "%d + %d = %d min";
 "recipe.detail.back" = "Back";
@@ -492,9 +492,9 @@
 "recipe.it_bistecca_alla_fiorentina.tool.t5" = "Cutting board";
 "recipe.it_bistecca_alla_fiorentina.tool.t6" = "Knife";
 "recipe.it_bruschetta_al_pomodoro.drink.body" = "Pair with a crisp dry Italian white such as Vermentino or a light-bodied rosé to match the fresh tomato and olive oil. Non-alcoholic option: sparkling water with lemon or an unsweetened iced tea.";
-"recipe.it_bruschetta_al_pomodoro.drink.summary" = "Dry white wine";
+"recipe.it_bruschetta_al_pomodoro.drink.summary" = "White wine (Vermentino)";
 "recipe.it_bruschetta_al_pomodoro.info" = "A traditional Italian antipasto of grilled or toasted rustic bread rubbed with garlic and topped with chopped ripe tomatoes dressed with extra-virgin olive oil, basil, salt, and pepper. Served immediately while the bread is crisp and warm, it is a classic start to a meal, especially in summer when tomatoes are sweetest.";
-"recipe.it_bruschetta_al_pomodoro.info.summary" = "Tomato garlic toast";
+"recipe.it_bruschetta_al_pomodoro.info.summary" = "Italian Summer Antipasti";
 "recipe.it_bruschetta_al_pomodoro.name" = "Bruschetta al Pomodoro";
 "recipe.it_bruschetta_al_pomodoro.step1.body" = "Dice the tomatoes and place them in a bowl. Tear basil and add it to the tomatoes.";
 "recipe.it_bruschetta_al_pomodoro.step1.title" = "Prepare the tomatoes";
