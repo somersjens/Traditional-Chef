@@ -57,6 +57,7 @@ struct RecipeDetailView: View {
     @State private var highlightFooterLinks = false
     @State private var selectedStepID: String? = nil
     @State private var knifeFlightProgress: CGFloat = 0
+    @State private var revealFlightProgress: CGFloat = 0
     @State private var showOpeningKnifeTransition: Bool = true
     @State private var openingTransitionHideWorkItem: DispatchWorkItem?
     @StateObject private var stepSpeaker = StepSpeaker()
@@ -66,7 +67,8 @@ struct RecipeDetailView: View {
     private let knifeRevealFineTuneOffset: CGFloat = 14
     private let knifeImageAspectRatio: CGFloat = 6.4
     private let knifeOffscreenStartMultiplier: CGFloat = 1.15
-    private let openingTransitionDuration: TimeInterval = 0.936
+    private let openingRevealTransitionDuration: TimeInterval = 0.936
+    private let openingKnifeTransitionDuration: TimeInterval = 1.05 // jens: increase/decrease this to fine-tune knife speed only.
     private let openingTransitionDelay: TimeInterval = 0
     private let openingTransitionHideBuffer: TimeInterval = 0.03
 
@@ -164,9 +166,10 @@ struct RecipeDetailView: View {
         let knifeTravelStart = fullHeight + (knifeHeight * knifeOffscreenStartMultiplier)
         let knifeTravelEnd = knifeHeight * (0.5 - knifeRevealBoundaryFraction)
         let knifeCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
+        let revealCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * revealFlightProgress)
         let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
-        let revealBoundaryY = knifeCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
-        let isKnifeFullyOffscreenAtBottom = (knifeCenterYInFullSpace - (knifeHeight / 2)) >= fullHeight
+        let revealBoundaryY = revealCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
+        let isKnifeFullyOffscreenAtBottom = (revealCenterYInFullSpace - (knifeHeight / 2)) >= fullHeight
         let coverHeight = isKnifeFullyOffscreenAtBottom ? fullHeight : min(max(revealBoundaryY, 0), fullHeight)
         let listSnapshot = OpeningTransitionSnapshotStore.listSnapshot
 
@@ -214,14 +217,19 @@ struct RecipeDetailView: View {
         transaction.disablesAnimations = true
         withTransaction(transaction) {
             knifeFlightProgress = 0
+            revealFlightProgress = 0
             showOpeningKnifeTransition = true
         }
 
-        withAnimation(.linear(duration: openingTransitionDuration).delay(openingTransitionDelay)) {
+        withAnimation(.linear(duration: openingRevealTransitionDuration).delay(openingTransitionDelay)) {
+            revealFlightProgress = 1
+        }
+
+        withAnimation(.linear(duration: openingKnifeTransitionDuration).delay(openingTransitionDelay)) {
             knifeFlightProgress = 1
         }
 
-        let hideDelay = openingTransitionDelay + openingTransitionDuration + openingTransitionHideBuffer
+        let hideDelay = openingTransitionDelay + max(openingRevealTransitionDuration, openingKnifeTransitionDuration) + openingTransitionHideBuffer
         let hideWorkItem = DispatchWorkItem {
             showOpeningKnifeTransition = false
         }
