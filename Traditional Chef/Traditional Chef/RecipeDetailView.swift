@@ -71,6 +71,8 @@ struct RecipeDetailView: View {
     private let openingKnifeTransitionDuration: TimeInterval = 1.05
     private let openingTransitionDelay: TimeInterval = 0
     private let openingTransitionHideBuffer: TimeInterval = 0.03
+    private let revealCoverCompletionLead: CGFloat = 0.05
+    private let revealCoverSnapOutThreshold: CGFloat = 0.965
 
     var body: some View {
         GeometryReader { proxy in
@@ -166,11 +168,14 @@ struct RecipeDetailView: View {
         let knifeTravelStart = fullHeight + (knifeHeight * knifeOffscreenStartMultiplier)
         let knifeTravelEnd = knifeHeight * (0.5 - knifeRevealBoundaryFraction)
         let knifeCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
-        let revealCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * revealFlightProgress)
+        let revealProgressForCover = min(revealFlightProgress + revealCoverCompletionLead, 1)
+        let revealCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * revealProgressForCover)
         let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
         let revealBoundaryY = revealCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
         let isKnifeFullyOffscreenAtBottom = (revealCenterYInFullSpace - (knifeHeight / 2)) >= fullHeight
-        let coverHeight = isKnifeFullyOffscreenAtBottom ? fullHeight : min(max(revealBoundaryY, 0), fullHeight)
+        let coverHeight = revealFlightProgress >= revealCoverSnapOutThreshold
+            ? 0
+            : (isKnifeFullyOffscreenAtBottom ? fullHeight : min(max(revealBoundaryY, 0), fullHeight))
         let listSnapshot = OpeningTransitionSnapshotStore.listSnapshot
 
         return ZStack(alignment: .top) {
