@@ -28,6 +28,7 @@ struct RecipeListView: View {
     @State private var settingsCardMeasuredHeight: CGFloat = 0
     @State private var showMeasurementOptions: Bool = false
     @State private var scrollToTopRequest: Int = 0
+    @State private var pendingNavigationTask: Task<Void, Never>?
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
 
@@ -90,7 +91,7 @@ struct RecipeListView: View {
                                                         searchText: vm.debouncedSearchText
                                                     )
                                                 }
-                                                .buttonStyle(.plain)
+                                                .buttonStyle(RecipeSelectionButtonStyle())
 
                                                 if recipe.id != visibleRecipes.last?.id {
                                                     Rectangle()
@@ -177,6 +178,8 @@ struct RecipeListView: View {
 
     @MainActor
     private func openRecipeDetail(_ recipe: Recipe) {
+        pendingNavigationTask?.cancel()
+
         RecipeImagePrefetcher.prefetch(
             urlString: recipe.imageURL,
             priority: URLSessionTask.highPriority
@@ -184,10 +187,17 @@ struct RecipeListView: View {
 
         OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
 
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction) {
-            navigationPath.append(recipe)
+        pendingNavigationTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 120_000_000)
+            guard !Task.isCancelled else { return }
+
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                navigationPath.append(recipe)
+            }
+
+            pendingNavigationTask = nil
         }
     }
 
@@ -809,6 +819,15 @@ struct RecipeListView: View {
             return continent.emoji
         }
         return "🌍"
+    }
+}
+
+private struct RecipeSelectionButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .opacity(configuration.isPressed ? 0.9 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 

@@ -67,7 +67,7 @@ struct RecipeDetailView: View {
     private let knifeImageAspectRatio: CGFloat = 6.4
     private let knifeOffscreenStartMultiplier: CGFloat = 1.15
     private let openingTransitionDuration: TimeInterval = 0.936
-    private let openingTransitionDelay: TimeInterval = 0.096
+    private let openingTransitionDelay: TimeInterval = 0
     private let openingTransitionHideBuffer: TimeInterval = 0.03
 
     var body: some View {
@@ -166,7 +166,8 @@ struct RecipeDetailView: View {
         let knifeCenterYInFullSpace = knifeTravelStart + ((knifeTravelEnd - knifeTravelStart) * knifeFlightProgress)
         let knifeCenterY = knifeCenterYInFullSpace - proxy.safeAreaInsets.top
         let revealBoundaryY = knifeCenterYInFullSpace - (knifeHeight / 2) + (knifeHeight * knifeRevealBoundaryFraction) + knifeRevealFineTuneOffset
-        let coverHeight = min(max(revealBoundaryY, 0), fullHeight)
+        let isKnifeFullyOffscreenAtBottom = (knifeCenterYInFullSpace - (knifeHeight / 2)) >= fullHeight
+        let coverHeight = isKnifeFullyOffscreenAtBottom ? fullHeight : min(max(revealBoundaryY, 0), fullHeight)
         let listSnapshot = OpeningTransitionSnapshotStore.listSnapshot
 
         return ZStack(alignment: .top) {
@@ -174,19 +175,18 @@ struct RecipeDetailView: View {
                 if let listSnapshot {
                     Image(uiImage: listSnapshot)
                         .resizable()
-                        .scaledToFill()
+                        .frame(width: fullWidth, height: fullHeight)
                 } else {
                     AppTheme.pageBackground
+                        .frame(width: fullWidth, height: fullHeight)
                 }
             }
-            .frame(height: coverHeight)
-            .frame(width: fullWidth)
             .clipped()
-            .padding(.leading, -proxy.safeAreaInsets.leading)
-            .padding(.trailing, -proxy.safeAreaInsets.trailing)
-            .padding(.top, -proxy.safeAreaInsets.top)
-            .padding(.bottom, -proxy.safeAreaInsets.bottom)
-            .frame(maxWidth: .infinity, alignment: .top)
+            .mask(alignment: .top) {
+                Rectangle()
+                    .frame(width: fullWidth, height: coverHeight)
+            }
+            .frame(width: fullWidth, height: fullHeight, alignment: .top)
 
             Group {
                 if let preparedKnifeImage = Self.preparedKnifeImage {
@@ -1010,9 +1010,16 @@ extension UIApplication {
 
 extension UIWindow {
     func snapshotImage() -> UIImage? {
-        let renderer = UIGraphicsImageRenderer(bounds: bounds)
-        return renderer.image { context in
-            layer.render(in: context.cgContext)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = screen.scale
+        format.opaque = isOpaque
+
+        let renderer = UIGraphicsImageRenderer(bounds: bounds, format: format)
+        return renderer.image { _ in
+            let drawn = drawHierarchy(in: bounds, afterScreenUpdates: true)
+            if !drawn, let context = UIGraphicsGetCurrentContext() {
+                layer.render(in: context)
+            }
         }
     }
 }
