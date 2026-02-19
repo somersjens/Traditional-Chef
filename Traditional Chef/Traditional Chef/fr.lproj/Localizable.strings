@@ -107,9 +107,9 @@
 "timer.pause" = "Pause";
 "timer.reset" = "Réinitialiser";
 
-"footer.feedback" = "Donner un avis";
-"footer.review" = "Noter";
-"footer.share" = "Partager";
+"footer.feedback" = "Envoyer un avis";
+"footer.review" = "Écrire un avis";
+"footer.share" = "Partager l’app";
 
 "aisle.vegetables" = "Légumes";
 "aisle.aromatics" = "Aromates";

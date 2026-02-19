@@ -108,9 +108,9 @@
 "timer.pause" = "Pauze";
 "timer.reset" = "Reset";
 
-"footer.feedback" = "Stuur feedback";
-"footer.review" = "Schrijf een review";
-"footer.share" = "Deel met vrienden";
+"footer.feedback" = "Feedback sturen";
+"footer.review" = "Review schrijven";
+"footer.share" = "App delen";
 
 "aisle.vegetables" = "Groenten";
 "aisle.aromatics" = "Aromaten";

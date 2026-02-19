@@ -68,7 +68,7 @@ struct RecipeDetailView: View {
     private let knifeImageAspectRatio: CGFloat = 6.4
     private let knifeOffscreenStartMultiplier: CGFloat = 1.15
     private let openingRevealTransitionDuration: TimeInterval = 0.936
-    private let openingKnifeTransitionDuration: TimeInterval = 1.05 // jens: increase/decrease this to fine-tune knife speed only.
+    private let openingKnifeTransitionDuration: TimeInterval = 1.05
     private let openingTransitionDelay: TimeInterval = 0
     private let openingTransitionHideBuffer: TimeInterval = 0.03
 
@@ -976,7 +976,7 @@ struct RecipeDetailView: View {
             .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .font(.footnote.weight(.medium))
+        .font(.footnote.weight(.semibold))
         .foregroundStyle(highlightFooterLinks ? Color.orange : AppTheme.primaryBlue)
         .animation(.easeInOut(duration: 0.2), value: highlightFooterLinks)
         .id(footerLinksID)
