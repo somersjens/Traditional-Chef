@@ -149,6 +149,13 @@
 "recipe.grocery.readAloud.group.en" = "Für die %@";
 "recipe.grocery.readAloud.none.en" = "Alle Einkäufe sind abgehakt.";
 
+"recipes.randomize" = "Zufallsgerichte";
+"recipes.random.new" = "Neue Zufallsauswahl";
+"recipes.random.new.starter" = "Neue Vorspeise";
+"recipes.random.new.main" = "Neues Hauptgericht";
+"recipes.random.new.dessert" = "Neues Dessert";
+"recipes.random.undo" = "Zufallsfilter rückgängig";
+
 
 // === AUTO-GENERATED RECIPES BELOW ===
 "grocery.group.it_arancini.g1" = "Reishülle";
@@ -1120,8 +1127,3 @@
 "recipe.it_zabaione.tool.t3" = "Schneebesen";
 "recipe.it_zabaione.tool.t4" = "Serviergläser";
 
-"recipes.randomize" = "Zufallsgerichte";
-"recipes.random.new" = "Neue Zufallsauswahl";
-"recipes.random.new.starter" = "Neue Vorspeise";
-"recipes.random.new.main" = "Neues Hauptgericht";
-"recipes.random.new.dessert" = "Neues Dessert";

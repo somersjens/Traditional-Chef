@@ -148,6 +148,13 @@
 "recipe.grocery.readAloud.group.en" = "Pour le %@";
 "recipe.grocery.readAloud.none.en" = "Toutes les courses sont cochées.";
 
+"recipes.randomize" = "Plats aléatoires";
+"recipes.random.new" = "Nouveaux aléatoires";
+"recipes.random.new.starter" = "Nouvelle entrée";
+"recipes.random.new.main" = "Nouveau plat";
+"recipes.random.new.dessert" = "Nouveau dessert";
+"recipes.random.undo" = "Annuler le filtre aléatoire";
+
 
 // === AUTO-GENERATED RECIPES BELOW ===
 "grocery.group.it_arancini.g1" = "Enveloppe de riz";
@@ -1118,9 +1125,3 @@
 "recipe.it_zabaione.tool.t2" = "Casserole";
 "recipe.it_zabaione.tool.t3" = "Fouet";
 "recipe.it_zabaione.tool.t4" = "Verres de service";
-
-"recipes.randomize" = "Plats aléatoires";
-"recipes.random.new" = "Nouveaux aléatoires";
-"recipes.random.new.starter" = "Nouvelle entrée";
-"recipes.random.new.main" = "Nouveau plat";
-"recipes.random.new.dessert" = "Nouveau dessert";

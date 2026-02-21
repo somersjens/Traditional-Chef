@@ -149,6 +149,13 @@
 "recipe.grocery.readAloud.group.nl" = "Voor de %@";
 "recipe.grocery.readAloud.none.nl" = "Alle boodschappen zijn afgevinkt.";
 
+"recipes.randomize" = "Willekeurige gerechten";
+"recipes.random.new" = "Nieuwe willekeurige";
+"recipes.random.new.starter" = "Nieuw voorgerecht";
+"recipes.random.new.main" = "Nieuw hoofdgerecht";
+"recipes.random.new.dessert" = "Nieuw dessert";
+"recipes.random.undo" = "Willekeurig filter ongedaan maken";
+
 // === AUTO-GENERATED RECIPES BELOW ===
 "grocery.group.it_arancini.g1" = "Rijstomhulsel";
 "grocery.group.it_arancini.g2" = "Ragùvulling";
@@ -1119,8 +1126,3 @@
 "recipe.it_zabaione.tool.t3" = "Garde";
 "recipe.it_zabaione.tool.t4" = "Serveerglazen";
 
-"recipes.randomize" = "Willekeurige gerechten";
-"recipes.random.new" = "Nieuwe willekeurige";
-"recipes.random.new.starter" = "Nieuw voorgerecht";
-"recipes.random.new.main" = "Nieuw hoofdgerecht";
-"recipes.random.new.dessert" = "Nieuw dessert";

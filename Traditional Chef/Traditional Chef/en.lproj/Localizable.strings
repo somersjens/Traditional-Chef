@@ -149,6 +149,14 @@
 "recipe.grocery.readAloud.group.en" = "For the %@";
 "recipe.grocery.readAloud.none.en" = "All groceries are ticked.";
 
+"recipes.randomize" = "Random dishes";
+"recipes.random.new" = "New randoms";
+"recipes.random.new.starter" = "New starter";
+"recipes.random.new.main" = "New main";
+"recipes.random.new.dessert" = "New dessert";
+"recipes.random.undo" = "Undo random filter";
+
+
 // === AUTO-GENERATED RECIPES BELOW ===
 "grocery.group.it_arancini.g1" = "Rice shell";
 "grocery.group.it_arancini.g2" = "Ragù filling";
@@ -1118,9 +1126,3 @@
 "recipe.it_zabaione.tool.t2" = "Saucepan";
 "recipe.it_zabaione.tool.t3" = "Whisk";
 "recipe.it_zabaione.tool.t4" = "Serving glasses";
-
-"recipes.randomize" = "Random dishes";
-"recipes.random.new" = "New randoms";
-"recipes.random.new.starter" = "New starter";
-"recipes.random.new.main" = "New main";
-"recipes.random.new.dessert" = "New dessert";
