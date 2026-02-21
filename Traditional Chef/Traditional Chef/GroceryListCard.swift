@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct GroceryListCard: View {
     let recipe: Recipe
@@ -29,6 +30,7 @@ struct GroceryListCard: View {
     @State private var resetDisplayIngredients: [Ingredient] = []
     @State private var isExpanded: Bool = false
     @State private var groupByDishPart: Bool = false
+    @State private var showCopiedFeedback: Bool = false
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let minServings = 1
     private let maxServings = 99
@@ -120,39 +122,62 @@ struct GroceryListCard: View {
                 Divider()
                     .overlay(AppTheme.hairline)
 
-                HStack(alignment: .center, spacing: 12) {
-                    Text(AppLanguage.string("grocery.servings", locale: locale))
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.textPrimary)
-
-                    Spacer()
-
-                    HStack(spacing: 10) {
-                        Button(action: decrementServings) {
-                            Image(systemName: "minus")
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 10) {
+                        Button(action: copyUntickedIngredientsToClipboard) {
+                            Image(systemName: "doc.on.doc")
                                 .font(.subheadline.weight(.semibold))
-                                .frame(width: 26, height: 26)
+                                .foregroundStyle(AppTheme.primaryBlue)
+                                .frame(width: headerIconWidth, height: 28, alignment: .center)
+                                .offset(x: 1.5)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(servings <= minServings ? 0.3 : 1))
-                        .disabled(servings <= minServings)
+                        .disabled(uncheckedIngredients.isEmpty)
+                        .opacity(uncheckedIngredients.isEmpty ? 0.35 : 1)
+                        .accessibilityLabel(Text(AppLanguage.string("grocery.copyUnticked", locale: locale)))
 
-                        Text("\(servings)")
+                        Text(AppLanguage.string("grocery.servings", locale: locale))
                             .font(.headline)
-                            .frame(width: 32)
+                            .foregroundStyle(AppTheme.textPrimary)
+                            .padding(.leading, -1.5)
 
-                        Button(action: incrementServings) {
-                            Image(systemName: "plus")
-                                .font(.subheadline.weight(.semibold))
-                                .frame(width: 26, height: 26)
-                                .contentShape(Rectangle())
+                        Spacer()
+
+                        HStack(spacing: 10) {
+                            Button(action: decrementServings) {
+                                Image(systemName: "minus")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(width: 26, height: 26)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(AppTheme.primaryBlue.opacity(servings <= minServings ? 0.3 : 1))
+                            .disabled(servings <= minServings)
+
+                            Text("\(servings)")
+                                .font(.headline)
+                                .frame(width: 32)
+
+                            Button(action: incrementServings) {
+                                Image(systemName: "plus")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(width: 26, height: 26)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(AppTheme.primaryBlue.opacity(servings >= maxServings ? 0.3 : 1))
+                            .disabled(servings >= maxServings)
                         }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(AppTheme.primaryBlue.opacity(servings >= maxServings ? 0.3 : 1))
-                        .disabled(servings >= maxServings)
+                        .foregroundStyle(AppTheme.primaryBlue)
                     }
-                    .foregroundStyle(AppTheme.primaryBlue)
+                    if showCopiedFeedback {
+                        Text(AppLanguage.string("grocery.copiedToClipboard", locale: locale))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .padding(.leading, headerIconWidth + 12)
+                            .transition(.asymmetric(insertion: .move(edge: .top).combined(with: .opacity), removal: .opacity))
+                    }
                 }
                 .frame(minHeight: headerRowHeight)
 
@@ -312,6 +337,30 @@ struct GroceryListCard: View {
     private func updateServings(to newValue: Int) {
         let clamped = min(max(newValue, minServings), maxServings)
         servings = clamped
+    }
+
+    private func copyUntickedIngredientsToClipboard() {
+        guard !uncheckedIngredients.isEmpty else { return }
+        UIPasteboard.general.string = untickedIngredientsClipboardText
+        withAnimation(.easeInOut(duration: 0.25)) {
+            showCopiedFeedback = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                showCopiedFeedback = false
+            }
+        }
+    }
+
+    private var untickedIngredientsClipboardText: String {
+        uncheckedIngredients
+            .map { ingredient in
+                let amount = formattedAmount(for: ingredient)
+                let localizedName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+                let amountText = amount.unit.isEmpty ? amount.value : "\(amount.value) \(amount.unit)"
+                return "\(localizedName): \(amountText)"
+            }
+            .joined(separator: "\n")
     }
 
     private func advanceSortMode() {

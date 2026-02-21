@@ -75,6 +75,8 @@
 "recipe.drink.redWine" = "Rotwein";
 "grocery.optional" = "Optional";
 "grocery.servings" = "Anzahl der Personen";
+"grocery.copyUnticked" = "Nicht abgehakte Zutaten kopieren";
+"grocery.copiedToClipboard" = "In die Zwischenablage kopiert";
 "grocery.option.allWeight" = "Gesamtgewicht";
 
 "grocery.option.partOfDish" = "Teil des Gerichts";

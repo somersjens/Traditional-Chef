@@ -75,6 +75,8 @@
 "recipe.drink.redWine" = "vin rouge";
 "grocery.optional" = "Optionnel";
 "grocery.servings" = "Nombre de personnes";
+"grocery.copyUnticked" = "Copier les courses non cochées";
+"grocery.copiedToClipboard" = "Copié dans le presse-papiers";
 "grocery.option.allWeight" = "Poids total";
 
 "grocery.option.partOfDish" = "Partie du plat";

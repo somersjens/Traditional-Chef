@@ -75,12 +75,14 @@
 "recipe.drink.redWine" = "red wine";
 "grocery.optional" = "Optional";
 "grocery.servings" = "Number of people";
+"grocery.copyUnticked" = "Copy unticked groceries";
+"grocery.copiedToClipboard" = "Copied to clipboard";
 "grocery.option.allWeight" = "All weight";
 
 "grocery.option.partOfDish" = "Part of dish";
 "settings.title" = "Settings";
 "settings.language" = "Language for recipes";
-"settings.measurement" = "Standard measurement";
+"settings.measurement" = "Measurement";
 "settings.measurement.metric.short" = "International";
 "settings.measurement.metric.long" = "Metric: g/ml";
 "settings.measurement.us.short" = "US Cups";

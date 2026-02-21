@@ -75,6 +75,8 @@
 "recipe.drink.redWine" = "rode wijn";
 "grocery.optional" = "Optioneel";
 "grocery.servings" = "Aantal personen";
+"grocery.copyUnticked" = "Vinkjes-uit boodschappen kopiëren";
+"grocery.copiedToClipboard" = "Gekopieerd naar klembord";
 "grocery.option.allWeight" = "All gewicht";
 
 "grocery.option.partOfDish" = "Onderdeel";
