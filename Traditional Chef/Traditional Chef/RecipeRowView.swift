@@ -83,29 +83,12 @@ struct RecipeRowView: View {
     private var difficultyDot: some View {
         if let difficulty = recipe.difficulty {
             Circle()
-                .fill(difficultyColor(for: difficulty))
+                .fill(DifficultyColor.color(for: difficulty))
                 .frame(width: 12, height: 12)
         } else {
             Circle()
                 .fill(AppTheme.primaryBlue.opacity(0.15))
                 .frame(width: 12, height: 12)
-        }
-    }
-
-    private func difficultyColor(for difficulty: Int) -> Color {
-        switch difficulty {
-        case 1:
-            return Color(red: 0.20, green: 0.72, blue: 0.36)
-        case 2:
-            return Color(red: 0.47, green: 0.82, blue: 0.46)
-        case 3:
-            return Color(red: 0.95, green: 0.77, blue: 0.27)
-        case 4:
-            return Color(red: 0.94, green: 0.52, blue: 0.50)
-        case 5:
-            return Color(red: 0.83, green: 0.25, blue: 0.24)
-        default:
-            return AppTheme.primaryBlue.opacity(0.25)
         }
     }
 

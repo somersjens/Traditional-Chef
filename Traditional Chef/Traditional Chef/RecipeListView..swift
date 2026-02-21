@@ -336,8 +336,9 @@ struct RecipeListView: View {
                     arrowSpacing: 4,
                     showArrow: false
                 ) {
-                    Text(AppLanguage.string("recipes.column.difficulty", locale: locale))
-                        .lineLimit(1)
+                    Circle()
+                        .fill(difficultyHeaderColor)
+                        .frame(width: 12, height: 12)
                 } action: {
                     vm.setSort(.difficulty)
                     onFilterOrSortChange()
@@ -1022,6 +1023,13 @@ struct RecipeListView: View {
             return continent.emoji
         }
         return "🌍"
+    }
+
+    private var difficultyHeaderColor: Color {
+        guard vm.sortKey == .difficulty else {
+            return DifficultyColor.color(for: 3)
+        }
+        return vm.ascending ? DifficultyColor.color(for: 1) : DifficultyColor.color(for: 5)
     }
 }
 
