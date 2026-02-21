@@ -392,9 +392,9 @@ struct RecipeListView: View {
                 onFilterOrSortChange()
             } label: {
                 Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
-                    .frame(width: 20, alignment: .center)
+                    .frame(width: 18, alignment: .center)
             }
             .buttonStyle(.plain)
             .padding(.trailing, 4)
