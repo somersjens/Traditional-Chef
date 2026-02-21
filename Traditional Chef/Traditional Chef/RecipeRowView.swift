@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct RecipeRowView: View {
+    private let metricsToFavoriteSpacing: CGFloat = 6.6
     let recipe: Recipe
     let listViewValue: RecipeListValue
     let primaryMetricColumnWidth: CGFloat
@@ -29,16 +30,18 @@ struct RecipeRowView: View {
 
             Spacer()
 
-            metrics
+            HStack(spacing: metricsToFavoriteSpacing) {
+                metrics
 
-            Button(action: onToggleFavorite) {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
-                    .frame(width: 18, alignment: .center)
+                Button(action: onToggleFavorite) {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
+                        .frame(width: 18, alignment: .center)
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 4)
             }
-            .buttonStyle(.plain)
-            .padding(.trailing, 4)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)

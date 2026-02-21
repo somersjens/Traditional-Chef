@@ -7,6 +7,8 @@ import SwiftUI
 import UIKit
 
 struct RecipeListView: View {
+    private let metricsColumnSpacingMultiplier: CGFloat = 1.1
+    private let metricsToFavoriteSpacingBase: CGFloat = 6
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
     }
@@ -281,7 +283,7 @@ struct RecipeListView: View {
                     for: secondaryValues + [AppLanguage.string("recipes.column.waitingShort", locale: locale)],
                     minWidth: splitMetricMinWidth + splitSecondaryLeadingRoom
                 ),
-                columnSpacing: 6
+                columnSpacing: 6 * metricsColumnSpacingMultiplier
             )
         }
 
@@ -337,68 +339,70 @@ struct RecipeListView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if listViewValue == .prepAndWaitingTime {
-                HStack(spacing: metricColumnWidths.columnSpacing) {
-                    SortHeaderButton(
-                        isActive: vm.sortKey == .prepTime,
-                        isAscending: vm.ascending,
-                        textAlignment: .trailing,
-                        arrowPlacement: .leading,
-                        arrowSpacing: 3
-                    ) {
-                        Text(AppLanguage.string("recipes.column.prepShort", locale: locale))
-                            .lineLimit(1)
-                    } action: {
-                        vm.setSort(.prepTime)
-                        onFilterOrSortChange()
-                    }
-                    .frame(width: metricColumnWidths.primary, alignment: .trailing)
+            HStack(spacing: metricsToFavoriteSpacingBase * metricsColumnSpacingMultiplier) {
+                if listViewValue == .prepAndWaitingTime {
+                    HStack(spacing: metricColumnWidths.columnSpacing) {
+                        SortHeaderButton(
+                            isActive: vm.sortKey == .prepTime,
+                            isAscending: vm.ascending,
+                            textAlignment: .trailing,
+                            arrowPlacement: .leading,
+                            arrowSpacing: 3
+                        ) {
+                            Text(AppLanguage.string("recipes.column.prepShort", locale: locale))
+                                .lineLimit(1)
+                        } action: {
+                            vm.setSort(.prepTime)
+                            onFilterOrSortChange()
+                        }
+                        .frame(width: metricColumnWidths.primary, alignment: .trailing)
 
+                        SortHeaderButton(
+                            isActive: vm.sortKey == .waitingTime,
+                            isAscending: vm.ascending,
+                            textAlignment: .trailing,
+                            arrowPlacement: .leading,
+                            arrowSpacing: 3
+                        ) {
+                            Text(AppLanguage.string("recipes.column.waitingShort", locale: locale))
+                                .lineLimit(1)
+                        } action: {
+                            vm.setSort(.waitingTime)
+                            onFilterOrSortChange()
+                        }
+                        .frame(width: metricColumnWidths.secondary ?? metricColumnWidths.primary, alignment: .trailing)
+                    }
+                } else {
                     SortHeaderButton(
-                        isActive: vm.sortKey == .waitingTime,
+                        isActive: vm.sortKey == listViewValue.sortKey,
                         isAscending: vm.ascending,
                         textAlignment: .trailing,
                         arrowPlacement: .leading,
-                        arrowSpacing: 3
+                        arrowSpacing: 4
                     ) {
-                        Text(AppLanguage.string("recipes.column.waitingShort", locale: locale))
+                        Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
                             .lineLimit(1)
+                            .multilineTextAlignment(.trailing)
                     } action: {
-                        vm.setSort(.waitingTime)
+                        vm.setSort(listViewValue.sortKey)
                         onFilterOrSortChange()
                     }
-                    .frame(width: metricColumnWidths.secondary ?? metricColumnWidths.primary, alignment: .trailing)
+                    .frame(minWidth: metricColumnWidths.primary, alignment: .trailing)
                 }
-            } else {
-                SortHeaderButton(
-                    isActive: vm.sortKey == listViewValue.sortKey,
-                    isAscending: vm.ascending,
-                    textAlignment: .trailing,
-                    arrowPlacement: .leading,
-                    arrowSpacing: 4
-                ) {
-                    Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
-                        .lineLimit(1)
-                        .multilineTextAlignment(.trailing)
-                } action: {
-                    vm.setSort(listViewValue.sortKey)
+
+                Button {
+                    vm.favoritesOnly.toggle()
                     onFilterOrSortChange()
+                } label: {
+                    Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
+                        .frame(width: 18, alignment: .center)
                 }
-                .frame(minWidth: metricColumnWidths.primary, alignment: .trailing)
+                .buttonStyle(.plain)
+                .padding(.trailing, 4)
+                .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: locale)))
             }
-
-            Button {
-                vm.favoritesOnly.toggle()
-                onFilterOrSortChange()
-            } label: {
-                Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
-                    .frame(width: 18, alignment: .center)
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, 4)
-            .accessibilityLabel(Text(AppLanguage.string("recipes.favoritesOnly", locale: locale)))
         }
         .font(.headline.weight(.semibold))
         .foregroundStyle(AppTheme.primaryBlue)
