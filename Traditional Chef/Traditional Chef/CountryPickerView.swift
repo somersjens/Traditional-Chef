@@ -7,6 +7,7 @@ import SwiftUI
 
 struct CountryPickerView: View {
     let allCountryCodes: [String]
+    let recipes: [Recipe]
     let selected: String?
     let selectedContinent: Continent?
     let onSelect: (String?, Continent?) -> Void
@@ -25,7 +26,7 @@ struct CountryPickerView: View {
                     HStack {
                         Text(AppLanguage.string("recipes.allCountries", locale: locale))
                         Spacer()
-                        if selected == nil && selectedContinent == nil { Image(systemName: "checkmark") }
+                        selectionStatus(count: recipes.count, isSelected: selected == nil && selectedContinent == nil)
                     }
                 }
                 .listRowBackground(AppTheme.searchBarBackground)
@@ -40,7 +41,10 @@ struct CountryPickerView: View {
                                 HStack {
                                     Text("\(continent.emoji) \(AppLanguage.string(continent.nameKey, locale: locale))")
                                     Spacer()
-                                    if selectedContinent == continent { Image(systemName: "checkmark") }
+                                    selectionStatus(
+                                        count: continentRecipeCounts[continent, default: 0],
+                                        isSelected: selectedContinent == continent
+                                    )
                                 }
                             }
                             .listRowBackground(AppTheme.searchBarBackground)
@@ -58,7 +62,10 @@ struct CountryPickerView: View {
                             HStack {
                                 Text("\(FlagEmoji.from(countryCode: code)) \(countryName(for: code))")
                                 Spacer()
-                                if selected == code { Image(systemName: "checkmark") }
+                                selectionStatus(
+                                    count: countryRecipeCounts[code.uppercased(), default: 0],
+                                    isSelected: selected == code
+                                )
                             }
                         }
                         .listRowBackground(AppTheme.searchBarBackground)
@@ -101,6 +108,30 @@ struct CountryPickerView: View {
     private var availableContinents: [Continent] {
         Continent.allCases.filter { continent in
             allCountryCodes.contains { continent.contains(countryCode: $0) }
+        }
+    }
+
+    private var countryRecipeCounts: [String: Int] {
+        Dictionary(grouping: recipes, by: { $0.countryCode.uppercased() })
+            .mapValues(\.count)
+    }
+
+    private var continentRecipeCounts: [Continent: Int] {
+        Dictionary(uniqueKeysWithValues: availableContinents.map { continent in
+            (continent, recipes.filter { continent.contains(countryCode: $0.countryCode) }.count)
+        })
+    }
+
+    @ViewBuilder
+    private func selectionStatus(count: Int, isSelected: Bool) -> some View {
+        HStack(spacing: 8) {
+            if isSelected {
+                Image(systemName: "checkmark")
+            }
+            Text("\(count)")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.primaryBlue.opacity(0.8))
+                .monospacedDigit()
         }
     }
 }

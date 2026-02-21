@@ -177,6 +177,7 @@ struct RecipeListView: View {
             .sheet(isPresented: $showCountryPicker) {
                 CountryPickerView(
                     allCountryCodes: allCountryCodes,
+                    recipes: recipeStore.recipes,
                     selected: vm.selectedCountryCode,
                     selectedContinent: vm.selectedContinent,
                     onSelect: { countryCode, continent in
