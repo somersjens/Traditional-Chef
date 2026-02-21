@@ -9,6 +9,10 @@ import UIKit
 struct RecipeListView: View {
     private let metricsColumnSpacingMultiplier: CGFloat = 1.1
     private let metricsToFavoriteSpacingBase: CGFloat = 6
+    private let flagToContentSpacing: CGFloat = 6
+    private let difficultyDotSize: CGFloat = 12
+    private let difficultyToNameExtraSpacing: CGFloat = 2
+    private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
     }
@@ -315,7 +319,7 @@ struct RecipeListView: View {
         16
     }
     private func headerRow(metricColumnWidths: MetricColumnWidths, onFilterOrSortChange: @escaping () -> Void) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: flagToContentSpacing) {
             Button {
                 vm.setSort(.country)
                 onFilterOrSortChange()
@@ -338,12 +342,13 @@ struct RecipeListView: View {
                 ) {
                     Circle()
                         .fill(difficultyHeaderColor)
-                        .frame(width: 12, height: 12)
+                        .frame(width: difficultyDotSize, height: difficultyDotSize)
+                        .offset(x: -1)
                 } action: {
                     vm.setSort(.difficulty)
                     onFilterOrSortChange()
                 }
-                .frame(width: 28, alignment: .center)
+                .frame(width: difficultyColumnWidth, alignment: .leading)
             }
 
             SortHeaderButton(

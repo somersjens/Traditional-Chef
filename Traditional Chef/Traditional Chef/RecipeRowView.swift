@@ -7,6 +7,10 @@ import SwiftUI
 
 struct RecipeRowView: View {
     private let metricsToFavoriteSpacing: CGFloat = 6.6
+    private let flagToContentSpacing: CGFloat = 6
+    private let difficultyDotSize: CGFloat = 12
+    private let difficultyToNameExtraSpacing: CGFloat = 2
+    private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     let recipe: Recipe
     let listViewValue: RecipeListValue
     let primaryMetricColumnWidth: CGFloat
@@ -20,14 +24,14 @@ struct RecipeRowView: View {
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: flagToContentSpacing) {
             Text(FlagEmoji.from(countryCode: recipe.countryCode))
                 .font(.title3)
                 .frame(width: 34, alignment: .center)
 
             if showDifficultyColumn {
                 difficultyDot
-                    .frame(width: 28, alignment: .center)
+                    .frame(width: difficultyColumnWidth, alignment: .leading)
             }
 
             Text(highlightedName)
@@ -84,11 +88,11 @@ struct RecipeRowView: View {
         if let difficulty = recipe.difficulty {
             Circle()
                 .fill(DifficultyColor.color(for: difficulty))
-                .frame(width: 12, height: 12)
+                .frame(width: difficultyDotSize, height: difficultyDotSize)
         } else {
             Circle()
                 .fill(AppTheme.primaryBlue.opacity(0.15))
-                .frame(width: 12, height: 12)
+                .frame(width: difficultyDotSize, height: difficultyDotSize)
         }
     }
 
