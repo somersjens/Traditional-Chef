@@ -1118,3 +1118,9 @@
 "recipe.it_zabaione.tool.t2" = "Sauspan";
 "recipe.it_zabaione.tool.t3" = "Garde";
 "recipe.it_zabaione.tool.t4" = "Serveerglazen";
+
+"recipes.randomize" = "Willekeurige gerechten";
+"recipes.random.new" = "Nieuwe willekeurige";
+"recipes.random.new.starter" = "Nieuw voorgerecht";
+"recipes.random.new.main" = "Nieuw hoofdgerecht";
+"recipes.random.new.dessert" = "Nieuw dessert";

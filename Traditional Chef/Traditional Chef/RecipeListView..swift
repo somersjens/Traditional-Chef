@@ -32,6 +32,7 @@ struct RecipeListView: View {
     @State private var pendingNavigationTask: Task<Void, Never>?
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var selectedCategoryFilter: RecipeCategory? { vm.selectedCategories.first }
 
     var body: some View {
         let visibleRecipes = filteredAndSortedRecipes
@@ -53,12 +54,19 @@ struct RecipeListView: View {
                             selected: vm.selectedCategories,
                             onToggle: { cat in
                                 vm.toggleCategory(cat)
+                                if vm.isRandomModeActive {
+                                    vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+                                }
                                 requestScrollToTop()
                             },
                             locale: locale
                         )
                         .frame(maxWidth: contentMaxWidth, alignment: .leading)
                         .frame(maxWidth: .infinity, alignment: .center)
+
+                        if vm.isRandomModeActive {
+                            randomControls
+                        }
 
                         headerRow(metricColumnWidths: metricColumnWidths, onFilterOrSortChange: {
                             requestScrollToTop()
@@ -134,6 +142,21 @@ struct RecipeListView: View {
             .onAppear {
                 ensureMeasurementUnit()
                 _ = RecipeDetailView.preparedKnifeImage
+            }
+            .onChange(of: vm.debouncedSearchText) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            }
+            .onChange(of: vm.selectedCountryCode) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            }
+            .onChange(of: vm.selectedContinent) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            }
+            .onChange(of: vm.favoritesOnly) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            }
+            .onChange(of: recipeStore.recipes) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
             }
             .onChange(of: appLanguage) { _ in
                 ensureMeasurementUnit()
@@ -394,6 +417,7 @@ struct RecipeListView: View {
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
 
             HStack {
+                randomizeButton
                 Spacer()
                 settingsButton
             }
@@ -403,6 +427,22 @@ struct RecipeListView: View {
         .padding(.bottom, 8)
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private var randomizeButton: some View {
+        Button {
+            isSearchFocused = false
+            vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            requestScrollToTop()
+        } label: {
+            Image(systemName: vm.isRandomModeActive ? "shuffle.circle.fill" : "shuffle")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 20, alignment: .center)
+        }
+        .buttonStyle(.plain)
+        .padding(.leading, 8)
+        .accessibilityLabel(Text(AppLanguage.string("recipes.randomize", locale: locale)))
     }
 
     private var searchBar: some View {
@@ -763,6 +803,60 @@ struct RecipeListView: View {
         .padding(.top, 40)
     }
 
+    private var randomControls: some View {
+        VStack(spacing: 8) {
+            actionButton(
+                title: AppLanguage.string("recipes.random.new", locale: locale),
+                isPrimary: true
+            ) {
+                vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+                requestScrollToTop()
+            }
+
+            if selectedCategoryFilter == nil {
+                HStack(spacing: 7) {
+                    ForEach(RecipeCategory.filterCategories) { category in
+                        actionButton(
+                            title: AppLanguage.string("recipes.random.new.\(category.rawValue)", locale: locale),
+                            isPrimary: true
+                        ) {
+                            vm.rerandomCategory(category, from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+                            requestScrollToTop()
+                        }
+                    }
+                }
+            }
+
+            actionButton(
+                title: AppLanguage.string("recipes.clearAllFilters", locale: locale),
+                isPrimary: false
+            ) {
+                clearAllFilters()
+                vm.clearRandomSelection()
+                requestScrollToTop()
+            }
+        }
+        .padding(.horizontal, listSideInset)
+        .frame(maxWidth: contentMaxWidth, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private func actionButton(title: String, isPrimary: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(isPrimary ? AppTheme.pageBackground : AppTheme.primaryBlue)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 9)
+                .background(isPrimary ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule().stroke(AppTheme.primaryBlue.opacity(isPrimary ? 0.65 : 0.2), lineWidth: isPrimary ? 1 : 1.4)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
     private func clearAllFilters() {
         vm.selectedCountryCode = nil
         vm.selectedContinent = nil
@@ -773,6 +867,21 @@ struct RecipeListView: View {
     }
 
     private var filteredAndSortedRecipes: [Recipe] {
+        let sorted = filteredRecipesBeforeRandom
+        guard vm.isRandomModeActive else { return sorted }
+
+        let selectedIDs = Set(vm.randomSelectionIDs)
+        var randomList = sorted.filter { selectedIDs.contains($0.id) }
+        if selectedCategoryFilter == nil {
+            randomList.sort { lhs, rhs in
+                RecipeCategory.filterCategories.firstIndex(of: lhs.category) ?? 0
+                < RecipeCategory.filterCategories.firstIndex(of: rhs.category) ?? 0
+            }
+        }
+        return randomList
+    }
+
+    private var filteredRecipesBeforeRandom: [Recipe] {
         var list = recipeStore.recipes
         let localizedNames = recipeStore.localizedNames(for: locale)
         let normalizedNames = recipeStore.normalizedNames(for: locale)
@@ -834,7 +943,6 @@ struct RecipeListView: View {
             }
             return vm.ascending ? result : !result
         }
-
         return list
     }
 
