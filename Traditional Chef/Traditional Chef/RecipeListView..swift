@@ -18,6 +18,7 @@ struct RecipeListView: View {
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
+    @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     @AppStorage("defaultServings") private var defaultServings: Int = 4
     @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.totalTime.rawValue
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
@@ -168,6 +169,10 @@ struct RecipeListView: View {
 
     private var listViewValue: RecipeListValue {
         RecipeListValue(rawValue: listViewValueRaw) ?? .totalTime
+    }
+
+    private var readVoicePreference: ReadVoicePreference {
+        ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
     }
 
     private func ensureMeasurementUnit() {
@@ -545,6 +550,38 @@ struct RecipeListView: View {
                     .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.readVoice", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
+                    Spacer()
+                    Menu {
+                        ForEach(ReadVoicePreference.allCases) { option in
+                            Button {
+                                readVoicePreferenceRaw = option.rawValue
+                            } label: {
+                                Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(AppLanguage.string(readVoicePreference.settingsLabelKey, locale: locale))
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
+                    .menuIndicator(.hidden)
+                }
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
+
+                HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.measurement", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -601,38 +638,6 @@ struct RecipeListView: View {
                     .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
-                    Text(AppLanguage.string("settings.servings", locale: locale))
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .multilineTextAlignment(.leading)
-                        .layoutPriority(1)
-                    Spacer()
-                    Menu {
-                        ForEach(1...12, id: \.self) { servings in
-                            Button {
-                                defaultServings = servings
-                            } label: {
-                                Text("\(servings)")
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text("\(defaultServings)")
-                            Image(systemName: "chevron.down")
-                        }
-                        .font(controlFont)
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .fixedSize(horizontal: true, vertical: false)
-                    }
-                    .menuIndicator(.hidden)
-                }
-                .padding(.vertical, rowVerticalPadding)
-                .frame(minHeight: rowMinHeight)
-
-                Divider()
-                    .overlay(AppTheme.primaryBlue.opacity(0.12))
-
-                HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.listViewValue", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -651,6 +656,38 @@ struct RecipeListView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Text(AppLanguage.string(listViewValue.settingsLabelKey, locale: locale))
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
+                    .menuIndicator(.hidden)
+                }
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
+
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.servings", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
+                    Spacer()
+                    Menu {
+                        ForEach(1...12, id: \.self) { servings in
+                            Button {
+                                defaultServings = servings
+                            } label: {
+                                Text("\(servings)")
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text("\(defaultServings)")
                             Image(systemName: "chevron.down")
                         }
                         .font(controlFont)

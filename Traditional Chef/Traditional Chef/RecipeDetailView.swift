@@ -36,9 +36,13 @@ struct RecipeDetailView: View {
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage("defaultServings") private var defaultServings: Int = 4
+    @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     private var locale: Locale { Locale(identifier: appLanguage) }
     private var measurementUnit: MeasurementUnit {
         MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
+    }
+    private var readVoicePreference: ReadVoicePreference {
+        ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
     }
     @State private var isInfoExpanded: Bool = false
     @State private var isStepsExpanded: Bool = false
@@ -596,7 +600,8 @@ struct RecipeDetailView: View {
                     if isInfoExpanded {
                         cardSpeaker.toggleRead(
                             text: AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale),
-                            languageCode: locale.identifier
+                            languageCode: locale.identifier,
+                            voicePreference: readVoicePreference
                         )
                     } else {
                         withAnimation(.easeInOut) {
@@ -623,17 +628,19 @@ struct RecipeDetailView: View {
                     )
                 )
 
-                if isInfoExpanded && cardSpeaker.isSpeaking {
+                if isInfoExpanded && (cardSpeaker.isSpeaking || cardSpeaker.isMutedFeedbackVisible) {
                     Button {
                         cardSpeaker.toggleRead(
                             text: AppLanguage.string(String.LocalizationValue(recipe.infoKey), locale: locale),
-                            languageCode: locale.identifier
+                            languageCode: locale.identifier,
+                            voicePreference: readVoicePreference
                         )
                     } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 18, height: 18, alignment: .center)
+                        ReadAloudIcon(
+                            isSpeaking: cardSpeaker.isSpeaking,
+                            isMuted: readVoicePreference == .none
+                        )
+                        .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(
@@ -791,9 +798,10 @@ struct RecipeDetailView: View {
                 Button {
                     readAllSteps()
                 } label: {
-                    Image(systemName: stepSpeaker.isSpeakingAllSteps ? "speaker.wave.2.fill" : "speaker.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.primaryBlue)
+                    ReadAloudIcon(
+                        isSpeaking: stepSpeaker.isSpeakingAllSteps,
+                        isMuted: readVoicePreference == .none
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(AppLanguage.string(
@@ -847,31 +855,7 @@ struct RecipeDetailView: View {
                         .overlay(AppTheme.hairline)
 
                     ForEach(recipe.steps) { step in
-                        StepRowView(
-                            step: step,
-                            ingredients: recipe.ingredients,
-                            servings: servings,
-                            baseServings: 4,
-                            isDimmed: selectedStepID != nil && selectedStepID != step.id,
-                            isSelected: selectedStepID == step.id,
-                            onStepTap: {
-                                if selectedStepID == step.id {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedStepID = nil
-                                    }
-                                    stopStepReadAloud()
-                                } else {
-                                    stopStepReadAloud()
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedStepID = step.id
-                                    }
-                                    readStep(step)
-                                }
-                            },
-                            onTimerUpdate: { snapshot in
-                                stepTimerSnapshots[snapshot.id] = snapshot
-                            }
-                        )
+                        stepRow(for: step)
                         if step.id != recipe.steps.last?.id {
                             Divider().overlay(AppTheme.hairline)
                         }
@@ -879,6 +863,43 @@ struct RecipeDetailView: View {
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
+        }
+    }
+
+    private func stepRow(for step: RecipeStep) -> some View {
+        let isSelected = selectedStepID == step.id
+        let isDimmed = selectedStepID != nil && !isSelected
+
+        return StepRowView(
+            step: step,
+            ingredients: recipe.ingredients,
+            servings: servings,
+            baseServings: 4,
+            isDimmed: isDimmed,
+            isSelected: isSelected,
+            readVoicePreference: readVoicePreference,
+            showMutedReadIcon: stepSpeaker.isMutedFeedbackVisible,
+            onStepTap: {
+                handleStepTap(step)
+            },
+            onTimerUpdate: { snapshot in
+                stepTimerSnapshots[snapshot.id] = snapshot
+            }
+        )
+    }
+
+    private func handleStepTap(_ step: RecipeStep) {
+        if selectedStepID == step.id {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedStepID = nil
+            }
+            stopStepReadAloud()
+        } else {
+            stopStepReadAloud()
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedStepID = step.id
+            }
+            readStep(step)
         }
     }
 
@@ -897,13 +918,18 @@ struct RecipeDetailView: View {
             spokenSteps,
             recipeName: recipeName,
             locale: locale,
-            languageCode: locale.identifier
+            languageCode: locale.identifier,
+            voicePreference: readVoicePreference
         )
     }
 
     private func readStep(_ step: RecipeStep) {
         let body = AppLanguage.string(String.LocalizationValue(step.bodyKey), locale: locale)
-        stepSpeaker.speakStep(text: renderDynamicIngredients(in: body), languageCode: locale.identifier)
+        stepSpeaker.speakStep(
+            text: renderDynamicIngredients(in: body),
+            languageCode: locale.identifier,
+            voicePreference: readVoicePreference
+        )
     }
 
     private func renderDynamicIngredients(in text: String) -> String {
@@ -1111,6 +1137,8 @@ private struct StepRowView: View {
     let baseServings: Int
     let isDimmed: Bool
     let isSelected: Bool
+    let readVoicePreference: ReadVoicePreference
+    let showMutedReadIcon: Bool
     let onStepTap: () -> Void
     let onTimerUpdate: (StepTimerSnapshot) -> Void
 
@@ -1144,6 +1172,8 @@ private struct StepRowView: View {
         baseServings: Int,
         isDimmed: Bool,
         isSelected: Bool,
+        readVoicePreference: ReadVoicePreference,
+        showMutedReadIcon: Bool,
         onStepTap: @escaping () -> Void,
         onTimerUpdate: @escaping (StepTimerSnapshot) -> Void
     ) {
@@ -1153,6 +1183,8 @@ private struct StepRowView: View {
         self.baseServings = baseServings
         self.isDimmed = isDimmed
         self.isSelected = isSelected
+        self.readVoicePreference = readVoicePreference
+        self.showMutedReadIcon = showMutedReadIcon
         self.onStepTap = onStepTap
         self.onTimerUpdate = onTimerUpdate
         let initial = step.timerSeconds ?? 0
@@ -1172,7 +1204,7 @@ private struct StepRowView: View {
                     .font(.headline)
                     .foregroundStyle(AppTheme.textPrimary)
 
-                if isSelected {
+                if isSelected && (readVoicePreference != .none || showMutedReadIcon) {
                     readAloudIcon
                         .padding(.leading, 6)
                 }
@@ -1456,9 +1488,11 @@ private struct StepRowView: View {
     }
 
     private var readAloudIcon: some View {
-        Image(systemName: "speaker.wave.2.fill")
+        ReadAloudIcon(
+            isSpeaking: readVoicePreference != .none,
+            isMuted: readVoicePreference == .none
+        )
             .font(.caption.weight(.semibold))
-            .foregroundStyle(AppTheme.primaryBlue)
             .accessibilityLabel(
                 Text(AppLanguage.string("recipe.steps.readSelectedAloud", locale: locale))
             )
@@ -1472,19 +1506,19 @@ private struct SpokenStep {
 
 private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     @Published private(set) var isSpeakingAllSteps = false
+    @Published private(set) var isMutedFeedbackVisible = false
 
     private let synthesizer = AVSpeechSynthesizer()
     private let audioSession = AVAudioSession.sharedInstance()
     private let speakerID = UUID().uuidString
     private var queuedUtteranceCount = 0
-    private lazy var availableVoices: [AVSpeechSynthesisVoice] = AVSpeechSynthesisVoice.speechVoices()
-    private lazy var preferredVoicesByLanguage: [String: AVSpeechSynthesisVoice] = buildPreferredVoices()
+    private let voiceResolver = ReadVoiceResolver()
+    private var mutedFeedbackWorkItem: DispatchWorkItem?
 
     override init() {
         super.init()
         synthesizer.delegate = self
         configureAudioSessionForReadAloud()
-        warmUpVoiceSelection()
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleExternalReadAloudStart(_:)),
@@ -1494,10 +1528,16 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
     }
 
     deinit {
+        mutedFeedbackWorkItem?.cancel()
         NotificationCenter.default.removeObserver(self)
     }
 
-    func speakSteps(_ steps: [SpokenStep], recipeName: String, locale: Locale, languageCode: String) {
+    func speakSteps(_ steps: [SpokenStep], recipeName: String, locale: Locale, languageCode: String, voicePreference: ReadVoicePreference) {
+        guard voicePreference != .none else {
+            stop()
+            showMutedFeedback()
+            return
+        }
         stop()
         isSpeakingAllSteps = true
         activateAudioSession()
@@ -1506,6 +1546,7 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         let intro = makeUtterance(
             text: introText(recipeName: recipeName, locale: locale),
             languageCode: languageCode,
+            voicePreference: voicePreference,
             postDelay: 0.2
         )
         queuedUtteranceCount += 1
@@ -1515,13 +1556,14 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
             let utterance = makeUtterance(
                 text: "\(step.number). \(step.text)",
                 languageCode: languageCode,
+                voicePreference: voicePreference,
                 postDelay: 0.2
             )
             queuedUtteranceCount += 1
             synthesizer.speak(utterance)
         }
 
-        let outro = makeUtterance(text: outroText(locale: locale), languageCode: languageCode)
+        let outro = makeUtterance(text: outroText(locale: locale), languageCode: languageCode, voicePreference: voicePreference)
         outro.preUtteranceDelay = 0.5
         queuedUtteranceCount += 1
         synthesizer.speak(outro)
@@ -1537,12 +1579,17 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         AppLanguage.string("recipe.steps.readAloud.outro", locale: locale)
     }
 
-    func speakStep(text: String, languageCode: String) {
+    func speakStep(text: String, languageCode: String, voicePreference: ReadVoicePreference) {
+        guard voicePreference != .none else {
+            stop()
+            showMutedFeedback()
+            return
+        }
         stop()
         isSpeakingAllSteps = false
         activateAudioSession()
         notifyReadAloudStart()
-        let utterance = makeUtterance(text: text, languageCode: languageCode)
+        let utterance = makeUtterance(text: text, languageCode: languageCode, voicePreference: voicePreference)
         synthesizer.speak(utterance)
     }
 
@@ -1569,9 +1616,9 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         }
     }
 
-    private func makeUtterance(text: String, languageCode: String, postDelay: TimeInterval = 0) -> AVSpeechUtterance {
+    private func makeUtterance(text: String, languageCode: String, voicePreference: ReadVoicePreference, postDelay: TimeInterval = 0) -> AVSpeechUtterance {
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = preferredVoice(for: languageCode)
+        utterance.voice = voiceResolver.preferredVoice(for: languageCode, preference: voicePreference)
         utterance.rate = 0.46
         utterance.pitchMultiplier = 0.95
         utterance.postUtteranceDelay = postDelay
@@ -1594,65 +1641,14 @@ private final class StepSpeaker: NSObject, ObservableObject, AVSpeechSynthesizer
         }
     }
 
-    private func warmUpVoiceSelection() {
-        _ = preferredVoicesByLanguage
-    }
-
-    private func preferredVoice(for languageCode: String) -> AVSpeechSynthesisVoice? {
-        let baseCode = baseLanguageCode(for: languageCode)
-        if let cached = preferredVoicesByLanguage[baseCode] {
-            return cached
+    private func showMutedFeedback() {
+        mutedFeedbackWorkItem?.cancel()
+        isMutedFeedbackVisible = true
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.isMutedFeedbackVisible = false
         }
-        if let fallback = AVSpeechSynthesisVoice(language: languageCode) {
-            return fallback
-        }
-        return AVSpeechSynthesisVoice(language: baseCode)
-    }
-
-    private func buildPreferredVoices() -> [String: AVSpeechSynthesisVoice] {
-        let preferredMaleNamesByLanguage: [String: [String]] = [
-            "en": ["Daniel", "Alex", "Arthur", "Aaron", "Nathan", "Tom"],
-            "nl": ["Xander", "Daan"]
-        ]
-
-        var selected: [String: AVSpeechSynthesisVoice] = [:]
-
-        for (language, names) in preferredMaleNamesByLanguage {
-            let candidates = availableVoices.filter { baseLanguageCode(for: $0.language) == language }
-            let maleCandidates = candidates.filter { voice in
-                names.contains(where: { maleName in
-                    voice.name.localizedCaseInsensitiveContains(maleName)
-                })
-            }
-
-            if let voice = bestVoice(from: maleCandidates) ?? bestVoice(from: candidates) {
-                selected[language] = voice
-            }
-        }
-
-        return selected
-    }
-
-    private func bestVoice(from voices: [AVSpeechSynthesisVoice]) -> AVSpeechSynthesisVoice? {
-        voices.max(by: { voiceRank($0.quality) < voiceRank($1.quality) })
-    }
-
-    private func voiceRank(_ quality: AVSpeechSynthesisVoiceQuality) -> Int {
-        switch quality {
-        case .premium:
-            return 3
-        case .enhanced:
-            return 2
-        default:
-            return 1
-        }
-    }
-
-    private func baseLanguageCode(for languageCode: String) -> String {
-        languageCode
-            .split(whereSeparator: { $0 == "_" || $0 == "-" })
-            .first
-            .map(String.init) ?? languageCode
+        mutedFeedbackWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
     }
 
     private func notifyReadAloudStart() {

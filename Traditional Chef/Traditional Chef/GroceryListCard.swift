@@ -10,10 +10,14 @@ struct GroceryListCard: View {
     let recipe: Recipe
     @Binding var servings: Int
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage("groceryAllMeasurements") private var showAllMeasurements: Bool = true
     private let ingredientRowSpacing: CGFloat = 9
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var readVoicePreference: ReadVoicePreference {
+        ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
+    }
     private var measurementUnit: MeasurementUnit {
         MeasurementUnit.resolved(from: measurementUnitRaw, languageCode: appLanguage)
     }
@@ -49,7 +53,7 @@ struct GroceryListCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Button {
                     if isExpanded {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } else {
                         withAnimation(.easeInOut) {
                             isExpanded = true
@@ -70,14 +74,15 @@ struct GroceryListCard: View {
                     Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand grocery list")
                 )
 
-                if isExpanded && cardSpeaker.isSpeaking {
+                if isExpanded && (cardSpeaker.isSpeaking || cardSpeaker.isMutedFeedbackVisible) {
                     Button {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 18, height: 18, alignment: .center)
+                        ReadAloudIcon(
+                            isSpeaking: cardSpeaker.isSpeaking,
+                            isMuted: readVoicePreference == .none
+                        )
+                        .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                 }

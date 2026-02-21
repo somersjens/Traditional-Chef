@@ -9,18 +9,18 @@ extension Notification.Name {
 
 final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     @Published private(set) var isSpeaking = false
+    @Published private(set) var isMutedFeedbackVisible = false
 
     private let synthesizer = AVSpeechSynthesizer()
     private let audioSession = AVAudioSession.sharedInstance()
     private let speakerID = UUID().uuidString
-    private lazy var availableVoices: [AVSpeechSynthesisVoice] = AVSpeechSynthesisVoice.speechVoices()
-    private lazy var preferredVoicesByLanguage: [String: AVSpeechSynthesisVoice] = buildPreferredVoices()
+    private let voiceResolver = ReadVoiceResolver()
+    private var mutedFeedbackWorkItem: DispatchWorkItem?
 
     override init() {
         super.init()
         synthesizer.delegate = self
         configureAudioSession()
-        warmUpVoiceSelection()
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleExternalReadAloudStart(_:)),
@@ -30,10 +30,17 @@ final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesize
     }
 
     deinit {
+        mutedFeedbackWorkItem?.cancel()
         NotificationCenter.default.removeObserver(self)
     }
 
-    func toggleRead(text: String, languageCode: String) {
+    func toggleRead(text: String, languageCode: String, voicePreference: ReadVoicePreference) {
+        if voicePreference == .none {
+            stop()
+            showMutedFeedback()
+            return
+        }
+
         if isSpeaking {
             stop()
             return
@@ -43,7 +50,7 @@ final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesize
         activateAudioSession()
         notifyReadAloudStart()
 
-        let voice = preferredVoice(for: languageCode)
+        let voice = voiceResolver.preferredVoice(for: languageCode, preference: voicePreference)
         let segments = speechSegments(from: trimmed)
         isSpeaking = true
 
@@ -102,65 +109,14 @@ final class CardReadAloudSpeaker: NSObject, ObservableObject, AVSpeechSynthesize
         }
     }
 
-    private func warmUpVoiceSelection() {
-        _ = preferredVoicesByLanguage
-    }
-
-    private func preferredVoice(for languageCode: String) -> AVSpeechSynthesisVoice? {
-        let baseCode = baseLanguageCode(for: languageCode)
-        if let cached = preferredVoicesByLanguage[baseCode] {
-            return cached
+    private func showMutedFeedback() {
+        mutedFeedbackWorkItem?.cancel()
+        isMutedFeedbackVisible = true
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.isMutedFeedbackVisible = false
         }
-        if let fallback = AVSpeechSynthesisVoice(language: languageCode) {
-            return fallback
-        }
-        return AVSpeechSynthesisVoice(language: baseCode)
-    }
-
-    private func buildPreferredVoices() -> [String: AVSpeechSynthesisVoice] {
-        let preferredMaleNamesByLanguage: [String: [String]] = [
-            "en": ["Daniel", "Alex", "Arthur", "Aaron", "Nathan", "Tom"],
-            "nl": ["Xander", "Daan"]
-        ]
-
-        var selected: [String: AVSpeechSynthesisVoice] = [:]
-
-        for (language, names) in preferredMaleNamesByLanguage {
-            let candidates = availableVoices.filter { baseLanguageCode(for: $0.language) == language }
-            let maleCandidates = candidates.filter { voice in
-                names.contains(where: { maleName in
-                    voice.name.localizedCaseInsensitiveContains(maleName)
-                })
-            }
-
-            if let voice = bestVoice(from: maleCandidates) ?? bestVoice(from: candidates) {
-                selected[language] = voice
-            }
-        }
-
-        return selected
-    }
-
-    private func bestVoice(from voices: [AVSpeechSynthesisVoice]) -> AVSpeechSynthesisVoice? {
-        voices.max(by: { voiceRank($0.quality) < voiceRank($1.quality) })
-    }
-
-    private func voiceRank(_ quality: AVSpeechSynthesisVoiceQuality) -> Int {
-        switch quality {
-        case .premium:
-            return 3
-        case .enhanced:
-            return 2
-        default:
-            return 1
-        }
-    }
-
-    private func baseLanguageCode(for languageCode: String) -> String {
-        languageCode
-            .split(whereSeparator: { $0 == "_" || $0 == "-" })
-            .first
-            .map(String.init) ?? languageCode
+        mutedFeedbackWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
     }
 
     private func notifyReadAloudStart() {
@@ -191,16 +147,20 @@ func joinedForSpeech(_ items: [String], locale: Locale) -> String {
 
 struct ReadAloudIcon: View {
     let isSpeaking: Bool
+    let isMuted: Bool
 
     var body: some View {
         ZStack {
-            Image(systemName: "speaker.fill")
+            Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.fill")
                 .opacity(isSpeaking ? 0 : 1)
 
-            Image(systemName: "speaker.wave.2.fill")
-                .opacity(isSpeaking ? 1 : 0)
+            if !isMuted {
+                Image(systemName: "speaker.wave.2.fill")
+                    .opacity(isSpeaking ? 1 : 0)
+            }
         }
         .font(.subheadline)
+        .foregroundStyle(isMuted ? AppTheme.primaryBlue.opacity(0.45) : AppTheme.primaryBlue)
         .frame(width: 16, height: 16, alignment: .center)
         .contentTransition(.opacity)
     }

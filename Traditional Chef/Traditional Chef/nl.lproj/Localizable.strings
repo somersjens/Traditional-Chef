@@ -94,6 +94,11 @@
 "settings.measurement.jp.short" = "Japanse cups";
 "settings.measurement.jp.long" = "JP: cup 200 ml · tbsp 15 · tsp 5";
 
+"settings.readVoice" = "Voorleesstem";
+"settings.readVoice.male" = "Mannelijk";
+"settings.readVoice.female" = "Vrouwelijk";
+"settings.readVoice.none" = "Geen stem";
+
 "settings.servings" = "Aantal personen";
 "settings.listViewValue" = "Waarde in overzicht";
 "settings.timerAutoStop" = "Stop timer automatisch";

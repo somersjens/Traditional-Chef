@@ -8,7 +8,11 @@ import SwiftUI
 struct KitchenToolsCard: View {
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var readVoicePreference: ReadVoicePreference {
+        ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
+    }
     @State private var isExpanded: Bool = false
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
 
@@ -18,7 +22,7 @@ struct KitchenToolsCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Button {
                     if isExpanded {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } else {
                         withAnimation(.easeInOut) {
                             isExpanded = true
@@ -39,14 +43,15 @@ struct KitchenToolsCard: View {
                     Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand kitchen tools")
                 )
 
-                if isExpanded && cardSpeaker.isSpeaking {
+                if isExpanded && (cardSpeaker.isSpeaking || cardSpeaker.isMutedFeedbackVisible) {
                     Button {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 18, height: 18, alignment: .center)
+                        ReadAloudIcon(
+                            isSpeaking: cardSpeaker.isSpeaking,
+                            isMuted: readVoicePreference == .none
+                        )
+                        .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                 }

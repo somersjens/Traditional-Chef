@@ -15,7 +15,11 @@ struct NutritionCard: View {
     let recipe: Recipe
     @State private var isExpanded: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var readVoicePreference: ReadVoicePreference {
+        ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
+    }
     private let baseServings = 4
     private let valueColumnWidth: CGFloat = 86
     private let columnPadding: CGFloat = 8
@@ -31,7 +35,7 @@ struct NutritionCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Button {
                     if isExpanded {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } else {
                         withAnimation(.easeInOut) {
                             isExpanded = true
@@ -52,14 +56,15 @@ struct NutritionCard: View {
                     Text(isExpanded ? AppLanguage.string("recipe.card.readAloud", locale: locale) : "Expand nutrition")
                 )
 
-                if isExpanded && cardSpeaker.isSpeaking {
+                if isExpanded && (cardSpeaker.isSpeaking || cardSpeaker.isMutedFeedbackVisible) {
                     Button {
-                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier)
+                        cardSpeaker.toggleRead(text: readAloudText, languageCode: locale.identifier, voicePreference: readVoicePreference)
                     } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 18, height: 18, alignment: .center)
+                        ReadAloudIcon(
+                            isSpeaking: cardSpeaker.isSpeaking,
+                            isMuted: readVoicePreference == .none
+                        )
+                        .frame(width: 18, height: 18, alignment: .center)
                     }
                     .buttonStyle(.plain)
                 }
