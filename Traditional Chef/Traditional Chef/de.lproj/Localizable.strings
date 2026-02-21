@@ -102,6 +102,8 @@
 "settings.servings" = "Anzahl der Portionen";
 "settings.listViewValue" = "Wert in Liste";
 "settings.timerAutoStop" = "Timer automatisch stoppen";
+"settings.difficultyColumn" = "Schwierigkeits-Spalte anzeigen";
+"recipes.column.difficulty" = "Schw";
 
 "grocery.sortLabel.useOrder" = "Reihenfolge verwenden";
 "grocery.sortLabel.grams" = "Menge";
@@ -1126,4 +1128,3 @@
 "recipe.it_zabaione.tool.t2" = "Stieltopf";
 "recipe.it_zabaione.tool.t3" = "Schneebesen";
 "recipe.it_zabaione.tool.t4" = "Serviergläser";
-

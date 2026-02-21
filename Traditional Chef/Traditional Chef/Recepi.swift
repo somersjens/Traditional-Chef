@@ -55,6 +55,10 @@ struct Recipe: Identifiable, Hashable, Codable {
     /// Localized recipe information key.
     let infoKey: String
     let infoSummaryKey: String
+
+    /// Optional difficulty value from 1 (easy) to 5 (very complex).
+    let difficulty: Int?
+
     /// Optional hero image URL.
     let imageURL: String?
 

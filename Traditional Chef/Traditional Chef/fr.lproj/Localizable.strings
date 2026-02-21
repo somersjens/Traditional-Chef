@@ -102,6 +102,8 @@
 "settings.servings" = "Nombre de portions";
 "settings.listViewValue" = "Valeur en liste";
 "settings.timerAutoStop" = "Arrêt auto minuteur";
+"settings.difficultyColumn" = "Afficher la colonne difficulté";
+"recipes.column.difficulty" = "Diff";
 
 "grocery.sortLabel.useOrder" = "Utiliser l’ordre";
 "grocery.sortLabel.grams" = "Quantité";

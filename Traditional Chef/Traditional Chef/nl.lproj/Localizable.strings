@@ -102,6 +102,8 @@
 "settings.servings" = "Aantal personen";
 "settings.listViewValue" = "Waarde in overzicht";
 "settings.timerAutoStop" = "Stop timer automatisch";
+"settings.difficultyColumn" = "Toon moeilijkheidskolom";
+"recipes.column.difficulty" = "Moe";
 
 "grocery.sortLabel.useOrder" = "Stap volgorde";
 "grocery.sortLabel.grams" = "Hoeveelheid";
@@ -1125,4 +1127,3 @@
 "recipe.it_zabaione.tool.t2" = "Sauspan";
 "recipe.it_zabaione.tool.t3" = "Garde";
 "recipe.it_zabaione.tool.t4" = "Serveerglazen";
-

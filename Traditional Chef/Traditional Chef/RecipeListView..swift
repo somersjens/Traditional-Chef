@@ -24,6 +24,7 @@ struct RecipeListView: View {
     @AppStorage("defaultServings") private var defaultServings: Int = 4
     @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.totalTime.rawValue
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
+    @AppStorage("showDifficultyColumn") private var showDifficultyColumn: Bool = false
 
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
@@ -96,7 +97,8 @@ struct RecipeListView: View {
                                                         metricColumnSpacing: metricColumnWidths.columnSpacing,
                                                         isFavorite: recipeStore.isFavorite(recipe),
                                                         onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
-                                                        searchText: vm.debouncedSearchText
+                                                        searchText: vm.debouncedSearchText,
+                                                        showDifficultyColumn: showDifficultyColumn
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())
@@ -324,6 +326,24 @@ struct RecipeListView: View {
             }
             .buttonStyle(.plain)
             .frame(width: 34, alignment: .center)
+
+            if showDifficultyColumn {
+                SortHeaderButton(
+                    isActive: vm.sortKey == .difficulty,
+                    isAscending: vm.ascending,
+                    textAlignment: .center,
+                    arrowPlacement: .trailing,
+                    arrowSpacing: 4,
+                    showArrow: false
+                ) {
+                    Text(AppLanguage.string("recipes.column.difficulty", locale: locale))
+                        .lineLimit(1)
+                } action: {
+                    vm.setSort(.difficulty)
+                    onFilterOrSortChange()
+                }
+                .frame(width: 28, alignment: .center)
+            }
 
             SortHeaderButton(
                 isActive: vm.sortKey == .name,
@@ -765,6 +785,24 @@ struct RecipeListView: View {
                     .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.difficultyColumn", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
+                    Spacer()
+                    Toggle("", isOn: $showDifficultyColumn)
+                        .labelsHidden()
+                        .tint(AppTheme.primaryBlue)
+                        .scaleEffect(0.8, anchor: .trailing)
+                }
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
+
+                HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.timerAutoStop", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -948,6 +986,8 @@ struct RecipeListView: View {
                 let bn = localizedNames[b.id]
                     ?? AppLanguage.string(String.LocalizationValue(b.nameKey), locale: locale)
                 result = an.localizedCaseInsensitiveCompare(bn) == .orderedAscending
+            case .difficulty:
+                result = (a.difficulty ?? 0) < (b.difficulty ?? 0)
             case .totalTime:
                 result = a.totalMinutes < b.totalMinutes
             case .prepTime:
@@ -1012,6 +1052,7 @@ private struct SortHeaderButton<Label: View>: View {
     let arrowSpacing: CGFloat
     let arrowLayout: ArrowLayout
     let arrowOverlayOffset: CGFloat
+    let showArrow: Bool
     let label: () -> Label
     let action: () -> Void
 
@@ -1023,6 +1064,7 @@ private struct SortHeaderButton<Label: View>: View {
         arrowSpacing: CGFloat,
         arrowLayout: ArrowLayout = .inline,
         arrowOverlayOffset: CGFloat = 0,
+        showArrow: Bool = true,
         @ViewBuilder label: @escaping () -> Label,
         action: @escaping () -> Void
     ) {
@@ -1033,6 +1075,7 @@ private struct SortHeaderButton<Label: View>: View {
         self.arrowSpacing = arrowSpacing
         self.arrowLayout = arrowLayout
         self.arrowOverlayOffset = arrowOverlayOffset
+        self.showArrow = showArrow
         self.label = label
         self.action = action
     }
@@ -1040,18 +1083,18 @@ private struct SortHeaderButton<Label: View>: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: arrowSpacing) {
-                if arrowPlacement == .leading, arrowLayout == .inline {
+                if showArrow, arrowPlacement == .leading, arrowLayout == .inline {
                     inlineArrowSlot
                 }
                 label()
-                if arrowPlacement == .trailing, arrowLayout == .inline {
+                if showArrow, arrowPlacement == .trailing, arrowLayout == .inline {
                     inlineArrowSlot
                 }
             }
             .frame(maxWidth: .infinity, alignment: textAlignment)
             .foregroundStyle(AppTheme.primaryBlue)
             .overlay(alignment: arrowAlignment) {
-                if arrowLayout == .overlay {
+                if showArrow, arrowLayout == .overlay {
                     arrowView
                         .offset(x: arrowPlacement == .leading ? -arrowOverlayOffset : arrowOverlayOffset)
                 }
@@ -1074,7 +1117,7 @@ private struct SortHeaderButton<Label: View>: View {
 
     @ViewBuilder
     private var arrowView: some View {
-        if isActive {
+        if showArrow, isActive {
             Image(systemName: isAscending ? "arrow.up" : "arrow.down")
                 .font(.caption2)
         }
