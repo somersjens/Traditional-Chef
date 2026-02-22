@@ -1,20 +1,15 @@
 import SwiftUI
 
 enum DifficultyColor {
+    private static let p: [Color] = [
+        .init(red: 68/255,  green: 206/255, blue: 27/255),  // #44ce1b
+        .init(red: 187/255, green: 219/255, blue: 68/255),  // #bbdb44
+        .init(red: 247/255, green: 227/255, blue: 121/255), // #f7e379
+        .init(red: 242/255, green: 161/255, blue: 52/255),  // #f2a134
+        .init(red: 229/255, green: 31/255,  blue: 31/255)   // #e51f1f
+    ]
+
     static func color(for difficulty: Int) -> Color {
-        switch difficulty {
-        case 1:
-            return Color(red: 0.20, green: 0.72, blue: 0.36)
-        case 2:
-            return Color(red: 0.56, green: 0.87, blue: 0.55)
-        case 3:
-            return Color(red: 0.95, green: 0.77, blue: 0.27)
-        case 4:
-            return Color(red: 0.94, green: 0.52, blue: 0.50)
-        case 5:
-            return Color(red: 0.83, green: 0.25, blue: 0.24)
-        default:
-            return AppTheme.primaryBlue.opacity(0.25)
-        }
+        p[min(max(difficulty, 1), 5) - 1]
     }
 }

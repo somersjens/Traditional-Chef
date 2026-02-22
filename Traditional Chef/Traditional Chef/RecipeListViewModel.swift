@@ -165,6 +165,21 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
         }
     }
 
+    var headerSymbolName: String {
+        switch self {
+        case .totalTime:
+            return "clock"
+        case .prepTime:
+            return "flame"
+        case .prepAndWaitingTime:
+            return "flame"
+        case .ingredients:
+            return "cart"
+        case .calories:
+            return "fork.knife"
+        }
+    }
+
     var columnLabelKey: String {
         switch self {
         case .totalTime:

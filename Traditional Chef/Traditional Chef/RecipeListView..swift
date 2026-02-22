@@ -12,6 +12,8 @@ struct RecipeListView: View {
     private let flagToContentSpacing: CGFloat = 6
     private let difficultyDotSize: CGFloat = 12
     private let difficultyToNameExtraSpacing: CGFloat = 2
+    private let minDefaultServings: Int = 1
+    private let maxDefaultServings: Int = 12
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
@@ -315,6 +317,16 @@ struct RecipeListView: View {
         }
     }
 
+    private func decrementDefaultServings() {
+        guard defaultServings > minDefaultServings else { return }
+        defaultServings -= 1
+    }
+
+    private func incrementDefaultServings() {
+        guard defaultServings < maxDefaultServings else { return }
+        defaultServings += 1
+    }
+
     private var listSideInset: CGFloat {
         16
     }
@@ -375,7 +387,7 @@ struct RecipeListView: View {
                             arrowPlacement: .leading,
                             arrowSpacing: 3
                         ) {
-                            Text(AppLanguage.string("recipes.column.prepShort", locale: locale))
+                            Image(systemName: "flame")
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.prepTime)
@@ -390,7 +402,7 @@ struct RecipeListView: View {
                             arrowPlacement: .leading,
                             arrowSpacing: 3
                         ) {
-                            Text(AppLanguage.string("recipes.column.waitingShort", locale: locale))
+                            Image(systemName: "hourglass")
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.waitingTime)
@@ -406,9 +418,8 @@ struct RecipeListView: View {
                         arrowPlacement: .leading,
                         arrowSpacing: 4
                     ) {
-                        Text(AppLanguage.string(listViewValue.columnLabelKey, locale: locale))
+                        Image(systemName: listViewValue.headerSymbolName)
                             .lineLimit(1)
-                            .multilineTextAlignment(.trailing)
                     } action: {
                         vm.setSort(listViewValue.sortKey)
                         onFilterOrSortChange()
@@ -738,12 +749,15 @@ struct RecipeListView: View {
                                 listViewValueRaw = option.rawValue
                                 vm.setSort(option.sortKey)
                             } label: {
-                                Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                                HStack(spacing: 8) {
+                                    Image(systemName: option.headerSymbolName)
+                                    Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                                }
                             }
                         }
                     } label: {
                         HStack(spacing: 6) {
-                            Text(AppLanguage.string(listViewValue.settingsLabelKey, locale: locale))
+                            Image(systemName: listViewValue.headerSymbolName)
                             Image(systemName: "chevron.down")
                         }
                         .font(controlFont)
@@ -765,24 +779,32 @@ struct RecipeListView: View {
                         .multilineTextAlignment(.leading)
                         .layoutPriority(1)
                     Spacer()
-                    Menu {
-                        ForEach(1...12, id: \.self) { servings in
-                            Button {
-                                defaultServings = servings
-                            } label: {
-                                Text("\(servings)")
-                            }
+                    HStack(spacing: 10) {
+                        Button(action: decrementDefaultServings) {
+                            Image(systemName: "minus")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(width: 26, height: 26)
+                                .contentShape(Rectangle())
                         }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text("\(defaultServings)")
-                            Image(systemName: "chevron.down")
+                        .buttonStyle(.plain)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(defaultServings <= minDefaultServings ? 0.3 : 1))
+                        .disabled(defaultServings <= minDefaultServings)
+
+                        Text("\(defaultServings)")
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.primaryBlue)
+                            .frame(width: 32)
+
+                        Button(action: incrementDefaultServings) {
+                            Image(systemName: "plus")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(width: 26, height: 26)
+                                .contentShape(Rectangle())
                         }
-                        .font(controlFont)
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .fixedSize(horizontal: true, vertical: false)
+                        .buttonStyle(.plain)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(defaultServings >= maxDefaultServings ? 0.3 : 1))
+                        .disabled(defaultServings >= maxDefaultServings)
                     }
-                    .menuIndicator(.hidden)
                 }
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
