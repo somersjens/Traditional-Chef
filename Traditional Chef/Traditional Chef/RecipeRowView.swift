@@ -37,8 +37,9 @@ struct RecipeRowView: View {
             Text(highlightedName)
                 .lineLimit(2)
                 .truncationMode(.tail)
+                .layoutPriority(1)
 
-            Spacer()
+            Spacer(minLength: 0)
 
             HStack(spacing: metricsToFavoriteSpacing) {
                 metrics

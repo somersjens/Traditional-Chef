@@ -388,6 +388,7 @@ struct RecipeListView: View {
                             arrowSpacing: 3
                         ) {
                             Image(systemName: "flame")
+                                .font(.system(size: 13, weight: .semibold))
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.prepTime)
@@ -403,6 +404,7 @@ struct RecipeListView: View {
                             arrowSpacing: 3
                         ) {
                             Image(systemName: "hourglass")
+                                .font(.system(size: 13, weight: .semibold))
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.waitingTime)
@@ -419,6 +421,7 @@ struct RecipeListView: View {
                         arrowSpacing: 4
                     ) {
                         Image(systemName: listViewValue.headerSymbolName)
+                            .font(.system(size: 13, weight: .semibold))
                             .lineLimit(1)
                     } action: {
                         vm.setSort(listViewValue.sortKey)
