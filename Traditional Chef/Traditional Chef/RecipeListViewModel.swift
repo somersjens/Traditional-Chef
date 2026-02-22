@@ -148,6 +148,10 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
     case ingredients
     case calories
 
+    static var allCases: [RecipeListValue] {
+        [.ingredients, .calories, .totalTime, .prepTime, .prepAndWaitingTime]
+    }
+
     var id: String { rawValue }
 
     var settingsLabelKey: String {
@@ -176,7 +180,16 @@ enum RecipeListValue: String, CaseIterable, Identifiable {
         case .ingredients:
             return "cart"
         case .calories:
-            return "fork.knife"
+            return "chart.pie"
+        }
+    }
+
+    var settingsSymbolName: String {
+        switch self {
+        case .prepAndWaitingTime:
+            return "person.2"
+        default:
+            return headerSymbolName
         }
     }
 

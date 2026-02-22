@@ -737,42 +737,6 @@ struct RecipeListView: View {
                     .overlay(AppTheme.primaryBlue.opacity(0.12))
 
                 HStack(spacing: 12) {
-                    Text(AppLanguage.string("settings.listViewValue", locale: locale))
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .multilineTextAlignment(.leading)
-                        .layoutPriority(1)
-                    Spacer()
-                    Menu {
-                        ForEach(RecipeListValue.allCases) { option in
-                            Button {
-                                listViewValueRaw = option.rawValue
-                                vm.setSort(option.sortKey)
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: option.headerSymbolName)
-                                    Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
-                                }
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: listViewValue.headerSymbolName)
-                            Image(systemName: "chevron.down")
-                        }
-                        .font(controlFont)
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .fixedSize(horizontal: true, vertical: false)
-                    }
-                    .menuIndicator(.hidden)
-                }
-                .padding(.vertical, rowVerticalPadding)
-                .frame(minHeight: rowMinHeight)
-
-                Divider()
-                    .overlay(AppTheme.primaryBlue.opacity(0.12))
-
-                HStack(spacing: 12) {
                     Text(AppLanguage.string("settings.servings", locale: locale))
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(AppTheme.primaryBlue)
@@ -805,6 +769,42 @@ struct RecipeListView: View {
                         .foregroundStyle(AppTheme.primaryBlue.opacity(defaultServings >= maxDefaultServings ? 0.3 : 1))
                         .disabled(defaultServings >= maxDefaultServings)
                     }
+                }
+                .padding(.vertical, rowVerticalPadding)
+                .frame(minHeight: rowMinHeight)
+
+                Divider()
+                    .overlay(AppTheme.primaryBlue.opacity(0.12))
+
+                HStack(spacing: 12) {
+                    Text(AppLanguage.string("settings.listViewValue", locale: locale))
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
+                    Spacer()
+                    Menu {
+                        ForEach(RecipeListValue.allCases) { option in
+                            Button {
+                                listViewValueRaw = option.rawValue
+                                vm.setSort(option.sortKey)
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: option.settingsSymbolName)
+                                    Text(AppLanguage.string(option.settingsLabelKey, locale: locale))
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: listViewValue.settingsSymbolName)
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(controlFont)
+                        .foregroundStyle(AppTheme.primaryBlue)
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
+                    .menuIndicator(.hidden)
                 }
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
