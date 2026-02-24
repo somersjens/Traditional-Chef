@@ -74,7 +74,7 @@ struct RecipeDetailView: View {
     private let openingRevealTransitionDuration: TimeInterval = 0.936
     private let openingKnifeTransitionDuration: TimeInterval = 1.02
     private let openingTransitionDelay: TimeInterval = 0
-    private let openingTransitionHideBuffer: TimeInterval = 0.03
+    private let openingTransitionHideBuffer: TimeInterval = 0
     private let revealCoverCompletionLead: CGFloat = 0.05
     private let revealCoverSnapOutThreshold: CGFloat = 0.965
 
@@ -152,6 +152,7 @@ struct RecipeDetailView: View {
                     }
                 }
             }
+            .allowsHitTesting(!showOpeningKnifeTransition)
 
             detailTopBar
                 .frame(maxWidth: .infinity, alignment: .leading)

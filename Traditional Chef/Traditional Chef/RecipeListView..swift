@@ -39,6 +39,7 @@ struct RecipeListView: View {
     @State private var showMeasurementOptions: Bool = false
     @State private var scrollToTopRequest: Int = 0
     @State private var pendingNavigationTask: Task<Void, Never>?
+    @State private var isOpeningRecipeDetail: Bool = false
     @State private var randomControlMaxButtonWidth: CGFloat = 0
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
@@ -108,6 +109,7 @@ struct RecipeListView: View {
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())
+                                                .disabled(isOpeningRecipeDetail)
 
                                                 if recipe.id != visibleRecipes.last?.id {
                                                     Rectangle()
@@ -158,6 +160,7 @@ struct RecipeListView: View {
             .onAppear {
                 ensureMeasurementUnit()
                 _ = RecipeDetailView.preparedKnifeImage
+                isOpeningRecipeDetail = false
             }
             .onChange(of: vm.debouncedSearchText) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
@@ -230,7 +233,8 @@ struct RecipeListView: View {
 
     @MainActor
     private func openRecipeDetail(_ recipe: Recipe) {
-        pendingNavigationTask?.cancel()
+        guard pendingNavigationTask == nil, !isOpeningRecipeDetail else { return }
+        isOpeningRecipeDetail = true
 
         RecipeImagePrefetcher.prefetch(
             urlString: recipe.imageURL,
@@ -240,6 +244,10 @@ struct RecipeListView: View {
         OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
 
         pendingNavigationTask = Task { @MainActor in
+            defer {
+                pendingNavigationTask = nil
+            }
+
             try? await Task.sleep(nanoseconds: 120_000_000)
             guard !Task.isCancelled else { return }
 
@@ -248,8 +256,6 @@ struct RecipeListView: View {
             withTransaction(transaction) {
                 navigationPath.append(recipe)
             }
-
-            pendingNavigationTask = nil
         }
     }
 
