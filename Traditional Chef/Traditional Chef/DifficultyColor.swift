@@ -2,11 +2,11 @@ import SwiftUI
 
 enum DifficultyColor {
     private static let p: [Color] = [
-        .init(red: 68/255,  green: 206/255, blue: 27/255),  // #44ce1b
-        .init(red: 187/255, green: 219/255, blue: 68/255),  // #bbdb44
-        .init(red: 247/255, green: 227/255, blue: 121/255), // #f7e379
-        .init(red: 242/255, green: 161/255, blue: 52/255),  // #f2a134
-        .init(red: 229/255, green: 31/255,  blue: 31/255)   // #e51f1f
+        .init(red: 244/255, green: 223/255, blue: 220/255), // #F4DFDC (1)
+        .init(red: 234/255, green: 191/255, blue: 185/255), // #EABFB9 (2)
+        .init(red: 225/255, green: 159/255, blue: 151/255), // #E19F97 (3)
+        .init(red: 215/255, green: 128/255, blue: 118/255), // #D78076 (4)
+        .init(red: 190/255, green: 96/255,  blue: 87/255)   // #BE6057 (5) darker
     ]
 
     static func color(for difficulty: Int) -> Color {
