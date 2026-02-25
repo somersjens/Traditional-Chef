@@ -6,6 +6,10 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    private let welcomeBackgroundColor = Color(hex: "FAF5F0")
+    private let welcomeTextColor = Color(hex: "1C263C")
+    private let welcomeButtonTextColor = Color(hex: "FAF5F0")
+
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -17,14 +21,14 @@ struct WelcomeView: View {
             message[range].link = URL(string: "https://www.hakketjak.nl")
             message[range].font = .system(size: 17, weight: .bold)
             message[range].underlineStyle = .single
-            message[range].foregroundColor = AppTheme.textPrimary
+            message[range].foregroundColor = welcomeTextColor
         }
         return message
     }
 
     var body: some View {
         ZStack {
-            AppTheme.pageBackground.ignoresSafeArea()
+            welcomeBackgroundColor.ignoresSafeArea()
 
             VStack(spacing: verticalSizeClass == .compact ? 4 : 7) {
                 Image(currentFrameName)
@@ -40,7 +44,7 @@ struct WelcomeView: View {
                 VStack(spacing: verticalSizeClass == .compact ? 8 : 14) {
                     Text(AppLanguage.string("welcome.greeting", locale: locale))
                         .font(.system(size: 33, weight: .semibold))
-                        .foregroundStyle(AppTheme.textPrimary)
+                        .foregroundStyle(welcomeTextColor)
 
                     Button {
                         hasSeenWelcome = true
@@ -50,7 +54,7 @@ struct WelcomeView: View {
                             .padding(.vertical, 14)
                             .padding(.horizontal, 24)
                             .background(Color(hex: "F57921"))
-                            .foregroundStyle(AppTheme.secondaryOffWhite)
+                            .foregroundStyle(welcomeButtonTextColor)
                             .clipShape(RoundedRectangle(cornerRadius: 26))
                     }
                     .padding(.horizontal, 22)
@@ -58,7 +62,7 @@ struct WelcomeView: View {
 
                     Text(sponsorMessage)
                         .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
+                        .foregroundStyle(welcomeTextColor.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .lineSpacing(1.8)
                         .padding(.horizontal, 22)
