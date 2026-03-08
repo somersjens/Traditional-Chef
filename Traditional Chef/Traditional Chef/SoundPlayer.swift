@@ -4,41 +4,63 @@
 //
 
 import Foundation
-import AudioToolbox
+import AVFoundation
 
 enum SoundPlayer {
-    /// Plays a system sound repeatedly for a short burst (no custom audio files needed).
+    /// Plays the bundled `tring.wav` once.
     static func playBeepBurst(durationSeconds: Double, completion: @escaping () -> Void) {
-        let soundID: SystemSoundID = 1005 // “new-mail” style beep; safe fallback
-        let interval: TimeInterval = 0.35
-        let repeats = max(1, Int(durationSeconds / interval))
+        _ = durationSeconds // keep signature stable for existing callsites
+        guard let player = makeTringPlayer(loop: false) else {
+            completion()
+            return
+        }
 
-        var count = 0
-        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
-            AudioServicesPlaySystemSound(soundID)
-            count += 1
-            if count >= repeats {
-                timer.invalidate()
-                completion()
+        oneShotPlayer = player
+        player.play()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(0.01, player.duration)) {
+            if oneShotPlayer === player {
+                oneShotPlayer = nil
             }
+            completion()
         }
     }
 
     static func startContinuousBeep(interval: TimeInterval = 0.35) -> UUID {
-        let soundID: SystemSoundID = 1005
+        _ = interval // looping is controlled by AVAudioPlayer
         let id = UUID()
-        let timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            AudioServicesPlaySystemSound(soundID)
+        guard let player = makeTringPlayer(loop: true) else {
+            return id
         }
-        activeTimers[id] = timer
+        activePlayers[id] = player
+        player.play()
         return id
     }
 
     static func stopBeep(id: UUID?) {
-        guard let id, let timer = activeTimers[id] else { return }
-        timer.invalidate()
-        activeTimers[id] = nil
+        guard let id, let player = activePlayers[id] else { return }
+        player.stop()
+        player.currentTime = 0
+        activePlayers[id] = nil
     }
 
-    private static var activeTimers: [UUID: Timer] = [:]
+    private static func makeTringPlayer(loop: Bool) -> AVAudioPlayer? {
+        guard let url = Bundle.main.url(forResource: "tring", withExtension: "wav") else {
+            assertionFailure("Missing tring.wav in app bundle")
+            return nil
+        }
+
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = loop ? -1 : 0
+            player.prepareToPlay()
+            return player
+        } catch {
+            assertionFailure("Failed to load tring.wav: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    private static var activePlayers: [UUID: AVAudioPlayer] = [:]
+    private static var oneShotPlayer: AVAudioPlayer?
 }
