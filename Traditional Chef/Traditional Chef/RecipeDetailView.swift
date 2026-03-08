@@ -469,6 +469,21 @@ struct RecipeDetailView: View {
             return
         }
 
+        if let cachedImage = await RecipeSharedImageLoader.shared.cachedImage(for: recipe.imageURL) {
+            let imageIsDark = cachedImage.cgImage.map(isImageDark) ?? false
+            await MainActor.run {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    heroUIImage = cachedImage
+                    hasHeroImageEntered = true
+                }
+                showHeroImageOfflineFallback = false
+                hasHeroFallbackEntered = false
+                heroTargetPixelSize = targetPixelSize
+                isHeroImageDark = imageIsDark
+            }
+            return
+        }
+
         var request = URLRequest(
             url: url,
             cachePolicy: .useProtocolCachePolicy,
@@ -499,6 +514,7 @@ struct RecipeDetailView: View {
 
             guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
                 if let fallbackImage = UIImage(data: data) {
+                    await RecipeSharedImageLoader.shared.cache(fallbackImage, for: recipe.imageURL)
                     await MainActor.run {
                         withAnimation(.easeOut(duration: 0.5)) {
                             heroUIImage = fallbackImage
@@ -545,6 +561,7 @@ struct RecipeDetailView: View {
             let image = UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
             let imageIsDark = isImageDark(cgImage)
 
+            await RecipeSharedImageLoader.shared.cache(image, for: recipe.imageURL)
             await MainActor.run {
                 withAnimation(.easeOut(duration: 0.5)) {
                     heroUIImage = image

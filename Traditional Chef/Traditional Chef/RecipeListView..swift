@@ -105,7 +105,8 @@ struct RecipeListView: View {
                                                         isFavorite: recipeStore.isFavorite(recipe),
                                                         onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                                         searchText: vm.debouncedSearchText,
-                                                        showDifficultyColumn: showDifficultyColumn
+                                                        showDifficultyColumn: showDifficultyColumn,
+                                                        showRandomImagePreview: vm.isRandomModeActive
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())

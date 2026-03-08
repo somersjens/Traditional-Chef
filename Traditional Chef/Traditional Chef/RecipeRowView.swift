@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct RecipeRowView: View {
     private let metricsToFavoriteSpacing: CGFloat = 6.6
@@ -20,45 +21,60 @@ struct RecipeRowView: View {
     let onToggleFavorite: () -> Void
     let searchText: String
     let showDifficultyColumn: Bool
+    let showRandomImagePreview: Bool
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @State private var randomPreviewImage: UIImage?
+    @State private var isRandomPreviewLoading: Bool = false
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
-        HStack(spacing: flagToContentSpacing) {
-            Text(FlagEmoji.from(countryCode: recipe.countryCode))
-                .font(.title3)
-                .frame(width: 34, alignment: .center)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: flagToContentSpacing) {
+                Text(FlagEmoji.from(countryCode: recipe.countryCode))
+                    .font(.title3)
+                    .frame(width: 34, alignment: .center)
 
-            if showDifficultyColumn {
-                difficultyDot
-                    .frame(width: difficultyColumnWidth, alignment: .leading)
+                if showDifficultyColumn {
+                    difficultyDot
+                        .frame(width: difficultyColumnWidth, alignment: .leading)
+                }
+
+                Text(highlightedName)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                    .layoutPriority(1)
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: metricsToFavoriteSpacing) {
+                    metrics
+
+                    Button(action: onToggleFavorite) {
+                        Image(systemName: isFavorite ? "heart.fill" : "heart")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
+                            .frame(width: 18, alignment: .center)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 4)
+                }
             }
 
-            Text(highlightedName)
-                .lineLimit(2)
-                .truncationMode(.tail)
-                .layoutPriority(1)
-
-            Spacer(minLength: 0)
-
-            HStack(spacing: metricsToFavoriteSpacing) {
-                metrics
-
-                Button(action: onToggleFavorite) {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
-                        .frame(width: 18, alignment: .center)
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing, 4)
+            if showRandomImagePreview {
+                randomImagePreview
             }
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)
         .contentShape(Rectangle())
-        .task {
-            RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
+        .task(id: showRandomImagePreview) {
+            if showRandomImagePreview {
+                await loadRandomPreviewImageIfNeeded()
+            } else {
+                randomPreviewImage = nil
+                isRandomPreviewLoading = false
+                RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
+            }
         }
     }
 
@@ -110,6 +126,39 @@ struct RecipeRowView: View {
         case .calories:
             return "\(recipe.calories)"
         }
+    }
+
+
+    @ViewBuilder
+    private var randomImagePreview: some View {
+        ZStack {
+            AppTheme.secondaryOffWhite
+
+            if let randomPreviewImage {
+                Image(uiImage: randomPreviewImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if isRandomPreviewLoading {
+                ProgressView()
+                    .tint(AppTheme.primaryBlue)
+                    .controlSize(.large)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 4)
+    }
+
+    @MainActor
+    private func loadRandomPreviewImageIfNeeded() async {
+        guard randomPreviewImage == nil else { return }
+
+        isRandomPreviewLoading = true
+        let loadedImage = await RecipeSharedImageLoader.shared.image(for: recipe.imageURL)
+        randomPreviewImage = loadedImage
+        isRandomPreviewLoading = false
     }
 
     private var highlightedName: AttributedString {
