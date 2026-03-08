@@ -9,7 +9,7 @@ import UIKit
 actor RecipeSharedImageLoader {
     static let shared = RecipeSharedImageLoader()
 
-    nonisolated private static let memoryCache: NSCache<NSURL, UIImage> = {
+    private static let memoryCache: NSCache<NSURL, UIImage> = {
         let cache = NSCache<NSURL, UIImage>()
         cache.countLimit = 180
         cache.totalCostLimit = 180 * 1024 * 1024

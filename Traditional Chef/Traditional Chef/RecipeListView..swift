@@ -905,7 +905,7 @@ struct RecipeListView: View {
         VStack(spacing: 8) {
             actionButton(
                 title: AppLanguage.string("recipes.random.new", locale: locale),
-                isPrimary: false
+                isPrimary: true
             ) {
                 vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
                 requestScrollToTop()
@@ -913,7 +913,7 @@ struct RecipeListView: View {
 
             actionButton(
                 title: AppLanguage.string("recipes.random.undo", locale: locale),
-                isPrimary: true
+                isPrimary: false
             ) {
                 vm.clearRandomSelection()
                 requestScrollToTop()
