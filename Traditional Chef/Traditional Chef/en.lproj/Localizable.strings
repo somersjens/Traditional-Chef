@@ -55,6 +55,7 @@
 
 "recipe.groceryTitle" = "Groceries";
 "recipe.stepsTitle" = "Steps";
+"recipe.steps.includeMeasurement" = "Include measurement in steps";
 "recipe.steps.readAllAloud" = "Read all steps aloud";
 "recipe.steps.stopReadAloud" = "Stop reading";
 "recipe.steps.readSelectedAloud" = "Read this step aloud";

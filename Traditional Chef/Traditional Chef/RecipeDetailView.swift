@@ -35,6 +35,8 @@ struct RecipeDetailView: View {
     let recipe: Recipe
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
+    @AppStorage("groceryAllMeasurements") private var groceryAllMeasurements: Bool = true
+    @AppStorage("stepsIncludeMeasurement") private var includeMeasurementInSteps: Bool = true
     @AppStorage("defaultServings") private var defaultServings: Int = 4
     @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     private var locale: Locale { Locale(identifier: appLanguage) }
@@ -878,6 +880,29 @@ struct RecipeDetailView: View {
                             Divider().overlay(AppTheme.hairline)
                         }
                     }
+
+                    Divider()
+                        .overlay(AppTheme.hairline)
+
+                    Button {
+                        includeMeasurementInSteps.toggle()
+                    } label: {
+                        Text(AppLanguage.string("recipe.steps.includeMeasurement", locale: locale))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(includeMeasurementInSteps ? Color.white : AppTheme.primaryBlue)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 11)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .background(
+                        Capsule()
+                            .fill(includeMeasurementInSteps ? AppTheme.primaryBlue : Color.clear)
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(AppTheme.primaryBlue, lineWidth: includeMeasurementInSteps ? 0 : 1)
+                    )
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
@@ -893,6 +918,8 @@ struct RecipeDetailView: View {
             ingredients: recipe.ingredients,
             servings: servings,
             baseServings: 4,
+            includeMeasurementInSteps: includeMeasurementInSteps,
+            showAllMeasurements: groceryAllMeasurements,
             isDimmed: isDimmed,
             isSelected: isSelected,
             readVoicePreference: readVoicePreference,
@@ -956,32 +983,18 @@ struct RecipeDetailView: View {
         for ingredient in sortedIngredients {
             let token = "%\(ingredient.id)"
             guard output.contains(token) else { continue }
-            let amount = GroceryMeasurementFormatter.formattedAmount(
-                for: ingredient,
+            let dynamicValue = StepIngredientReferenceFormatter.dynamicValue(
+                ingredient: ingredient,
                 servings: servings,
                 baseServings: 4,
                 measurementUnit: measurementUnit,
-                // Step inline references should follow the selected measurement system while
-                // still using each ingredient's preferred display mode.
-                showAllMeasurements: false,
-                locale: locale,
-                localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
+                includeMeasurementInSteps: includeMeasurementInSteps,
+                showAllMeasurements: groceryAllMeasurements,
+                locale: locale
             )
-            let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            let unit = stepDescriptionUnitLabel(for: amount.unit)
-            let dynamicValue = "\(amount.value) \(unit) \(ingredientName)".lowercased(with: locale)
             output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
-    }
-
-    private func stepDescriptionUnitLabel(for unit: String) -> String {
-        switch unit.lowercased() {
-        case "l":
-            return "liter"
-        default:
-            return unit
-        }
     }
 
     private func stopStepReadAloud() {
@@ -1141,6 +1154,52 @@ private extension UIView {
     }
 }
 
+
+
+private enum StepIngredientReferenceFormatter {
+    static func dynamicValue(
+        ingredient: Ingredient,
+        servings: Int,
+        baseServings: Int,
+        measurementUnit: MeasurementUnit,
+        includeMeasurementInSteps: Bool,
+        showAllMeasurements: Bool,
+        locale: Locale
+    ) -> String {
+        let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+            .lowercased(with: locale)
+        let mustShowAmount = (ingredient.isInvisible ?? false) || includeMeasurementInSteps
+        guard mustShowAmount else {
+            return ingredientName
+        }
+
+        let englishIngredientName = AppLanguage.string(
+            String.LocalizationValue(ingredient.nameKey),
+            locale: Locale(identifier: "en")
+        )
+        let isWaterIngredient = englishIngredientName.compare("water", options: .caseInsensitive) == .orderedSame
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ingredient,
+            servings: servings,
+            baseServings: baseServings,
+            measurementUnit: measurementUnit,
+            showAllMeasurements: showAllMeasurements && !isWaterIngredient,
+            locale: locale,
+            localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
+        )
+        let unit = stepDescriptionUnitLabel(for: amount.unit)
+        return "\(ingredientName) (\(amount.value) \(unit))"
+    }
+
+    private static func stepDescriptionUnitLabel(for unit: String) -> String {
+        switch unit.lowercased() {
+        case "l":
+            return "liter"
+        default:
+            return unit
+        }
+    }
+}
 private struct StepTimerSnapshot {
     let id: String
     let isRunning: Bool
@@ -1153,6 +1212,8 @@ private struct StepRowView: View {
     let ingredients: [Ingredient]
     let servings: Int
     let baseServings: Int
+    let includeMeasurementInSteps: Bool
+    let showAllMeasurements: Bool
     let isDimmed: Bool
     let isSelected: Bool
     let readVoicePreference: ReadVoicePreference
@@ -1188,6 +1249,8 @@ private struct StepRowView: View {
         ingredients: [Ingredient],
         servings: Int,
         baseServings: Int,
+        includeMeasurementInSteps: Bool,
+        showAllMeasurements: Bool,
         isDimmed: Bool,
         isSelected: Bool,
         readVoicePreference: ReadVoicePreference,
@@ -1199,6 +1262,8 @@ private struct StepRowView: View {
         self.ingredients = ingredients
         self.servings = servings
         self.baseServings = baseServings
+        self.includeMeasurementInSteps = includeMeasurementInSteps
+        self.showAllMeasurements = showAllMeasurements
         self.isDimmed = isDimmed
         self.isSelected = isSelected
         self.readVoicePreference = readVoicePreference
@@ -1357,31 +1422,18 @@ private struct StepRowView: View {
         for ingredient in sortedIngredients {
             let token = "%\(ingredient.id)"
             guard output.contains(token) else { continue }
-            let amount = GroceryMeasurementFormatter.formattedAmount(
-                for: ingredient,
+            let dynamicValue = StepIngredientReferenceFormatter.dynamicValue(
+                ingredient: ingredient,
                 servings: servings,
                 baseServings: baseServings,
                 measurementUnit: measurementUnit,
-                // Step inline references should follow the selected measurement system while
-                // still using each ingredient's preferred display mode.
-                showAllMeasurements: false,
-                locale: locale,
-                localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
+                includeMeasurementInSteps: includeMeasurementInSteps,
+                showAllMeasurements: showAllMeasurements,
+                locale: locale
             )
-            let ingredientName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
-            let unit = stepDescriptionUnitLabel(for: amount.unit)
-            let dynamicValue = "\(amount.value) \(unit) \(ingredientName)".lowercased(with: locale)
             output = output.replacingOccurrences(of: token, with: dynamicValue)
         }
         return output
-    }
-    private func stepDescriptionUnitLabel(for unit: String) -> String {
-        switch unit.lowercased() {
-        case "l":
-            return "liter"
-        default:
-            return unit
-        }
     }
 
     private func handleTimerTap() {
