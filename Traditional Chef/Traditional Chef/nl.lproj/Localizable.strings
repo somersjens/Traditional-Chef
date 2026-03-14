@@ -55,7 +55,7 @@
 
 "recipe.groceryTitle" = "Boodschappen";
 "recipe.stepsTitle" = "Stappen";
-"recipe.steps.includeMeasurement" = "Hoeveelheden in stappen opnemen";
+"recipe.steps.includeMeasurement" = "Hoeveelheden tonen";
 "recipe.steps.readAllAloud" = "Lees alle stappen hardop";
 "recipe.steps.stopReadAloud" = "Stop met voorlezen";
 "recipe.steps.readSelectedAloud" = "Lees deze stap hardop";

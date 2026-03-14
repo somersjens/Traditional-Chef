@@ -55,7 +55,7 @@
 
 "recipe.groceryTitle" = "Courses";
 "recipe.stepsTitle" = "Étapes";
-"recipe.steps.includeMeasurement" = "Inclure les mesures dans les étapes";
+"recipe.steps.includeMeasurement" = "Inclure mesures";
 "recipe.steps.readAllAloud" = "Lire toutes les étapes à voix haute";
 "recipe.steps.stopReadAloud" = "Arrêter la lecture";
 "recipe.steps.readSelectedAloud" = "Lire cette étape à voix haute";

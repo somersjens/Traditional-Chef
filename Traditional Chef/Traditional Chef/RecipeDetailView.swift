@@ -884,25 +884,58 @@ struct RecipeDetailView: View {
                     Divider()
                         .overlay(AppTheme.hairline)
 
-                    Button {
-                        includeMeasurementInSteps.toggle()
-                    } label: {
-                        Text(AppLanguage.string("recipe.steps.includeMeasurement", locale: locale))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(includeMeasurementInSteps ? Color.white : AppTheme.primaryBlue)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 11)
-                            .contentShape(Rectangle())
+                    GeometryReader { geometry in
+                        let availableWidth = geometry.size.width - 8
+                        let allWeightButtonWidth = availableWidth * 0.3
+                        let includeMeasurementsButtonWidth = availableWidth * 0.7
+
+                        HStack(spacing: 8) {
+                            Button {
+                                groceryAllMeasurements.toggle()
+                            } label: {
+                                Text(AppLanguage.string("grocery.option.allWeight", locale: locale))
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(groceryAllMeasurements ? Color.white : AppTheme.primaryBlue)
+                                    .frame(maxWidth: .infinity, minHeight: 22.4)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4.8)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .background(
+                                Capsule()
+                                    .fill(groceryAllMeasurements ? AppTheme.primaryBlue : Color.clear)
+                            )
+                            .overlay(
+                                Capsule()
+                                    .stroke(AppTheme.primaryBlue, lineWidth: groceryAllMeasurements ? 0 : 1)
+                            )
+                            .frame(width: allWeightButtonWidth)
+
+                            Button {
+                                includeMeasurementInSteps.toggle()
+                            } label: {
+                                Text(AppLanguage.string("recipe.steps.includeMeasurement", locale: locale))
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(includeMeasurementInSteps ? Color.white : AppTheme.primaryBlue)
+                                    .frame(maxWidth: .infinity, minHeight: 22.4)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4.8)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .background(
+                                Capsule()
+                                    .fill(includeMeasurementInSteps ? AppTheme.primaryBlue : Color.clear)
+                            )
+                            .overlay(
+                                Capsule()
+                                    .stroke(AppTheme.primaryBlue, lineWidth: includeMeasurementInSteps ? 0 : 1)
+                            )
+                            .frame(width: includeMeasurementsButtonWidth)
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .background(
-                        Capsule()
-                            .fill(includeMeasurementInSteps ? AppTheme.primaryBlue : Color.clear)
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(AppTheme.primaryBlue, lineWidth: includeMeasurementInSteps ? 0 : 1)
-                    )
+                    .frame(minHeight: 32)
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }

@@ -55,7 +55,7 @@
 
 "recipe.groceryTitle" = "Einkaufsliste";
 "recipe.stepsTitle" = "Schritte";
-"recipe.steps.includeMeasurement" = "Mengenangaben in Schritten anzeigen";
+"recipe.steps.includeMeasurement" = "Mengen anzeigen";
 "recipe.steps.readAllAloud" = "Alle Schritte laut vorlesen";
 "recipe.steps.stopReadAloud" = "Vorlesen stoppen";
 "recipe.steps.readSelectedAloud" = "Diesen Schritt laut vorlesen";
