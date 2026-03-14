@@ -23,6 +23,7 @@ struct RecipeRowView: View {
     let searchText: String
     let showDifficultyColumn: Bool
     let showImagePreview: Bool
+    let foregroundOpacity: CGFloat
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @State private var randomPreviewImage: UIImage?
     @State private var isRandomPreviewLoading: Bool = false
@@ -61,6 +62,7 @@ struct RecipeRowView: View {
                     .padding(.trailing, 4)
                 }
             }
+            .opacity(foregroundOpacity)
 
             if showImagePreview {
                 randomImagePreview

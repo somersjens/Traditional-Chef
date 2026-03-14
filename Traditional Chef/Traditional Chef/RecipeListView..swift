@@ -45,6 +45,7 @@ struct RecipeListView: View {
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
     private var selectedCategoryFilter: RecipeCategory? { vm.selectedCategories.first }
+    private var loadingForegroundOpacity: CGFloat { isOpeningRecipeDetail ? 0.5 : 1 }
 
     var body: some View {
         let visibleRecipes = filteredAndSortedRecipes
@@ -56,6 +57,7 @@ struct RecipeListView: View {
 
                 VStack(spacing: 10) {
                     topBar
+                        .opacity(loadingForegroundOpacity)
 
                     settingsCardContainer
 
@@ -75,10 +77,12 @@ struct RecipeListView: View {
                         )
                         .frame(maxWidth: contentMaxWidth, alignment: .leading)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .opacity(loadingForegroundOpacity)
 
                         headerRow(metricColumnWidths: metricColumnWidths, onFilterOrSortChange: {
                             requestScrollToTop()
                         })
+                        .opacity(loadingForegroundOpacity)
 
                         ScrollView {
                             VStack(spacing: 0) {
@@ -108,7 +112,8 @@ struct RecipeListView: View {
                                                         onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                                         searchText: vm.debouncedSearchText,
                                                         showDifficultyColumn: showDifficultyColumn,
-                                                        showImagePreview: vm.isRandomModeActive || showRecipeListImages
+                                                        showImagePreview: vm.isRandomModeActive || showRecipeListImages,
+                                                        foregroundOpacity: loadingForegroundOpacity
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())
@@ -152,6 +157,8 @@ struct RecipeListView: View {
                         }
                     }
                 }
+                .allowsHitTesting(!isOpeningRecipeDetail)
+                .animation(.easeInOut(duration: 0.16), value: isOpeningRecipeDetail)
             }
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
@@ -244,14 +251,17 @@ struct RecipeListView: View {
             priority: URLSessionTask.highPriority
         )
 
-        OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
-
         pendingNavigationTask = Task { @MainActor in
             defer {
                 pendingNavigationTask = nil
             }
 
-            try? await Task.sleep(nanoseconds: 120_000_000)
+            try? await Task.sleep(nanoseconds: 90_000_000)
+            guard !Task.isCancelled else { return }
+
+            OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
+
+            try? await Task.sleep(nanoseconds: 40_000_000)
             guard !Task.isCancelled else { return }
 
             var transaction = Transaction()
@@ -560,6 +570,7 @@ struct RecipeListView: View {
                 .accessibilityLabel(Text(AppLanguage.string("recipes.search.clear", locale: locale)))
             }
         }
+        .opacity(loadingForegroundOpacity)
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
         .frame(minHeight: 44)
