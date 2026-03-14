@@ -11,6 +11,8 @@ struct RecipeRowView: View {
     private let flagToContentSpacing: CGFloat = 6
     private let difficultyDotSize: CGFloat = 12
     private let difficultyToNameExtraSpacing: CGFloat = 2
+    private let previewShowDuration: Double = 0.15
+    private let previewHideDuration: Double = 0.00
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     let recipe: Recipe
     let listIndex: Int
@@ -28,6 +30,8 @@ struct RecipeRowView: View {
     @State private var randomPreviewImage: UIImage?
     @State private var isRandomPreviewLoading: Bool = false
     @State private var isRowVisible: Bool = false
+    @State private var isPreviewHiding: Bool = false
+    @State private var hideLayerResetTask: Task<Void, Never>?
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
@@ -66,24 +70,48 @@ struct RecipeRowView: View {
 
             if showImagePreview {
                 randomImagePreview
-                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.animation(.easeInOut(duration: previewShowDuration)),
+                            removal: .opacity.animation(.easeOut(duration: previewHideDuration))
+                        )
+                    )
             }
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)
         .contentShape(Rectangle())
-        .animation(.easeInOut(duration: 0.22), value: showImagePreview)
+        .zIndex((showImagePreview || isPreviewHiding) ? 1 : 0)
+        .animation(.easeInOut(duration: 0.14), value: showImagePreview)
         .onAppear {
             isRowVisible = true
+            isPreviewHiding = false
+        }
+        .onChange(of: showImagePreview) { isShowingPreview in
+            hideLayerResetTask?.cancel()
+            guard !isShowingPreview else {
+                isPreviewHiding = false
+                return
+            }
+
+            isPreviewHiding = true
+            let waitNanoseconds = UInt64(previewHideDuration * 1_000_000_000)
+            hideLayerResetTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: waitNanoseconds)
+                guard !Task.isCancelled, !showImagePreview else { return }
+                isPreviewHiding = false
+            }
         }
         .onDisappear {
             isRowVisible = false
+            isRandomPreviewLoading = false
+            hideLayerResetTask?.cancel()
+            isPreviewHiding = false
         }
         .task(id: imageLoadingToken) {
             if showImagePreview && isRowVisible {
                 await loadRandomPreviewImageIfNeeded()
             } else {
-                randomPreviewImage = nil
                 isRandomPreviewLoading = false
             }
         }
@@ -146,40 +174,52 @@ struct RecipeRowView: View {
 
     @ViewBuilder
     private var randomImagePreview: some View {
-        ZStack {
-            AppTheme.secondaryOffWhite
-
-            if let randomPreviewImage {
-                Image(uiImage: randomPreviewImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if isRandomPreviewLoading {
+        if let randomPreviewImage {
+            Image(uiImage: randomPreviewImage)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal, 4)
+        } else if isRandomPreviewLoading {
+            ZStack {
+                AppTheme.secondaryOffWhite
                 ProgressView()
                     .tint(AppTheme.primaryBlue)
                     .controlSize(.large)
             }
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal, 4)
         }
-        .frame(maxWidth: .infinity)
-        .aspectRatio(1, contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.horizontal, 4)
     }
 
     @MainActor
     private func loadRandomPreviewImageIfNeeded() async {
         guard randomPreviewImage == nil else { return }
 
+        isRandomPreviewLoading = true
+
         let maxStaggeredRows = 16
         let staggeredIndex = min(max(0, listIndex), maxStaggeredRows)
         let delayNanoseconds = UInt64(staggeredIndex) * 30_000_000
         if delayNanoseconds > 0 {
             try? await Task.sleep(nanoseconds: delayNanoseconds)
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled else {
+                isRandomPreviewLoading = false
+                return
+            }
         }
 
-        isRandomPreviewLoading = true
         let loadedImage = await RecipeSharedImageLoader.shared.image(for: recipe.imageURL)
+        guard !Task.isCancelled else {
+            isRandomPreviewLoading = false
+            return
+        }
+
         randomPreviewImage = loadedImage
         isRandomPreviewLoading = false
     }
