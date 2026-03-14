@@ -483,18 +483,11 @@ struct RecipeListView: View {
             Button {
                 hasSeenWelcome = false
             } label: {
-                HStack(spacing: 10) {
-                    Text(appDisplayName)
-                        .font(.system(size: 26.4, weight: .semibold))
-                        .foregroundStyle(AppTheme.primaryBlue)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
-
-                    Image("chef_no_background")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 32, height: 32)
-                }
+                Text(appDisplayName)
+                    .font(.system(size: 30.4, weight: .semibold))
+                    .foregroundStyle(AppTheme.primaryBlue)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
