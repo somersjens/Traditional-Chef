@@ -153,6 +153,7 @@
 "recipe.grocery.readAloud.none.en" = "Toutes les courses sont cochées.";
 
 "recipes.randomize" = "Plats aléatoires";
+"recipes.toggleImages" = "Afficher les photos des recettes";
 "recipes.random.new" = "Nouveaux aléatoires";
 "recipes.random.new.starter" = "Nouvelle entrée";
 "recipes.random.new.main" = "Nouveau plat";

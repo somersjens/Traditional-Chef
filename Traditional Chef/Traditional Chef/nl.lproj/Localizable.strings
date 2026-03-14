@@ -154,6 +154,7 @@
 "recipe.grocery.readAloud.none.nl" = "Alle boodschappen zijn afgevinkt.";
 
 "recipes.randomize" = "Willekeurige gerechten";
+"recipes.toggleImages" = "Receptafbeeldingen tonen";
 "recipes.random.new" = "Nieuwe willekeurige";
 "recipes.random.new.starter" = "Nieuw voorgerecht";
 "recipes.random.new.main" = "Nieuw hoofdgerecht";

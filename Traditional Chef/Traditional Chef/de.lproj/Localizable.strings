@@ -154,6 +154,7 @@
 "recipe.grocery.readAloud.none.en" = "Alle Einkäufe sind abgehakt.";
 
 "recipes.randomize" = "Zufallsgerichte";
+"recipes.toggleImages" = "Rezeptbilder anzeigen";
 "recipes.random.new" = "Neue Zufallsauswahl";
 "recipes.random.new.starter" = "Neue Vorspeise";
 "recipes.random.new.main" = "Neues Hauptgericht";

@@ -154,6 +154,7 @@
 "recipe.grocery.readAloud.none.en" = "All groceries are ticked.";
 
 "recipes.randomize" = "Random dishes";
+"recipes.toggleImages" = "Show recipe pictures";
 "recipes.random.new" = "New randoms";
 "recipes.random.new.starter" = "New starter";
 "recipes.random.new.main" = "New main";

@@ -13,6 +13,7 @@ struct RecipeRowView: View {
     private let difficultyToNameExtraSpacing: CGFloat = 2
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     let recipe: Recipe
+    let listIndex: Int
     let listViewValue: RecipeListValue
     let primaryMetricColumnWidth: CGFloat
     let secondaryMetricColumnWidth: CGFloat?
@@ -21,10 +22,11 @@ struct RecipeRowView: View {
     let onToggleFavorite: () -> Void
     let searchText: String
     let showDifficultyColumn: Bool
-    let showRandomImagePreview: Bool
+    let showImagePreview: Bool
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
     @State private var randomPreviewImage: UIImage?
     @State private var isRandomPreviewLoading: Bool = false
+    @State private var isRowVisible: Bool = false
     private var locale: Locale { Locale(identifier: appLanguage) }
 
     var body: some View {
@@ -60,22 +62,33 @@ struct RecipeRowView: View {
                 }
             }
 
-            if showRandomImagePreview {
+            if showImagePreview {
                 randomImagePreview
+                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 4)
         .contentShape(Rectangle())
-        .task(id: showRandomImagePreview) {
-            if showRandomImagePreview {
+        .animation(.easeInOut(duration: 0.22), value: showImagePreview)
+        .onAppear {
+            isRowVisible = true
+        }
+        .onDisappear {
+            isRowVisible = false
+        }
+        .task(id: imageLoadingToken) {
+            if showImagePreview && isRowVisible {
                 await loadRandomPreviewImageIfNeeded()
             } else {
                 randomPreviewImage = nil
                 isRandomPreviewLoading = false
-                RecipeImagePrefetcher.prefetch(urlString: recipe.imageURL)
             }
         }
+    }
+
+    private var imageLoadingToken: String {
+        "\(showImagePreview)-\(isRowVisible)-\(recipe.id)-\(listIndex)"
     }
 
     private func meta(_ text: String, width: CGFloat) -> some View {
@@ -154,6 +167,14 @@ struct RecipeRowView: View {
     @MainActor
     private func loadRandomPreviewImageIfNeeded() async {
         guard randomPreviewImage == nil else { return }
+
+        let maxStaggeredRows = 16
+        let staggeredIndex = min(max(0, listIndex), maxStaggeredRows)
+        let delayNanoseconds = UInt64(staggeredIndex) * 30_000_000
+        if delayNanoseconds > 0 {
+            try? await Task.sleep(nanoseconds: delayNanoseconds)
+            guard !Task.isCancelled else { return }
+        }
 
         isRandomPreviewLoading = true
         let loadedImage = await RecipeSharedImageLoader.shared.image(for: recipe.imageURL)

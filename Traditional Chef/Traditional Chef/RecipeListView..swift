@@ -31,6 +31,7 @@ struct RecipeListView: View {
     @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.totalTime.rawValue
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
     @AppStorage("showDifficultyColumn") private var showDifficultyColumn: Bool = false
+    @AppStorage("showRecipeListImages") private var showRecipeListImages: Bool = false
 
     @State private var showCountryPicker: Bool = false
     @State private var showSettings: Bool = false
@@ -92,12 +93,13 @@ struct RecipeListView: View {
                                             .frame(maxWidth: .infinity, alignment: .center)
                                     } else {
                                         LazyVStack(spacing: 0) {
-                                            ForEach(visibleRecipes) { recipe in
+                                            ForEach(Array(visibleRecipes.enumerated()), id: \.element.id) { index, recipe in
                                                 Button {
                                                     openRecipeDetail(recipe)
                                                 } label: {
                                                     RecipeRowView(
                                                         recipe: recipe,
+                                                        listIndex: index,
                                                         listViewValue: listViewValue,
                                                         primaryMetricColumnWidth: metricColumnWidths.primary,
                                                         secondaryMetricColumnWidth: metricColumnWidths.secondary,
@@ -106,7 +108,7 @@ struct RecipeListView: View {
                                                         onToggleFavorite: { recipeStore.toggleFavorite(recipe) },
                                                         searchText: vm.debouncedSearchText,
                                                         showDifficultyColumn: showDifficultyColumn,
-                                                        showRandomImagePreview: vm.isRandomModeActive
+                                                        showImagePreview: vm.isRandomModeActive || showRecipeListImages
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())
@@ -461,7 +463,13 @@ struct RecipeListView: View {
     }
 
     private var topBar: some View {
-        ZStack {
+        HStack(spacing: 14) {
+            randomizeButton
+            recipeImageToggleButton
+            Spacer()
+            settingsButton
+        }
+        .overlay(alignment: .center) {
             Button {
                 hasSeenWelcome = false
             } label: {
@@ -480,12 +488,6 @@ struct RecipeListView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
-
-            HStack {
-                randomizeButton
-                Spacer()
-                settingsButton
-            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 10)
@@ -512,6 +514,21 @@ struct RecipeListView: View {
         .buttonStyle(.plain)
         .padding(.leading, 8)
         .accessibilityLabel(Text(AppLanguage.string("recipes.randomize", locale: locale)))
+    }
+
+    private var recipeImageToggleButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.22)) {
+                showRecipeListImages.toggle()
+            }
+        } label: {
+            Image(systemName: showRecipeListImages ? "photo.fill" : "photo")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 20, alignment: .center)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(AppLanguage.string("recipes.toggleImages", locale: locale)))
     }
 
     private var searchBar: some View {
