@@ -11,6 +11,8 @@ struct RecipeRowView: View {
     private let flagToContentSpacing: CGFloat = 6
     private let difficultyDotSize: CGFloat = 12
     private let difficultyToNameExtraSpacing: CGFloat = 2
+    private let flagBaselineAdjustment: CGFloat = -2
+    private let difficultyBaselineAdjustment: CGFloat = 5
     private let previewShowDuration: Double = 0.15
     private let previewHideDuration: Double = 0.00
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
@@ -36,14 +38,20 @@ struct RecipeRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: flagToContentSpacing) {
+            HStack(alignment: .firstTextBaseline, spacing: flagToContentSpacing) {
                 Text(FlagEmoji.from(countryCode: recipe.countryCode))
                     .font(.title3)
                     .frame(width: 34, alignment: .center)
+                    .alignmentGuide(.firstTextBaseline) { dimensions in
+                        dimensions[.firstTextBaseline] + flagBaselineAdjustment
+                    }
 
                 if showDifficultyColumn {
                     difficultyDot
                         .frame(width: difficultyColumnWidth, alignment: .leading)
+                        .alignmentGuide(.firstTextBaseline) { dimensions in
+                            dimensions[VerticalAlignment.center] + difficultyBaselineAdjustment
+                        }
                 }
 
                 Text(highlightedName)
