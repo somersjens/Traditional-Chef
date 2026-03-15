@@ -928,16 +928,18 @@ struct RecipeListView: View {
                 title: AppLanguage.string("recipes.random.new", locale: locale),
                 isPrimary: true
             ) {
-                vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
-                requestScrollToTop()
+                withAnimation(nil) {
+                    vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+                }
             }
 
             actionButton(
                 title: AppLanguage.string("recipes.random.undo", locale: locale),
                 isPrimary: false
             ) {
-                vm.clearRandomSelection()
-                requestScrollToTop()
+                withAnimation(nil) {
+                    vm.clearRandomSelection()
+                }
             }
         }
         .frame(maxWidth: 320)

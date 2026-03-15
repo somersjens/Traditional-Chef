@@ -172,29 +172,25 @@ struct RecipeRowView: View {
     }
 
 
-    @ViewBuilder
     private var randomImagePreview: some View {
-        if let randomPreviewImage {
-            Image(uiImage: randomPreviewImage)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .frame(maxWidth: .infinity)
-                .aspectRatio(1, contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal, 4)
-        } else if isRandomPreviewLoading {
-            ZStack {
-                AppTheme.secondaryOffWhite
+        ZStack {
+            AppTheme.secondaryOffWhite
+
+            if let randomPreviewImage {
+                Image(uiImage: randomPreviewImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if isRandomPreviewLoading {
                 ProgressView()
                     .tint(AppTheme.primaryBlue)
                     .controlSize(.large)
             }
-            .frame(maxWidth: .infinity)
-            .aspectRatio(1, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal, 4)
         }
+        .frame(maxWidth: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 4)
     }
 
     @MainActor
