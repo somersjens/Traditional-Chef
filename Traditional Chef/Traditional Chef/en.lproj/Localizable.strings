@@ -106,7 +106,7 @@
 "settings.servings" = "Number of servings";
 "settings.listViewValue" = "Value in listview";
 "settings.timerAutoStop" = "Timer auto stop";
-"settings.difficultyColumn" = "Show difficulty column";
+"settings.difficultyColumn" = "Difficulty column";
 "recipes.column.difficulty" = "Diff";
 
 "grocery.sortLabel.useOrder" = "Use order";
