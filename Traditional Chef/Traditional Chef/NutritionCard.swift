@@ -76,7 +76,7 @@ struct NutritionCard: View {
                         isExpanded.toggle()
                     }
                 } label: {
-                    Text("\(recipe.calories) kcal")
+                    Text("\(caloriesPerPortionText(recipe.calories)) kcal")
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
                         .lineLimit(1)
@@ -122,7 +122,7 @@ struct NutritionCard: View {
                         nutritionRow(
                             labelKey: "recipe.nutrition.energy",
                             perServing: kcalText(recipe.nutrition?.energyKcal),
-                            per100g: kcalText(recipe.nutrition?.energyKcal, multiplier: per100gMultiplier)
+                            per100g: kcalText(recipe.nutrition?.energyKcal, multiplier: per100gMultiplier, roundToWholeNumber: true)
                         )
                         dividerRow
                         nutritionRow(
@@ -254,12 +254,27 @@ struct NutritionCard: View {
             .frame(maxHeight: .infinity)
     }
 
-    private func kcalText(_ value: Int?, multiplier: Double? = nil) -> String {
+    private func kcalText(_ value: Int?, multiplier: Double? = nil, roundToWholeNumber: Bool = false) -> String {
         guard let value else { return "x" }
         let scaled = multiplier.map { Double(value) * $0 } ?? Double(value)
-        return "\(formattedNumber(scaled)) kcal"
+        let formatted = roundToWholeNumber
+            ? formattedCaloriesRoundedToWhole(scaled)
+            : formattedCaloriesRoundedToNearestTen(scaled)
+        return "\(formatted) kcal"
     }
 
+    private func caloriesPerPortionText(_ calories: Int) -> String {
+        formattedCaloriesRoundedToNearestTen(Double(calories))
+    }
+
+    private func formattedCaloriesRoundedToNearestTen(_ value: Double) -> String {
+        let rounded = (value / 10).rounded() * 10
+        return String(Int(rounded))
+    }
+
+    private func formattedCaloriesRoundedToWhole(_ value: Double) -> String {
+        String(Int(value.rounded()))
+    }
     private func gramsText(_ value: Double?, multiplier: Double? = nil) -> String {
         guard let value else { return "x" }
         let scaled = multiplier.map { value * $0 } ?? value

@@ -167,8 +167,13 @@ struct RecipeRowView: View {
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:
-            return "\(recipe.calories)"
+            return formattedCaloriesPerPortion(recipe.calories)
         }
+    }
+
+    private func formattedCaloriesPerPortion(_ calories: Int) -> String {
+        let roundedToNearestTen = (Double(calories) / 10).rounded() * 10
+        return String(Int(roundedToNearestTen))
     }
 
 
