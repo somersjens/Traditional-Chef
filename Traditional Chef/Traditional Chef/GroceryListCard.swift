@@ -191,11 +191,11 @@ struct GroceryListCard: View {
 
                 if isResettingChecks {
                     VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ingredientList(resetDisplayIngredients, checkedState: checked, isCheckedSection: false, dimChecked: true)
+                        ingredientList(resetDisplayIngredients, isCheckedSection: false, dimChecked: true)
                     }
                 } else {
                     VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                        ingredientList(uncheckedIngredients, checkedState: [], isCheckedSection: false, dimChecked: false)
+                        ingredientList(uncheckedIngredients, isCheckedSection: false, dimChecked: false)
                     }
 
                     if !checkedIngredients.isEmpty {
@@ -204,7 +204,7 @@ struct GroceryListCard: View {
                         }
 
                         VStack(alignment: .leading, spacing: ingredientRowSpacing) {
-                            ingredientList(checkedIngredients, checkedState: checked, isCheckedSection: true, dimChecked: true)
+                            ingredientList(checkedIngredients, isCheckedSection: true, dimChecked: true)
                         }
                     }
                 }
@@ -395,8 +395,11 @@ struct GroceryListCard: View {
         }
     }
 
+    private var visibleIngredients: [Ingredient] {
+        recipe.ingredients.filter { !($0.isInvisible ?? false) }
+    }
+
     private var sortedAll: [Ingredient] {
-        let visibleIngredients = recipe.ingredients.filter { !($0.isInvisible ?? false) }
         let sourceIngredients = groupByDishPart ? visibleIngredients : mergedIngredients(visibleIngredients)
         switch sortMode {
         case .useOrder:
@@ -426,16 +429,15 @@ struct GroceryListCard: View {
     }
 
     private var uncheckedIngredients: [Ingredient] {
-        sortedAll.filter { !checked.contains($0.id) }
+        sortedAll.filter { !isIngredientChecked($0) }
     }
 
     private var checkedIngredients: [Ingredient] {
-        sortedAll.filter { checked.contains($0.id) }
+        sortedAll.filter(isIngredientChecked)
     }
 
     private func ingredientList(
         _ ingredients: [Ingredient],
-        checkedState: Set<String>,
         isCheckedSection: Bool,
         dimChecked: Bool
     ) -> some View {
@@ -449,15 +451,17 @@ struct GroceryListCard: View {
                             .padding(.top, 6)
 
                         ForEach(group.items) { ing in
-                            ingredientRow(ing, isChecked: checkedState.contains(ing.id) || isCheckedSection)
-                                .opacity(dimChecked && checkedState.contains(ing.id) ? 0.65 : 1)
+                            let rowChecked = isIngredientChecked(ing)
+                            ingredientRow(ing, isChecked: rowChecked || isCheckedSection)
+                                .opacity(dimChecked && rowChecked ? 0.65 : 1)
                         }
                     }
                 }
             } else {
                 ForEach(ingredients) { ing in
-                    ingredientRow(ing, isChecked: checkedState.contains(ing.id) || isCheckedSection)
-                        .opacity(dimChecked && checkedState.contains(ing.id) ? 0.65 : 1)
+                    let rowChecked = isIngredientChecked(ing)
+                    ingredientRow(ing, isChecked: rowChecked || isCheckedSection)
+                        .opacity(dimChecked && rowChecked ? 0.65 : 1)
                 }
             }
         }
@@ -478,9 +482,10 @@ struct GroceryListCard: View {
     }
 
     private func mergedIngredients(_ ingredients: [Ingredient]) -> [Ingredient] {
-        var byId: [String: Ingredient] = [:]
+        var byName: [String: Ingredient] = [:]
         for ingredient in ingredients {
-            if var existing = byId[ingredient.id] {
+            let groupingKey = ingredientGroupingKey(for: ingredient)
+            if var existing = byName[groupingKey] {
                 existing = Ingredient(
                     id: existing.id,
                     nameKey: existing.nameKey,
@@ -494,16 +499,16 @@ struct GroceryListCard: View {
                     useOrder: min(existing.useOrder, ingredient.useOrder),
                     customAmountValue: nil,
                     customAmountLabelKey: nil,
-                    displayMode: existing.displayMode ?? ingredient.displayMode,
+                    displayMode: preferredDisplayMode(primary: existing.displayMode, secondary: ingredient.displayMode),
                     gramsPerMl: existing.gramsPerMl ?? ingredient.gramsPerMl,
                     gramsPerTsp: existing.gramsPerTsp ?? ingredient.gramsPerTsp,
                     gramsPerCount: existing.gramsPerCount ?? ingredient.gramsPerCount,
                     allowCup: existing.allowCup,
                     isInvisible: existing.isInvisible ?? ingredient.isInvisible
                 )
-                byId[ingredient.id] = existing
+                byName[groupingKey] = existing
             } else {
-                byId[ingredient.id] = Ingredient(
+                byName[groupingKey] = Ingredient(
                     id: ingredient.id,
                     nameKey: ingredient.nameKey,
                     grams: ingredient.grams,
@@ -525,7 +530,36 @@ struct GroceryListCard: View {
                 )
             }
         }
-        return Array(byId.values)
+        return Array(byName.values)
+    }
+
+    private func preferredDisplayMode(primary: IngredientDisplayMode?, secondary: IngredientDisplayMode?) -> IngredientDisplayMode? {
+        let first = primary ?? secondary
+        guard primary != .weight else { return primary }
+        if secondary == .weight {
+            return .weight
+        }
+        return first
+    }
+
+    private func ingredientGroupingKey(for ingredient: Ingredient) -> String {
+        let localizedName = AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+        return localizedName
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: locale)
+    }
+
+    private func linkedIngredientIds(for ingredient: Ingredient) -> [String] {
+        let groupingKey = ingredientGroupingKey(for: ingredient)
+        return visibleIngredients
+            .filter { ingredientGroupingKey(for: $0) == groupingKey }
+            .map(\.id)
+    }
+
+    private func isIngredientChecked(_ ingredient: Ingredient) -> Bool {
+        let ids = linkedIngredientIds(for: ingredient)
+        guard !ids.isEmpty else { return false }
+        return ids.allSatisfy { checked.contains($0) }
     }
 
     private func ingredientRow(_ ing: Ingredient, isChecked: Bool) -> some View {
@@ -568,10 +602,11 @@ struct GroceryListCard: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
+            let linkedIds = linkedIngredientIds(for: ing)
             if isChecked {
-                checked.remove(ing.id)
+                linkedIds.forEach { checked.remove($0) }
             } else {
-                checked.insert(ing.id)
+                linkedIds.forEach { checked.insert($0) }
             }
         }
     }
@@ -614,8 +649,7 @@ struct GroceryListCard: View {
     }
 
     private var uniqueVisibleIngredientCount: Int {
-        let visibleIngredients = recipe.ingredients.filter { !($0.isInvisible ?? false) }
-        return Set(visibleIngredients.map(\.id)).count
+        Set(visibleIngredients.map(\.id)).count
     }
 
     private var checkedStorageKey: String {
@@ -623,7 +657,7 @@ struct GroceryListCard: View {
     }
 
     private var visibleIngredientIds: Set<String> {
-        Set(orderedIngredientIds)
+        Set(visibleIngredients.map(\.id))
     }
 
     private func loadChecked() -> Set<String> {
@@ -642,11 +676,11 @@ struct GroceryListCard: View {
     private func startSequentialUncheck() {
         isResettingChecks = true
         resetDisplayIngredients = sortedAll
-        let idsToClear = orderedIngredientIds.filter { checked.contains($0) }
+        let idsToClear = orderedIngredientIds.filter { $0.allSatisfy { checked.contains($0) } }
         let stepDelay = 0.08
-        for (index, id) in idsToClear.enumerated() {
+        for (index, ids) in idsToClear.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + (stepDelay * Double(index))) {
-                _ = checked.remove(id)
+                ids.forEach { checked.remove($0) }
             }
         }
         let totalDelay = (stepDelay * Double(idsToClear.count)) + 0.13
@@ -656,21 +690,16 @@ struct GroceryListCard: View {
         }
     }
 
-    private var orderedIngredientIds: [String] {
-        var seen: Set<String> = []
+    private var orderedIngredientIds: [[String]] {
         if groupByDishPart {
             return groupedIngredients(sortedAll).flatMap { group in
                 group.items.compactMap { ingredient in
-                    guard !seen.contains(ingredient.id) else { return nil }
-                    seen.insert(ingredient.id)
-                    return ingredient.id
+                    [ingredient.id]
                 }
             }
         }
-        return sortedAll.compactMap { ingredient in
-            guard !seen.contains(ingredient.id) else { return nil }
-            seen.insert(ingredient.id)
-            return ingredient.id
+        return sortedAll.map { ingredient in
+            linkedIngredientIds(for: ingredient)
         }
     }
 
