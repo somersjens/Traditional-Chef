@@ -244,6 +244,57 @@ final class GroceryMeasurementFormatterTests: XCTestCase {
         XCTAssertEqual(amount.unit, "pcs")
     }
 
+
+    func testPcsModeUsesLocalizedShortUnitLabels() {
+        let ing = ingredient(grams: 100, mode: .pcs, gramsPerCount: 40)
+
+        let dutch = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            locale: Locale(identifier: "nl_NL"),
+            localizedCustomLabel: { _ in "" }
+        )
+        let german = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            locale: Locale(identifier: "de_DE"),
+            localizedCustomLabel: { _ in "" }
+        )
+        let french = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            locale: Locale(identifier: "fr_FR"),
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(dutch.unit, "st.")
+        XCTAssertEqual(german.unit, "Stk.")
+        XCTAssertEqual(french.unit, "pces")
+    }
+
+    func testMeasurementModeUsesFullGramLabel() {
+        let ing = ingredient(grams: 400, mode: .weight)
+        let amount = GroceryMeasurementFormatter.formattedAmount(
+            for: ing,
+            servings: 4,
+            baseServings: 4,
+            measurementUnit: .metric,
+            showAllMeasurements: false,
+            localizedCustomLabel: { _ in "" }
+        )
+
+        XCTAssertEqual(amount.unit, "gram")
+    }
+
     func testCustomAmountOverridesWhenAllMeasurementsDisabled() {
         let ing = ingredient(
             grams: 100,

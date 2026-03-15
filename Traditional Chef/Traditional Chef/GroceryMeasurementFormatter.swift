@@ -18,7 +18,7 @@ struct GroceryMeasurementFormatter {
         let grams = scaledGrams(ingredient.grams, servings: servings, baseServings: baseServings)
 
         if showAllMeasurements {
-            return metricWeightAmount(grams, locale: locale)
+            return metricWeightAmount(grams, locale: locale, useAbbreviatedGram: true)
         }
 
         if let customValue = ingredient.customAmountValue,
@@ -96,7 +96,7 @@ struct GroceryMeasurementFormatter {
         let mode = ingredient.displayMode ?? .weight
         switch mode {
         case .pcs:
-            return pieceAmount(for: ingredient, grams: grams, locale: locale) ?? metricWeightAmount(grams, locale: locale)
+            return pieceAmount(for: ingredient, grams: grams, locale: locale) ?? metricWeightAmount(grams, locale: locale, useAbbreviatedGram: false)
         case .liquid:
             if let gramsPerMl = ingredient.gramsPerMl, gramsPerMl > 0 {
                 let ml = grams / gramsPerMl
@@ -105,11 +105,11 @@ struct GroceryMeasurementFormatter {
                 }
                 return DisplayAmount(value: formatNumber(ml, locale: locale), unit: "ml")
             }
-            return metricWeightAmount(grams, locale: locale)
+            return metricWeightAmount(grams, locale: locale, useAbbreviatedGram: false)
         case .spoon:
             return spoonAmount(for: ingredient, grams: grams, unit: .metric, locale: locale)
         case .weight:
-            return metricWeightAmount(grams, locale: locale)
+            return metricWeightAmount(grams, locale: locale, useAbbreviatedGram: false)
         }
     }
 
@@ -129,13 +129,13 @@ struct GroceryMeasurementFormatter {
             case .us, .ukImp:
                 return imperialWeightAmount(grams, locale: locale)
             case .metric, .auNz, .jp:
-                return metricWeightAmount(grams, locale: locale)
+                return metricWeightAmount(grams, locale: locale, useAbbreviatedGram: false)
             }
         }
     }
 
-    private static func metricWeightAmount(_ grams: Double, locale: Locale) -> DisplayAmount {
-        DisplayAmount(value: formatNumber(grams, locale: locale), unit: "g")
+    private static func metricWeightAmount(_ grams: Double, locale: Locale, useAbbreviatedGram: Bool) -> DisplayAmount {
+        DisplayAmount(value: formatNumber(grams, locale: locale), unit: useAbbreviatedGram ? "g" : "gram")
     }
 
     private static func imperialWeightAmount(_ grams: Double, locale: Locale) -> DisplayAmount {
@@ -147,17 +147,31 @@ struct GroceryMeasurementFormatter {
     }
 
     private static func pieceAmount(for ingredient: Ingredient, grams: Double, locale: Locale) -> DisplayAmount? {
+        let pieceUnit = shortPieceUnit(for: locale)
         if let gramsPerCount = ingredient.gramsPerCount, gramsPerCount > 0 {
             let count = max(0.25, (grams / gramsPerCount).rounded(toNearest: 0.25))
-            return DisplayAmount(value: formatNumber(count, locale: locale), unit: "pcs")
+            return DisplayAmount(value: formatNumber(count, locale: locale), unit: pieceUnit)
         }
 
         if ingredient.grams > 0 {
             let count = max(0.25, (grams / ingredient.grams).rounded(toNearest: 0.25))
-            return DisplayAmount(value: formatNumber(count, locale: locale), unit: "pcs")
+            return DisplayAmount(value: formatNumber(count, locale: locale), unit: pieceUnit)
         }
 
         return nil
+    }
+
+    private static func shortPieceUnit(for locale: Locale) -> String {
+        switch locale.language.languageCode?.identifier.lowercased() {
+        case "nl":
+            return "stuks"
+        case "de":
+            return "Stk."
+        case "fr":
+            return "pces"
+        default:
+            return "pcs"
+        }
     }
 
     private static func spoonAmount(for ingredient: Ingredient, grams: Double, unit: MeasurementUnit, locale: Locale) -> DisplayAmount {

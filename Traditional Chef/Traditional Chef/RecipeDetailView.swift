@@ -1220,14 +1220,26 @@ private enum StepIngredientReferenceFormatter {
             locale: locale,
             localizedCustomLabel: { AppLanguage.string(String.LocalizationValue($0), locale: locale) }
         )
-        let unit = stepDescriptionUnitLabel(for: amount.unit)
-        return "\(ingredientName) (\(amount.value) \(unit))"
+        let unit = stepDescriptionUnitLabel(for: amount.unit, locale: locale)
+        return "\(ingredientName) (\(amount.value)\u{00A0}\(unit))"
     }
 
-    private static func stepDescriptionUnitLabel(for unit: String) -> String {
+    private static func stepDescriptionUnitLabel(for unit: String, locale: Locale) -> String {
+        let languageCode = locale.language.languageCode?.identifier.lowercased() ?? "en"
         switch unit.lowercased() {
         case "l":
             return "liter"
+        case "pcs", "st.", "stk.", "pces":
+            switch languageCode {
+            case "nl":
+                return "stuks"
+            case "de":
+                return "Stück"
+            case "fr":
+                return "pièces"
+            default:
+                return "pieces"
+            }
         default:
             return unit
         }
