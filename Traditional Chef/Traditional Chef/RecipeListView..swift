@@ -28,7 +28,8 @@ struct RecipeListView: View {
     @AppStorage("measurementUnit") private var measurementUnitRaw: String = ""
     @AppStorage(ReadVoicePreference.appStorageKey) private var readVoicePreferenceRaw: String = ReadVoicePreference.defaultValue.rawValue
     @AppStorage("defaultServings") private var defaultServings: Int = 4
-    @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.totalTime.rawValue
+    @AppStorage("listViewValue") private var listViewValueRaw: String = RecipeListValue.ingredients.rawValue
+    @AppStorage("hasShownFirstImpressionRandom") private var hasShownFirstImpressionRandom: Bool = false
     @AppStorage("timerAutoStop") private var timerAutoStop: Bool = true
     @AppStorage("showDifficultyColumn") private var showDifficultyColumn: Bool = false
     @AppStorage("showRecipeListImages") private var showRecipeListImages: Bool = false
@@ -171,6 +172,7 @@ struct RecipeListView: View {
                 _ = RecipeDetailView.preparedKnifeImage
                 isOpeningRecipeDetail = false
                 openingRecipeID = nil
+                applyFirstImpressionIfNeeded()
             }
             .onChange(of: vm.debouncedSearchText) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
@@ -228,7 +230,7 @@ struct RecipeListView: View {
     }
 
     private var listViewValue: RecipeListValue {
-        RecipeListValue(rawValue: listViewValueRaw) ?? .totalTime
+        RecipeListValue(rawValue: listViewValueRaw) ?? .ingredients
     }
 
     private func rowForegroundOpacity(for recipe: Recipe) -> CGFloat {
@@ -245,6 +247,14 @@ struct RecipeListView: View {
         if MeasurementUnit(rawValue: measurementUnitRaw) == nil {
             measurementUnitRaw = MeasurementUnit.default(for: appLanguage).rawValue
         }
+    }
+
+    private func applyFirstImpressionIfNeeded() {
+        guard !hasShownFirstImpressionRandom else { return }
+        guard recipeStore.recipes.contains(where: { $0.id == "it_spaghetti_alla_carbonara" }) else { return }
+
+        vm.setRandomSelection(to: "it_spaghetti_alla_carbonara")
+        hasShownFirstImpressionRandom = true
     }
 
     @MainActor

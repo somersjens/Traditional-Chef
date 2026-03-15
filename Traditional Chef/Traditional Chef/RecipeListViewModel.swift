@@ -99,6 +99,11 @@ final class RecipeListViewModel: ObservableObject {
         randomSelectionIDs = []
     }
 
+    func setRandomSelection(to recipeID: String) {
+        isRandomModeActive = true
+        randomSelectionIDs = [recipeID]
+    }
+
     func beginSearch() {
         guard isRandomModeActive else { return }
         clearRandomSelection()
