@@ -27,7 +27,7 @@ final class RecipeListViewModelTests: XCTestCase {
         )
     }
 
-    func testRandomSelectionWithoutCategoryReturnsStarterMainDessert() {
+    func testRandomSelectionWithoutCategoryReturnsSingleDish() {
         let vm = RecipeListViewModel()
         let recipes = [
             recipe(id: "s1", category: .starter),
@@ -38,7 +38,8 @@ final class RecipeListViewModelTests: XCTestCase {
         vm.applyRandomSelection(from: recipes, selectedCategory: nil)
 
         XCTAssertTrue(vm.isRandomModeActive)
-        XCTAssertEqual(Set(vm.randomSelectionIDs), Set(["s1", "m1", "d1"]))
+        XCTAssertEqual(vm.randomSelectionIDs.count, 1)
+        XCTAssertTrue(["s1", "m1", "d1"].contains(vm.randomSelectionIDs[0]))
     }
 
     func testRandomSelectionWithCategoryOnlyReturnsOneDish() {

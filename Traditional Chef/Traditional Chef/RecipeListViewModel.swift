@@ -61,24 +61,11 @@ final class RecipeListViewModel: ObservableObject {
     }
 
     func applyRandomSelection(from recipes: [Recipe], selectedCategory: RecipeCategory?) {
-        let categories: [RecipeCategory] = {
-            if let selectedCategory {
-                return [selectedCategory]
-            }
-            return RecipeCategory.filterCategories
-        }()
-
-        var generatedIDs: [String] = []
-        for category in categories {
-            let pool = recipes
-                .filter { $0.category == category }
-                .map(\.id)
-                .sorted()
-            guard let id = nextID(from: pool, key: category.rawValue) else { continue }
-            generatedIDs.append(id)
-        }
-
-        randomSelectionIDs = generatedIDs
+        let pool = recipes
+            .map(\.id)
+            .sorted()
+        let pointerKey = selectedCategory?.rawValue ?? "all"
+        randomSelectionIDs = nextID(from: pool, key: pointerKey).map { [$0] } ?? []
         isRandomModeActive = true
     }
 
@@ -98,10 +85,7 @@ final class RecipeListViewModel: ObservableObject {
             return
         }
 
-        randomSelectionIDs.removeAll { recipeID in
-            recipes.first(where: { $0.id == recipeID })?.category == category
-        }
-        randomSelectionIDs.append(newID)
+        randomSelectionIDs = [newID]
     }
 
     func clearRandomSelection() {

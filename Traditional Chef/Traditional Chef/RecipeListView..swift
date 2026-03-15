@@ -42,7 +42,6 @@ struct RecipeListView: View {
     @State private var pendingNavigationTask: Task<Void, Never>?
     @State private var isOpeningRecipeDetail: Bool = false
     @State private var openingRecipeID: String?
-    @State private var randomControlMaxButtonWidth: CGFloat = 0
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
     private var selectedCategoryFilter: RecipeCategory? { vm.selectedCategories.first }
@@ -190,13 +189,6 @@ struct RecipeListView: View {
             }
             .onChange(of: appLanguage) { _ in
                 ensureMeasurementUnit()
-                randomControlMaxButtonWidth = 0
-            }
-            .onChange(of: vm.selectedCategories) { _ in
-                randomControlMaxButtonWidth = 0
-            }
-            .onChange(of: vm.isRandomModeActive) { _ in
-                randomControlMaxButtonWidth = 0
             }
             .sheet(isPresented: $showCountryPicker) {
                 CountryPickerView(
@@ -950,9 +942,6 @@ struct RecipeListView: View {
         }
         .frame(maxWidth: 320)
         .frame(maxWidth: .infinity, alignment: .center)
-        .onPreferenceChange(RandomControlButtonWidthPreferenceKey.self) { width in
-            randomControlMaxButtonWidth = width
-        }
     }
 
     private func actionButton(title: String, isPrimary: Bool, action: @escaping () -> Void) -> some View {
@@ -961,15 +950,9 @@ struct RecipeListView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(isPrimary ? AppTheme.pageBackground : AppTheme.primaryBlue)
                 .lineLimit(1)
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 9)
-                .background(
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: RandomControlButtonWidthPreferenceKey.self, value: proxy.size.width)
-                    }
-                )
-                .frame(width: randomControlMaxButtonWidth > 0 ? randomControlMaxButtonWidth : nil)
-                .frame(maxWidth: .infinity)
                 .background(isPrimary ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
                 .clipShape(Capsule())
                 .overlay(
@@ -1206,13 +1189,6 @@ private struct SettingsCardHeightPreferenceKey: PreferenceKey {
     }
 }
 
-private struct RandomControlButtonWidthPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-    }
-}
 
 
 private struct PopoverCompactAdaptationModifier: ViewModifier {
