@@ -60,6 +60,12 @@ final class RecipeListViewModel: ObservableObject {
         }
     }
 
+    func setCountrySelection(countryCode: String?, continent: Continent?) {
+        selectedCountryCode = countryCode
+        selectedContinent = continent
+        selectedCategories.removeAll()
+    }
+
     func applyRandomSelection(from recipes: [Recipe], selectedCategory: RecipeCategory?) {
         let pool = recipes
             .map(\.id)

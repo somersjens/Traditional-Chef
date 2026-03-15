@@ -56,6 +56,17 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertTrue(["m1", "m2"].contains(vm.randomSelectionIDs[0]))
     }
 
+
+    func testSetCountrySelectionClearsCategoryFilters() {
+        let vm = RecipeListViewModel()
+        vm.selectedCategories = [.starter]
+
+        vm.setCountrySelection(countryCode: "JP", continent: .asia)
+
+        XCTAssertEqual(vm.selectedCountryCode, "JP")
+        XCTAssertEqual(vm.selectedContinent, .asia)
+        XCTAssertTrue(vm.selectedCategories.isEmpty)
+    }
     func testPseudoRandomBouncesThroughSequence() {
         let vm = RecipeListViewModel()
         let recipes = [

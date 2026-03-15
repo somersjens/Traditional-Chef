@@ -197,8 +197,10 @@ struct RecipeListView: View {
                     selected: vm.selectedCountryCode,
                     selectedContinent: vm.selectedContinent,
                     onSelect: { countryCode, continent in
-                        vm.selectedCountryCode = countryCode
-                        vm.selectedContinent = continent
+                        vm.setCountrySelection(countryCode: countryCode, continent: continent)
+                        if vm.isRandomModeActive {
+                            vm.applyRandomSelection(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+                        }
                         requestScrollToTop()
                     }
                 )
