@@ -14,7 +14,10 @@ struct CountryPickerView: View {
 
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.defaultCode()
+    @State private var searchText: String = ""
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private let englishLocale = Locale(identifier: "en")
+    private let dutchLocale = Locale(identifier: "nl")
 
     var body: some View {
         NavigationStack {
@@ -31,9 +34,14 @@ struct CountryPickerView: View {
                 }
                 .listRowBackground(AppTheme.searchBarBackground)
 
-                if !availableContinents.isEmpty {
+                TextField(AppLanguage.string("recipes.countrySearch", locale: locale), text: $searchText)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .listRowBackground(AppTheme.searchBarBackground)
+
+                if !filteredContinents.isEmpty {
                     Section(AppLanguage.string("recipes.pickContinent", locale: locale)) {
-                        ForEach(availableContinents) { continent in
+                        ForEach(filteredContinents) { continent in
                             Button {
                                 onSelect(nil, continent)
                                 dismiss()
@@ -53,25 +61,34 @@ struct CountryPickerView: View {
                     .listRowBackground(AppTheme.searchBarBackground)
                 }
 
-                Section(AppLanguage.string("recipes.pickCountry", locale: locale)) {
-                    ForEach(allCountryCodes, id: \.self) { code in
-                        Button {
-                            onSelect(code, nil)
-                            dismiss()
-                        } label: {
-                            HStack {
-                                Text("\(FlagEmoji.from(countryCode: code)) \(countryName(for: code))")
-                                Spacer()
-                                selectionStatus(
-                                    count: countryRecipeCounts[code.uppercased(), default: 0],
-                                    isSelected: selected == code
-                                )
+                if !filteredCountryCodes.isEmpty {
+                    Section(AppLanguage.string("recipes.pickCountry", locale: locale)) {
+                        ForEach(filteredCountryCodes, id: \.self) { code in
+                            Button {
+                                onSelect(code, nil)
+                                dismiss()
+                            } label: {
+                                HStack {
+                                    Text("\(FlagEmoji.from(countryCode: code)) \(countryName(for: code))")
+                                    Spacer()
+                                    selectionStatus(
+                                        count: countryRecipeCounts[code.uppercased(), default: 0],
+                                        isSelected: selected == code
+                                    )
+                                }
                             }
+                            .listRowBackground(AppTheme.searchBarBackground)
                         }
-                        .listRowBackground(AppTheme.searchBarBackground)
                     }
+                    .listRowBackground(AppTheme.searchBarBackground)
                 }
-                .listRowBackground(AppTheme.searchBarBackground)
+
+                if !searchQuery.isEmpty && filteredContinents.isEmpty && filteredCountryCodes.isEmpty {
+                    Text(AppLanguage.string("recipes.countrySearch.noMatches", locale: locale))
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.primaryBlue.opacity(0.8))
+                        .listRowBackground(AppTheme.searchBarBackground)
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .scrollContentBackground(.hidden)
@@ -109,6 +126,47 @@ struct CountryPickerView: View {
         Continent.allCases.filter { continent in
             allCountryCodes.contains { continent.contains(countryCode: $0) }
         }
+    }
+
+    private var searchQuery: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var filteredCountryCodes: [String] {
+        guard !searchQuery.isEmpty else { return allCountryCodes }
+
+        return allCountryCodes.filter { code in
+            localizedCountryNames(for: code).contains { name in
+                name.localizedCaseInsensitiveContains(searchQuery)
+            }
+        }
+    }
+
+    private var filteredContinents: [Continent] {
+        guard !searchQuery.isEmpty else { return availableContinents }
+
+        return availableContinents.filter { continent in
+            localizedContinentNames(for: continent).contains { name in
+                name.localizedCaseInsensitiveContains(searchQuery)
+            }
+        }
+    }
+
+    private func localizedCountryNames(for code: String) -> [String] {
+        [
+            locale.localizedString(forRegionCode: code),
+            englishLocale.localizedString(forRegionCode: code),
+            dutchLocale.localizedString(forRegionCode: code)
+        ]
+        .compactMap { $0 }
+    }
+
+    private func localizedContinentNames(for continent: Continent) -> [String] {
+        [
+            AppLanguage.string(continent.nameKey, locale: locale),
+            AppLanguage.string(continent.nameKey, locale: englishLocale),
+            AppLanguage.string(continent.nameKey, locale: dutchLocale)
+        ]
     }
 
     private var countryRecipeCounts: [String: Int] {

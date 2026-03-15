@@ -16,6 +16,8 @@
 "recipes.allCountries" = "All countries included";
 "recipes.pickContinent" = "Pick a continent";
 "recipes.pickCountry" = "Pick a country";
+"recipes.countrySearch" = "Search countries or continents";
+"recipes.countrySearch.noMatches" = "No countries or continents match your search.";
 "recipes.countryFilterTitle" = "Countries";
 "recipes.favoritesOnly" = "Favorites only";
 
