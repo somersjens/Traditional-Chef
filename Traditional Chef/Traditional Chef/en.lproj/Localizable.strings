@@ -83,6 +83,8 @@
 "grocery.copiedToClipboard" = "Copied to clipboard";
 "grocery.option.allWeight" = "All weight";
 
+"grocery.option.allInGrams" = "All in grams";
+"grocery.option.allInOunces" = "All in ounces";
 "grocery.option.partOfDish" = "Part of dish";
 "settings.title" = "Settings";
 "settings.language" = "Language for recipes";

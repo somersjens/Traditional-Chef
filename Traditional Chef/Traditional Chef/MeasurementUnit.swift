@@ -56,8 +56,10 @@ enum MeasurementUnit: String, CaseIterable, Identifiable {
     var groceryOptionKey: String {
         switch self {
         case .metric:
-            return "grocery.option.allWeight"
-        case .us, .ukImp, .auNz, .jp:
+            return "grocery.option.allInGrams"
+        case .ukImp:
+            return "grocery.option.allInOunces"
+        case .us, .auNz, .jp:
             return "grocery.option.allWeight"
         }
     }

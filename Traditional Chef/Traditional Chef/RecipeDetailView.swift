@@ -893,7 +893,7 @@ struct RecipeDetailView: View {
                             Button {
                                 groceryAllMeasurements.toggle()
                             } label: {
-                                Text(AppLanguage.string("grocery.option.allWeight", locale: locale))
+                                Text(AppLanguage.string(String.LocalizationValue(measurementUnit.groceryOptionKey), locale: locale))
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(groceryAllMeasurements ? Color.white : AppTheme.primaryBlue)
                                     .frame(maxWidth: .infinity, minHeight: 22.4)
