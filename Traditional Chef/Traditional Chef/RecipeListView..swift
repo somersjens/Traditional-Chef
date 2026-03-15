@@ -316,8 +316,8 @@ struct RecipeListView: View {
         }
 
         if listViewValue == .prepAndWaitingTime {
-            let primaryValues = recipes.map { "\($0.totalActiveMinutes)" }
-            let secondaryValues = recipes.map { "\(max(0, $0.totalMinutes - $0.totalActiveMinutes))" }
+            let primaryValues = recipes.map { TimeDisplayFormatter.columnText(minutes: $0.totalActiveMinutes, locale: locale) }
+            let secondaryValues = recipes.map { TimeDisplayFormatter.columnText(minutes: max(0, $0.totalMinutes - $0.totalActiveMinutes), locale: locale) }
             return MetricColumnWidths(
                 primary: width(
                     for: primaryValues + [AppLanguage.string("recipes.column.prepShort", locale: locale)],
@@ -341,11 +341,11 @@ struct RecipeListView: View {
     private func listValueText(for recipe: Recipe) -> String {
         switch listViewValue {
         case .totalTime:
-            return "\(recipe.totalMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalMinutes, locale: locale)
         case .prepTime:
-            return "\(recipe.totalActiveMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalActiveMinutes, locale: locale)
         case .prepAndWaitingTime:
-            return "\(recipe.totalActiveMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalActiveMinutes, locale: locale)
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:

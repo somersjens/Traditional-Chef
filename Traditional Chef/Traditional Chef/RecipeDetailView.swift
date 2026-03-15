@@ -747,13 +747,11 @@ struct RecipeDetailView: View {
     private var stepsCard: some View {
         let totalActiveMinutes = recipe.totalActiveMinutes
         let totalPassiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
-        let format = AppLanguage.string("recipe.steps.summary", locale: locale)
-        let summary = String(
-            format: format,
-            locale: locale,
-            totalActiveMinutes,
-            totalPassiveMinutes,
-            recipe.totalMinutes
+        let summary = TimeDisplayFormatter.summaryEquation(
+            activeMinutes: totalActiveMinutes,
+            passiveMinutes: totalPassiveMinutes,
+            totalMinutes: recipe.totalMinutes,
+            locale: locale
         )
         let headerText = stepsHeaderText(summary: summary)
         let contentSpacing: CGFloat = isStepsExpanded ? 9 : 0
@@ -839,7 +837,7 @@ struct RecipeDetailView: View {
             } label: {
                 Text(headerText)
                     .font(.subheadline)
-                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.75))
+                    .foregroundStyle(stepsHeaderHighlightColor)
                     .lineLimit(1)
             }
             .buttonStyle(.plain)
@@ -1047,16 +1045,12 @@ struct RecipeDetailView: View {
     }
 
     private func formatTimerText(seconds: Int) -> String {
-        if seconds >= 0 {
-            let m = seconds / 60
-            let s = seconds % 60
-            return String(format: "%d:%02d", m, s)
-        } else {
-            let over = abs(seconds)
-            let m = over / 60
-            let s = over % 60
-            return String(format: "-%d:%02d", m, s)
-        }
+        TimeDisplayFormatter.countdownText(seconds: seconds, locale: locale)
+    }
+
+    private var stepsHeaderHighlightColor: Color {
+        let hasRunningTimer = stepTimerSnapshots.values.contains(where: \.isRunning)
+        return hasRunningTimer ? AppTheme.timerActiveGreen : AppTheme.primaryBlue.opacity(0.75)
     }
 
     private var footerLinks: some View {
@@ -1448,16 +1442,7 @@ private struct StepRowView: View {
     }
 
     private func formattedTimerText(_ totalSeconds: Int) -> String {
-        if totalSeconds >= 0 {
-            let m = totalSeconds / 60
-            let s = totalSeconds % 60
-            return String(format: "%d:%02d", m, s)
-        } else {
-            let over = abs(totalSeconds)
-            let m = over / 60
-            let s = over % 60
-            return String(format: "-%d:%02d", m, s)
-        }
+        TimeDisplayFormatter.countdownText(seconds: totalSeconds, locale: locale)
     }
 
 

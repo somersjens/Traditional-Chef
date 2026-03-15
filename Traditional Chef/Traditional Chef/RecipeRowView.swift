@@ -143,8 +143,8 @@ struct RecipeRowView: View {
         case .prepAndWaitingTime:
             let passiveMinutes = max(0, recipe.totalMinutes - recipe.totalActiveMinutes)
             HStack(spacing: metricColumnSpacing) {
-                meta("\(recipe.totalActiveMinutes)", width: primaryMetricColumnWidth)
-                meta("\(passiveMinutes)", width: secondaryMetricColumnWidth ?? primaryMetricColumnWidth)
+                meta(TimeDisplayFormatter.columnText(minutes: recipe.totalActiveMinutes, locale: locale), width: primaryMetricColumnWidth)
+                meta(TimeDisplayFormatter.columnText(minutes: passiveMinutes, locale: locale), width: secondaryMetricColumnWidth ?? primaryMetricColumnWidth)
             }
         default:
             meta(listValueText, width: primaryMetricColumnWidth)
@@ -167,11 +167,11 @@ struct RecipeRowView: View {
     private var listValueText: String {
         switch listViewValue {
         case .totalTime:
-            return "\(recipe.totalMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalMinutes, locale: locale)
         case .prepTime:
-            return "\(recipe.totalActiveMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalActiveMinutes, locale: locale)
         case .prepAndWaitingTime:
-            return "\(recipe.totalActiveMinutes)"
+            return TimeDisplayFormatter.columnText(minutes: recipe.totalActiveMinutes, locale: locale)
         case .ingredients:
             return "\(recipe.ingredientsCountForList)"
         case .calories:
