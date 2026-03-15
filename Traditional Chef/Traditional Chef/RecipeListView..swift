@@ -41,6 +41,7 @@ struct RecipeListView: View {
     @State private var scrollToTopRequest: Int = 0
     @State private var pendingNavigationTask: Task<Void, Never>?
     @State private var isOpeningRecipeDetail: Bool = false
+    @State private var openingRecipeID: String?
     @State private var randomControlMaxButtonWidth: CGFloat = 0
     @FocusState private var isSearchFocused: Bool
     private var locale: Locale { Locale(identifier: appLanguage) }
@@ -113,7 +114,7 @@ struct RecipeListView: View {
                                                         searchText: vm.debouncedSearchText,
                                                         showDifficultyColumn: showDifficultyColumn,
                                                         showImagePreview: vm.isRandomModeActive || showRecipeListImages,
-                                                        foregroundOpacity: loadingForegroundOpacity
+                                                        foregroundOpacity: rowForegroundOpacity(for: recipe)
                                                     )
                                                 }
                                                 .buttonStyle(RecipeSelectionButtonStyle())
@@ -158,7 +159,6 @@ struct RecipeListView: View {
                     }
                 }
                 .allowsHitTesting(!isOpeningRecipeDetail)
-                .animation(.easeInOut(duration: 0.16), value: isOpeningRecipeDetail)
             }
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
@@ -171,6 +171,7 @@ struct RecipeListView: View {
                 ensureMeasurementUnit()
                 _ = RecipeDetailView.preparedKnifeImage
                 isOpeningRecipeDetail = false
+                openingRecipeID = nil
             }
             .onChange(of: vm.debouncedSearchText) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
@@ -231,6 +232,12 @@ struct RecipeListView: View {
         RecipeListValue(rawValue: listViewValueRaw) ?? .totalTime
     }
 
+    private func rowForegroundOpacity(for recipe: Recipe) -> CGFloat {
+        guard isOpeningRecipeDetail else { return 1 }
+        guard let openingRecipeID else { return loadingForegroundOpacity }
+        return openingRecipeID == recipe.id ? 1 : loadingForegroundOpacity
+    }
+
     private var readVoicePreference: ReadVoicePreference {
         ReadVoicePreference.resolved(from: readVoicePreferenceRaw)
     }
@@ -244,6 +251,7 @@ struct RecipeListView: View {
     @MainActor
     private func openRecipeDetail(_ recipe: Recipe) {
         guard pendingNavigationTask == nil, !isOpeningRecipeDetail else { return }
+        openingRecipeID = recipe.id
         isOpeningRecipeDetail = true
 
         RecipeImagePrefetcher.prefetch(
@@ -256,7 +264,7 @@ struct RecipeListView: View {
                 pendingNavigationTask = nil
             }
 
-            try? await Task.sleep(nanoseconds: 90_000_000)
+            try? await Task.sleep(nanoseconds: 220_000_000)
             guard !Task.isCancelled else { return }
 
             OpeningTransitionSnapshotStore.listSnapshot = UIApplication.shared.firstKeyWindow?.snapshotImage()
