@@ -57,6 +57,24 @@ final class RecipeListViewModelTests: XCTestCase {
     }
 
 
+
+    func testBeginSearchClearsRandomMode() {
+        let vm = RecipeListViewModel()
+        let recipes = [
+            recipe(id: "m1", category: .main),
+            recipe(id: "d1", category: .dessert)
+        ]
+
+        vm.applyRandomSelection(from: recipes, selectedCategory: nil)
+        XCTAssertTrue(vm.isRandomModeActive)
+        XCTAssertEqual(vm.randomSelectionIDs.count, 1)
+
+        vm.beginSearch()
+
+        XCTAssertFalse(vm.isRandomModeActive)
+        XCTAssertTrue(vm.randomSelectionIDs.isEmpty)
+    }
+
     func testSetCountrySelectionClearsCategoryFilters() {
         let vm = RecipeListViewModel()
         vm.selectedCategories = [.starter]

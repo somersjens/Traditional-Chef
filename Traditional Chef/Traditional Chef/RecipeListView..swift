@@ -175,6 +175,11 @@ struct RecipeListView: View {
             .onChange(of: vm.debouncedSearchText) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
             }
+            .onChange(of: isSearchFocused) { focused in
+                if focused {
+                    vm.beginSearch()
+                }
+            }
             .onChange(of: vm.selectedCountryCode) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
             }
