@@ -948,7 +948,9 @@ struct RecipeDetailView: View {
             step: step,
             ingredients: recipe.ingredients,
             servings: servings,
-            baseServings: 4,
+            // Ingredient amounts in imported data are per person.
+            // Keep step references aligned with grocery list scaling.
+            baseServings: 1,
             includeMeasurementInSteps: includeMeasurementInSteps,
             showAllMeasurements: groceryAllMeasurements,
             isDimmed: isDimmed,
@@ -1017,7 +1019,7 @@ struct RecipeDetailView: View {
             let dynamicValue = StepIngredientReferenceFormatter.dynamicValue(
                 ingredient: ingredient,
                 servings: servings,
-                baseServings: 4,
+                baseServings: 1,
                 measurementUnit: measurementUnit,
                 includeMeasurementInSteps: includeMeasurementInSteps,
                 showAllMeasurements: groceryAllMeasurements,
