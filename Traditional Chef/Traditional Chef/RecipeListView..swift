@@ -562,15 +562,15 @@ struct RecipeListView: View {
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
 
             TextField(
-                AppLanguage.string("recipes.search", locale: locale),
+                AppLanguage.string(vm.searchScope.placeholderKey, locale: locale),
                 text: $vm.searchText,
-                prompt: Text(AppLanguage.string("recipes.search", locale: locale))
+                prompt: Text(AppLanguage.string(vm.searchScope.placeholderKey, locale: locale))
                     .foregroundColor(AppTheme.searchPlaceholder)
             )
                 .textFieldStyle(.plain)
                 .focused($isSearchFocused)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled(false)
                 .font(.body)
                 .foregroundStyle(AppTheme.textPrimary)
 
@@ -584,6 +584,16 @@ struct RecipeListView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(AppLanguage.string("recipes.search.clear", locale: locale)))
             }
+
+            Button {
+                vm.toggleSearchScope()
+            } label: {
+                Image(systemName: vm.searchScope.iconName)
+                    .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
+                    .frame(width: 24, alignment: .center)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(AppLanguage.string(vm.searchScope.toggleAccessibilityKey, locale: locale)))
         }
         .opacity(loadingForegroundOpacity)
         .padding(.vertical, 10)
@@ -1015,16 +1025,23 @@ struct RecipeListView: View {
         var list = recipeStore.recipes
         let localizedNames = recipeStore.localizedNames(for: locale)
         let normalizedNames = recipeStore.normalizedNames(for: locale)
+        let normalizedIngredients = recipeStore.normalizedIngredients(for: locale)
         let query = vm.debouncedSearchText.normalizedSearchKey(locale: locale)
 
         // Search: wildcard both sides + ignore spaces
         if !query.isEmpty {
             list = list.filter { recipe in
-                let name = normalizedNames[recipe.id]
-                    ?? AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
-                        .normalizedSearchKey(locale: locale)
-                let country = recipe.countryCode.normalizedSearchKey(locale: locale)
-                return name.contains(query) || country.contains(query)
+                switch vm.searchScope {
+                case .recipe:
+                    let name = normalizedNames[recipe.id]
+                        ?? AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+                            .normalizedSearchKey(locale: locale)
+                    let country = recipe.countryCode.normalizedSearchKey(locale: locale)
+                    return name.contains(query) || country.contains(query)
+                case .ingredient:
+                    let ingredients = normalizedIngredients[recipe.id] ?? []
+                    return ingredients.contains { $0.contains(query) }
+                }
             }
         }
 

@@ -11,6 +11,7 @@ import SwiftUI
 final class RecipeListViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published private(set) var debouncedSearchText: String = ""
+    @Published var searchScope: SearchScope = .recipe
 
     @Published var selectedCategories: Set<RecipeCategory> = []
     @Published var selectedCountryCode: String? = nil // nil = all countries
@@ -28,6 +29,33 @@ final class RecipeListViewModel: ObservableObject {
 
     private var cancellables: Set<AnyCancellable> = []
     private var randomPointers: [String: RandomPointer] = [:]
+
+
+    enum SearchScope {
+        case recipe
+        case ingredient
+
+        var iconName: String {
+            switch self {
+            case .recipe: return "fork.knife"
+            case .ingredient: return "carrot"
+            }
+        }
+
+        var placeholderKey: String {
+            switch self {
+            case .recipe: return "recipes.search"
+            case .ingredient: return "recipes.search.ingredient"
+            }
+        }
+
+        var toggleAccessibilityKey: String {
+            switch self {
+            case .recipe: return "recipes.search.scope.switchIngredient"
+            case .ingredient: return "recipes.search.scope.switchRecipe"
+            }
+        }
+    }
 
     private struct RandomPointer {
         var index: Int = 0
@@ -102,6 +130,11 @@ final class RecipeListViewModel: ObservableObject {
     func setRandomSelection(to recipeID: String) {
         isRandomModeActive = true
         randomSelectionIDs = [recipeID]
+    }
+
+    func toggleSearchScope() {
+        searchScope = searchScope == .recipe ? .ingredient : .recipe
+        searchText = ""
     }
 
     func beginSearch() {

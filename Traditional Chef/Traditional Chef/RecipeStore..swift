@@ -21,6 +21,7 @@ final class RecipeStore: ObservableObject {
     private(set) var countryCodes: [String] = []
     private var localizedNameCache: [String: [String: String]] = [:]
     private var normalizedNameCache: [String: [String: String]] = [:]
+    private var normalizedIngredientCache: [String: [String: [String]]] = [:]
 
     init() {
         loadRecipes()
@@ -96,9 +97,31 @@ final class RecipeStore: ObservableObject {
         return normalized
     }
 
+
+    func normalizedIngredients(for locale: Locale) -> [String: [String]] {
+        let key = locale.identifier
+        if let cached = normalizedIngredientCache[key] {
+            return cached
+        }
+
+        let normalized = Dictionary(
+            uniqueKeysWithValues: recipes.map { recipe in
+                let ingredientNames = recipe.ingredients.map { ingredient in
+                    AppLanguage.string(String.LocalizationValue(ingredient.nameKey), locale: locale)
+                        .normalizedSearchKey(locale: locale)
+                }
+                return (recipe.id, ingredientNames)
+            }
+        )
+
+        normalizedIngredientCache[key] = normalized
+        return normalized
+    }
+
     private func rebuildCaches() {
         countryCodes = Array(Set(recipes.map { $0.countryCode })).sorted()
         localizedNameCache.removeAll()
         normalizedNameCache.removeAll()
+        normalizedIngredientCache.removeAll()
     }
 }

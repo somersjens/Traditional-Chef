@@ -12,6 +12,9 @@
 
 
 "recipes.search" = "Search recipes";
+"recipes.search.ingredient" = "Search ingredient";
+"recipes.search.scope.switchIngredient" = "Switch to ingredient search";
+"recipes.search.scope.switchRecipe" = "Switch to recipe search";
 "recipes.search.clear" = "Clear search";
 "recipes.allCountries" = "All countries included";
 "recipes.pickContinent" = "Pick a continent";
