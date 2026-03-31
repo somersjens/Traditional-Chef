@@ -368,7 +368,15 @@ struct RecipeDetailView: View {
                 }
             }
             .transition(.scale.combined(with: .opacity))
+
             Text(title)
+
+            if recipe.isVegetarian == true {
+                Image(systemName: "leaf.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.green)
+                    .accessibilityHidden(true)
+            }
         }
         .font(.headline)
         .foregroundStyle(AppTheme.textPrimary)

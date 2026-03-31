@@ -414,13 +414,7 @@ struct RecipeListView: View {
                 arrowPlacement: .trailing,
                 arrowSpacing: 4
             ) {
-                HStack(spacing: 4) {
-                    Text(AppLanguage.string("recipes.column.name", locale: locale))
-                    Image(systemName: "leaf.fill")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.green)
-                        .accessibilityHidden(true)
-                }
+                Text(AppLanguage.string("recipes.column.name", locale: locale))
             } action: {
                 vm.setSort(.name)
                 onFilterOrSortChange()

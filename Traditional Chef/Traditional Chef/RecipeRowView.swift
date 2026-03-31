@@ -55,13 +55,6 @@ struct RecipeRowView: View {
                 }
 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    if recipe.isVegetarian == true {
-                        Image(systemName: "leaf.fill")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.green)
-                            .accessibilityHidden(true)
-                    }
-
                     Text(highlightedName)
                         .lineLimit(2)
                         .truncationMode(.tail)
