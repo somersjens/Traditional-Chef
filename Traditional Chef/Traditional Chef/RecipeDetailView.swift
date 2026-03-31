@@ -389,7 +389,7 @@ struct RecipeDetailView: View {
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .animation(.easeInOut(duration: 0.2), value: isTitleCopyFeedbackVisible)
-        .onLongPressGesture(minimumDuration: 0.4) {
+        .onTapGesture {
             copyRecipeTitleToClipboard()
         }
     }
