@@ -77,6 +77,13 @@ def parse_bool(value: str) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "y"}
 
 
+def parse_ingredient_is_vegetarian(value: str) -> bool:
+    normalized = (value or "").strip().lower()
+    if normalized in {"0", "false", "no", "n"}:
+        return False
+    return True
+
+
 def capitalize_first_text_character(value: str) -> str:
     for index, char in enumerate(value):
         if char.isalpha():
@@ -193,6 +200,7 @@ def load_recipes(path: Path, strings: LocalizedStrings) -> Dict[str, dict]:
                 "infoKey": info_key,
                 "infoSummaryKey": info_summary_key,
                 "imageURL": (row.get("recipe_url") or "").strip() or None,
+                "isVegetarian": True,
                 "difficulty": max(1, min(5, parse_int(row.get("difficulty", "")) or 1)),
                 "approximateMinutes": 0,
                 "totalMinutes": 0,
@@ -243,6 +251,7 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
                     "allow_cup",
                     "pct_in_end_product",
                     "is_invisible",
+                    "Vega",
                     "group_en",
                     "group_nl",
                     "group_de",
@@ -311,6 +320,8 @@ def load_groceries(path: Path, recipes: Dict[str, dict], strings: LocalizedStrin
             recipe["nutrition"]["saturatedFatGrams"] += (parse_float(row.get("saturated_fat", "")) or 0.0) * nutrition_factor
             recipe["nutrition"]["sodiumMilligrams"] += (parse_float(row.get("sodium", "")) or 0.0) * nutrition_factor
             recipe["nutrition"]["fiberGrams"] += (parse_float(row.get("fiber", "")) or 0.0) * nutrition_factor
+            if not parse_ingredient_is_vegetarian(row.get("Vega", "")):
+                recipe["isVegetarian"] = False
 
 
 def infer_display_mode(row: Dict[str, str]) -> str:

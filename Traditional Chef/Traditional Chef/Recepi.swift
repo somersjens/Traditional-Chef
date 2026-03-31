@@ -61,6 +61,7 @@ struct Recipe: Identifiable, Hashable, Codable {
 
     /// Optional hero image URL.
     let imageURL: String?
+    let isVegetarian: Bool?
 
     /// List view metadata
     let approximateMinutes: Int

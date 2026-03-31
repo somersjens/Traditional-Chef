@@ -191,6 +191,9 @@ struct RecipeListView: View {
             .onChange(of: vm.favoritesOnly) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
             }
+            .onChange(of: vm.vegetarianOnly) { _ in
+                vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
+            }
             .onChange(of: recipeStore.recipes) { _ in
                 vm.refreshRandomSelectionIfNeeded(from: filteredRecipesBeforeRandom, selectedCategory: selectedCategoryFilter)
             }
@@ -411,7 +414,13 @@ struct RecipeListView: View {
                 arrowPlacement: .trailing,
                 arrowSpacing: 4
             ) {
-                Text(AppLanguage.string("recipes.column.name", locale: locale))
+                HStack(spacing: 4) {
+                    Text(AppLanguage.string("recipes.column.name", locale: locale))
+                    Image(systemName: "leaf.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.green)
+                        .accessibilityHidden(true)
+                }
             } action: {
                 vm.setSort(.name)
                 onFilterOrSortChange()
@@ -497,8 +506,9 @@ struct RecipeListView: View {
     private var topBar: some View {
         HStack(spacing: 14) {
             randomizeButton
-            recipeImageToggleButton
+            vegetarianFilterButton
             Spacer()
+            recipeImageToggleButton
             settingsButton
         }
         .overlay(alignment: .center) {
@@ -519,6 +529,20 @@ struct RecipeListView: View {
         .padding(.bottom, 8)
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private var vegetarianFilterButton: some View {
+        Button {
+            vm.vegetarianOnly.toggle()
+            requestScrollToTop()
+        } label: {
+            Image(systemName: vm.vegetarianOnly ? "leaf.circle.fill" : "leaf")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppTheme.primaryBlue)
+                .frame(width: 20, alignment: .center)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("Vegetarian filter"))
     }
 
     private var randomizeButton: some View {
@@ -1002,6 +1026,7 @@ struct RecipeListView: View {
         vm.selectedContinent = nil
         vm.selectedCategories.removeAll()
         vm.favoritesOnly = false
+        vm.vegetarianOnly = false
         vm.searchText = ""
         isSearchFocused = false
     }
@@ -1063,6 +1088,11 @@ struct RecipeListView: View {
         // Favorites filter
         if vm.favoritesOnly {
             list = list.filter { recipeStore.isFavorite($0) }
+        }
+
+        // Vegetarian filter
+        if vm.vegetarianOnly {
+            list = list.filter { $0.isVegetarian == true }
         }
 
         // Sorting (one active at a time)

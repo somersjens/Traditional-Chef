@@ -17,6 +17,7 @@ final class RecipeListViewModel: ObservableObject {
     @Published var selectedCountryCode: String? = nil // nil = all countries
     @Published var selectedContinent: Continent? = nil
     @Published var favoritesOnly: Bool = false
+    @Published var vegetarianOnly: Bool = false
 
     enum SortKey: String {
         case country, difficulty, name, totalTime, prepTime, waitingTime, calories, ingredients
