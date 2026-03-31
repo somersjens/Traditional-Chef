@@ -66,6 +66,8 @@ struct RecipeDetailView: View {
     @State private var revealFlightProgress: CGFloat = 0
     @State private var showOpeningKnifeTransition: Bool = true
     @State private var openingTransitionHideWorkItem: DispatchWorkItem?
+    @State private var titleCopyResetWorkItem: DispatchWorkItem?
+    @State private var isTitleCopyFeedbackVisible: Bool = false
     @StateObject private var stepSpeaker = StepSpeaker()
     @StateObject private var cardSpeaker = CardReadAloudSpeaker()
     private let footerLinksID = "footerLinksID"
@@ -103,6 +105,8 @@ struct RecipeDetailView: View {
         .onDisappear {
             openingTransitionHideWorkItem?.cancel()
             openingTransitionHideWorkItem = nil
+            titleCopyResetWorkItem?.cancel()
+            titleCopyResetWorkItem = nil
         }
     }
 
@@ -353,9 +357,17 @@ struct RecipeDetailView: View {
     }
 
     private var titleOverlay: some View {
-        let title = AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+        let title = localizedRecipeTitle
         return HStack(spacing: 6) {
-            Text("\(FlagEmoji.from(countryCode: recipe.countryCode))")
+            Group {
+                if isTitleCopyFeedbackVisible {
+                    Image(systemName: "doc.on.doc.fill")
+                        .symbolRenderingMode(.monochrome)
+                } else {
+                    Text("\(FlagEmoji.from(countryCode: recipe.countryCode))")
+                }
+            }
+            .transition(.scale.combined(with: .opacity))
             Text(title)
         }
         .font(.headline)
@@ -368,6 +380,33 @@ struct RecipeDetailView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
+        .animation(.easeInOut(duration: 0.2), value: isTitleCopyFeedbackVisible)
+        .onLongPressGesture(minimumDuration: 0.4) {
+            copyRecipeTitleToClipboard()
+        }
+    }
+
+    private var localizedRecipeTitle: String {
+        AppLanguage.string(String.LocalizationValue(recipe.nameKey), locale: locale)
+    }
+
+    private func copyRecipeTitleToClipboard() {
+        UIPasteboard.general.string = localizedRecipeTitle
+        Haptics.light()
+
+        titleCopyResetWorkItem?.cancel()
+
+        withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
+            isTitleCopyFeedbackVisible = true
+        }
+
+        let resetWorkItem = DispatchWorkItem {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isTitleCopyFeedbackVisible = false
+            }
+        }
+        titleCopyResetWorkItem = resetWorkItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1, execute: resetWorkItem)
     }
 
     private func heroImage(targetPixelSize: CGFloat, isLandscape: Bool) -> some View {
