@@ -508,7 +508,7 @@ struct RecipeListView: View {
                 recipeImageToggleButton
                 settingsButton
             }
-            .padding(.trailing, 8)
+            .padding(.trailing, 15)
         }
         .overlay(alignment: .center) {
             Button {
