@@ -14,6 +14,8 @@ struct RecipeListView: View {
     private let difficultyToNameExtraSpacing: CGFloat = 2
     private let minDefaultServings: Int = 1
     private let maxDefaultServings: Int = 12
+    private let searchBarInnerHorizontalPadding: CGFloat = 6
+    private let searchBarEdgeIconNudge: CGFloat = 4
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
@@ -502,8 +504,11 @@ struct RecipeListView: View {
             randomizeButton
             vegetarianFilterButton
             Spacer()
-            recipeImageToggleButton
-            settingsButton
+            HStack(spacing: 14) {
+                recipeImageToggleButton
+                settingsButton
+            }
+            .padding(.trailing, 8)
         }
         .overlay(alignment: .center) {
             Button {
@@ -578,6 +583,8 @@ struct RecipeListView: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
+                .frame(width: 20, alignment: .center)
+                .padding(.leading, searchBarEdgeIconNudge)
 
             TextField(
                 AppLanguage.string(vm.searchScope.placeholderKey, locale: locale),
@@ -609,13 +616,14 @@ struct RecipeListView: View {
                 Image(systemName: vm.searchScope.iconName)
                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
                     .frame(width: 24, alignment: .center)
+                    .padding(.trailing, searchBarEdgeIconNudge + 2)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string(vm.searchScope.toggleAccessibilityKey, locale: locale)))
         }
         .opacity(loadingForegroundOpacity)
         .padding(.vertical, 10)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, searchBarInnerHorizontalPadding)
         .frame(minHeight: 44)
         .background(AppTheme.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -666,7 +674,6 @@ struct RecipeListView: View {
         }
         .buttonStyle(.plain)
         .background(Color.clear)
-        .padding(.trailing, 8)
         .accessibilityLabel(Text(AppLanguage.string("settings.title", locale: locale)))
     }
 
