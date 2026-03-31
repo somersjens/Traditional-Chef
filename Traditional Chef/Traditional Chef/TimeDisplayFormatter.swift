@@ -20,17 +20,15 @@ enum TimeDisplayFormatter {
     }
 
     static func summaryEquation(activeMinutes: Int, passiveMinutes: Int, totalMinutes: Int, locale: Locale) -> String {
-        let active = summaryComponent(minutes: activeMinutes, locale: locale)
-        let passive = summaryComponent(minutes: passiveMinutes, locale: locale)
+        let active = summaryEquationComponent(minutes: activeMinutes, locale: locale)
+        let passive = summaryEquationComponent(minutes: passiveMinutes, locale: locale)
 
         let total = max(0, totalMinutes)
         let convertedTotal = convert(minutes: total)
-        let hasLeftoverBeyondHalfDay = convertedTotal.unit == .day && (total % (12 * 60) != 0)
-        let plusSuffix = hasLeftoverBeyondHalfDay ? "+" : ""
-        //jens moved trailing plus to the end of the total unit (e.g. "7 dagen +")
-        let totalText = "\(formattedNumber(convertedTotal.value, locale: locale)) \(summaryUnit(for: convertedTotal.unit, value: convertedTotal.value, locale: locale))\(plusSuffix)"
+        let totalText = "\(formattedNumber(convertedTotal.value, locale: locale)) \(summaryUnit(for: convertedTotal.unit, value: convertedTotal.value, locale: locale))"
+        let relation = (active.isApproximate || passive.isApproximate || isNonExactLargeAmount(minutes: total, unit: convertedTotal.unit)) ? "≈" : "="
 
-        return "\(active) + \(passive) = \(totalText)"
+        return "\(active.text) + \(passive.text) \(relation) \(totalText)"
     }
 
     static func countdownText(seconds: Int, locale: Locale) -> String {
@@ -75,6 +73,26 @@ enum TimeDisplayFormatter {
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 1
         return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+    }
+
+    private static func summaryEquationComponent(minutes: Int, locale: Locale) -> (text: String, isApproximate: Bool) {
+        let normalizedMinutes = max(0, minutes)
+        let converted = convert(minutes: normalizedMinutes)
+        let isApproximate = converted.unit != .minute
+        let prefix = isApproximate ? "~" : ""
+        let componentText = "\(prefix)\(formattedNumber(converted.value, locale: locale)) \(summaryUnit(for: converted.unit, value: converted.value, locale: locale))"
+        return (componentText, isApproximate)
+    }
+
+    private static func isNonExactLargeAmount(minutes: Int, unit: Unit) -> Bool {
+        switch unit {
+        case .minute:
+            return false
+        case .hour:
+            return minutes % 30 != 0
+        case .day:
+            return minutes % (12 * 60) != 0
+        }
     }
 
     private static func languageCode(for locale: Locale) -> String {
