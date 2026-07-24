@@ -74,11 +74,11 @@ struct ServingsCard: View {
             }
             .foregroundStyle(AppTheme.primaryBlue)
         }
-        .padding(12)
+        .padding(AppTheme.scaled(12))
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16)).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .onChange(of: isServingsFocused) { isFocused in
             if !isFocused {
