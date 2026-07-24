@@ -7,6 +7,15 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
+    static var layoutScale: CGFloat { UIDevice.current.userInterfaceIdiom == .pad ? 2.25 : 1 }
+    static var iPadDynamicTypeSize: DynamicTypeSize? { UIDevice.current.userInterfaceIdiom == .pad ? .accessibility1 : nil }
+
+    static func scaled(_ value: CGFloat) -> CGFloat { value * layoutScale }
+
+    static func systemFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: scaled(size), weight: weight)
+    }
+
     static let lightPrimaryBlue = Color(hex: "1C263C")
     static let lightOffWhite = Color(hex: "FAF5F0")
 
@@ -39,5 +48,23 @@ private extension AppTheme {
                     : UIColor(light)
             }
         )
+    }
+}
+
+struct IPadReadableScaleModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if let dynamicTypeSize = AppTheme.iPadDynamicTypeSize {
+            content
+                .dynamicTypeSize(dynamicTypeSize)
+                .controlSize(.large)
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func iPadReadableScale() -> some View {
+        modifier(IPadReadableScaleModifier())
     }
 }

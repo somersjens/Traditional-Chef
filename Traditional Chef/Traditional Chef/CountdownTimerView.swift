@@ -85,7 +85,7 @@ struct CountdownTimerView: View {
 
                 VStack(spacing: 6) {
                     Text(timeText)
-                        .font(.system(size: isCompactHeight ? 38 : 44, weight: .bold))
+                        .font(AppTheme.systemFont(size: isCompactHeight ? 38 : 44, weight: .bold))
                         .monospacedDigit()
                         .foregroundStyle(timerColor)
 
@@ -106,7 +106,7 @@ struct CountdownTimerView: View {
                         .padding(.vertical, 14)
                         .background(AppTheme.primaryBlue.opacity(0.10))
                         .foregroundStyle(AppTheme.primaryBlue)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(14)))
                 }
 
                 Button {
@@ -117,7 +117,7 @@ struct CountdownTimerView: View {
                         .padding(.vertical, 14)
                         .background(AppTheme.primaryBlue)
                         .foregroundStyle(AppTheme.secondaryOffWhite)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(14)))
                 }
             }
             .padding(.horizontal, 20)
@@ -133,7 +133,7 @@ struct CountdownTimerView: View {
                             .padding(.vertical, 10)
                             .frame(width: controlWidth)
                             .background(AppTheme.primaryBlue.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(10)))
 
                         TextField("Seconds", text: $overrideSecondsText)
                             .keyboardType(.numberPad)
@@ -141,7 +141,7 @@ struct CountdownTimerView: View {
                             .padding(.vertical, 10)
                             .frame(width: controlWidth)
                             .background(AppTheme.primaryBlue.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(10)))
                     }
 
                     Text(":")

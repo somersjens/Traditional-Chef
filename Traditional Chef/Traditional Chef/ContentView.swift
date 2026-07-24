@@ -18,6 +18,7 @@ struct ContentView: View {
             }
         }
         .environment(\.locale, Locale(identifier: appLanguage))
+        .iPadReadableScale()
     }
 }
 
