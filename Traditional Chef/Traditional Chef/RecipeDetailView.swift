@@ -142,8 +142,8 @@ struct RecipeDetailView: View {
 
                         footerLinks
                     }
-                    .padding(.leading, 12 + proxy.safeAreaInsets.leading)
-                    .padding(.trailing, 12 + proxy.safeAreaInsets.trailing)
+                    .padding(.leading, AppTheme.scaled(12) + proxy.safeAreaInsets.leading)
+                    .padding(.trailing, AppTheme.scaled(12) + proxy.safeAreaInsets.trailing)
                 }
                 .padding(.bottom, 12)
                 .background(ScrollOffsetReader(offset: $scrollOffset).frame(height: 0))
@@ -264,7 +264,7 @@ struct RecipeDetailView: View {
                 dismiss()
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: baseIconSize * iconScale, weight: .semibold))
+                    .font(AppTheme.systemFont(size: baseIconSize * iconScale, weight: .semibold))
                     .foregroundStyle(iconColor)
             }
             .buttonStyle(.plain)
@@ -276,15 +276,15 @@ struct RecipeDetailView: View {
                 recipeStore.toggleFavorite(recipe)
             } label: {
                 Image(systemName: recipeStore.isFavorite(recipe) ? "heart.fill" : "heart")
-                    .font(.system(size: heartIconSize * iconScale, weight: .semibold))
+                    .font(AppTheme.systemFont(size: heartIconSize * iconScale, weight: .semibold))
                     .offset(x: -6)
                     .foregroundStyle(recipeStore.isFavorite(recipe) ? .red : iconColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("recipe.detail.favorite", locale: locale)))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, AppTheme.scaled(16))
+        .padding(.vertical, AppTheme.scaled(8))
     }
 
     private var shareAppURL: URL {
@@ -333,7 +333,7 @@ struct RecipeDetailView: View {
                 imageFadeOverlay
             }
             .overlay(alignment: .bottomLeading) {
-                let contentLeadingPadding = 12 + safeAreaInsets.leading
+                let contentLeadingPadding = AppTheme.scaled(12) + safeAreaInsets.leading
                 let titleLeadingPadding = contentLeadingPadding + (isLandscape ? safeAreaInsets.leading : 0)
                 titleOverlay
                     .padding(.leading, titleLeadingPadding)
@@ -373,19 +373,19 @@ struct RecipeDetailView: View {
 
             if recipe.isVegetarian == true {
                 Image(systemName: "leaf.fill")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(AppTheme.systemFont(size: 12, weight: .semibold))
                     .foregroundStyle(.green)
                     .accessibilityHidden(true)
             }
         }
         .font(.headline)
         .foregroundStyle(AppTheme.textPrimary)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
+        .padding(.horizontal, AppTheme.scaled(14))
+        .padding(.vertical, AppTheme.scaled(8))
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16))
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .animation(.easeInOut(duration: 0.2), value: isTitleCopyFeedbackVisible)
@@ -467,7 +467,7 @@ struct RecipeDetailView: View {
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, AppTheme.scaled(16))
                 .offset(y: hasHeroFallbackEntered ? 0 : -420)
                 .animation(.easeOut(duration: 0.5), value: hasHeroFallbackEntered)
             }
@@ -778,11 +778,11 @@ struct RecipeDetailView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: isInfoExpanded)
-        .padding(12)
+        .padding(AppTheme.scaled(12))
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16)).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .onChange(of: isInfoExpanded) { expanded in
             if !expanded {
@@ -808,11 +808,11 @@ struct RecipeDetailView: View {
             stepsContent
         }
         .animation(.easeInOut(duration: 0.25), value: isStepsExpanded)
-        .padding(12)
+        .padding(AppTheme.scaled(12))
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16)).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .onDisappear {
             stepSpeaker.stop()
@@ -942,8 +942,8 @@ struct RecipeDetailView: View {
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(groceryAllMeasurements ? Color.white : AppTheme.primaryBlue)
                                     .frame(maxWidth: .infinity, minHeight: 22.4)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4.8)
+                                    .padding(.horizontal, AppTheme.scaled(10))
+                                    .padding(.vertical, AppTheme.scaled(4.8))
                                     .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
@@ -964,8 +964,8 @@ struct RecipeDetailView: View {
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(includeMeasurementInSteps ? Color.white : AppTheme.primaryBlue)
                                     .frame(maxWidth: .infinity, minHeight: 22.4)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4.8)
+                                    .padding(.horizontal, AppTheme.scaled(10))
+                                    .padding(.vertical, AppTheme.scaled(4.8))
                                     .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
@@ -980,7 +980,7 @@ struct RecipeDetailView: View {
                             .frame(width: includeMeasurementsButtonWidth)
                         }
                     }
-                    .frame(minHeight: 32)
+                    .frame(minHeight: AppTheme.scaled(32))
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
@@ -1119,7 +1119,7 @@ struct RecipeDetailView: View {
         .animation(.easeInOut(duration: 0.2), value: highlightFooterLinks)
         .id(footerLinksID)
         .padding(.top, -7)
-        .padding(.vertical, 8)
+        .padding(.vertical, AppTheme.scaled(8))
     }
 
     private func footerLinkButton(titleKey: String, url: URL) -> some View {

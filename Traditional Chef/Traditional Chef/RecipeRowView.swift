@@ -7,10 +7,10 @@ import SwiftUI
 import UIKit
 
 struct RecipeRowView: View {
-    private let metricsToFavoriteSpacing: CGFloat = 6.6
-    private let flagToContentSpacing: CGFloat = 6
-    private let difficultyDotSize: CGFloat = 12
-    private let difficultyToNameExtraSpacing: CGFloat = 2
+    private var metricsToFavoriteSpacing: CGFloat { AppTheme.scaled(6.6) }
+    private var flagToContentSpacing: CGFloat { AppTheme.scaled(6) }
+    private var difficultyDotSize: CGFloat { AppTheme.scaled(12) }
+    private var difficultyToNameExtraSpacing: CGFloat { AppTheme.scaled(2) }
     private let flagBaselineAdjustment: CGFloat = -2
     private let difficultyBaselineAdjustment: CGFloat = 5
     private let previewShowDuration: Double = 0.15
@@ -41,7 +41,7 @@ struct RecipeRowView: View {
             HStack(alignment: .firstTextBaseline, spacing: flagToContentSpacing) {
                 Text(FlagEmoji.from(countryCode: recipe.countryCode))
                     .font(.title3)
-                    .frame(width: 34, alignment: .center)
+                    .frame(width: AppTheme.scaled(34), alignment: .center)
                     .alignmentGuide(.firstTextBaseline) { dimensions in
                         dimensions[.firstTextBaseline] + flagBaselineAdjustment
                     }
@@ -68,9 +68,9 @@ struct RecipeRowView: View {
 
                     Button(action: onToggleFavorite) {
                         Image(systemName: isFavorite ? "heart.fill" : "heart")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(AppTheme.systemFont(size: 14, weight: .semibold))
                             .foregroundStyle(isFavorite ? .red : AppTheme.primaryBlue.opacity(0.85))
-                            .frame(width: 18, alignment: .center)
+                            .frame(width: AppTheme.scaled(18), alignment: .center)
                     }
                     .buttonStyle(.plain)
                     .padding(.trailing, 4)
@@ -88,8 +88,8 @@ struct RecipeRowView: View {
                     )
             }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 4)
+        .padding(.vertical, AppTheme.scaled(10))
+        .padding(.horizontal, AppTheme.scaled(4))
         .contentShape(Rectangle())
         .zIndex((showImagePreview || isPreviewHiding) ? 1 : 0)
         .animation(.easeInOut(duration: 0.14), value: showImagePreview)
@@ -204,8 +204,8 @@ struct RecipeRowView: View {
         }
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.horizontal, 4)
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(12)))
+        .padding(.horizontal, AppTheme.scaled(4))
     }
 
     @MainActor

@@ -15,11 +15,13 @@ struct WelcomeView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var currentFrameName: String = "11"
     private var locale: Locale { Locale(identifier: appLanguage) }
+    private var isCompactHeight: Bool { verticalSizeClass == .compact }
+    private var welcomeSpacing: CGFloat { AppTheme.scaled(isCompactHeight ? 8 : 18) }
     private var sponsorMessage: AttributedString {
         var message = AttributedString(AppLanguage.string("welcome.sponsorMessage", locale: locale))
         if let range = message.range(of: "Hakketjak") {
             message[range].link = URL(string: "https://www.hakketjak.nl")
-            message[range].font = .system(size: 17, weight: .bold)
+            message[range].font = AppTheme.systemFont(size: 17, weight: .bold)
             message[range].underlineStyle = .single
             message[range].foregroundColor = welcomeTextColor
         }
@@ -27,55 +29,74 @@ struct WelcomeView: View {
     }
 
     var body: some View {
-        ZStack {
-            welcomeBackgroundColor.ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                welcomeBackgroundColor.ignoresSafeArea()
 
-            VStack(spacing: verticalSizeClass == .compact ? 4 : 7) {
-                Image(currentFrameName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(
-                        maxWidth: 690,
-                        maxHeight: verticalSizeClass == .compact ? 360 : 690
-                    )
-                    .accessibilityHidden(true)
-                    .padding(.bottom, verticalSizeClass == .compact ? 0 : 3)
+                VStack(spacing: welcomeSpacing) {
+                    Spacer(minLength: AppTheme.scaled(isCompactHeight ? 8 : 18))
 
-                VStack(spacing: verticalSizeClass == .compact ? 8 : 14) {
-                    Text(AppLanguage.string("welcome.greeting", locale: locale))
-                        .font(.system(size: 33, weight: .semibold))
-                        .foregroundStyle(welcomeTextColor)
+                    animationStage(in: proxy)
 
-                    Button {
-                        hasSeenWelcome = true
-                    } label: {
-                        Text(AppLanguage.string("welcome.startButton", locale: locale))
-                            .font(.system(size: 19, weight: .medium))
-                            .padding(.vertical, 14)
-                            .padding(.horizontal, 24)
-                            .background(Color(hex: "F57921"))
-                            .foregroundStyle(welcomeButtonTextColor)
-                            .clipShape(RoundedRectangle(cornerRadius: 26))
+                    VStack(spacing: AppTheme.scaled(isCompactHeight ? 8 : 14)) {
+                        Text(AppLanguage.string("welcome.greeting", locale: locale))
+                            .font(AppTheme.systemFont(size: 33, weight: .semibold))
+                            .foregroundStyle(welcomeTextColor)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.72)
+
+                        Button {
+                            hasSeenWelcome = true
+                        } label: {
+                            Text(AppLanguage.string("welcome.startButton", locale: locale))
+                                .font(AppTheme.systemFont(size: 19, weight: .medium))
+                                .padding(.vertical, AppTheme.scaled(14))
+                                .padding(.horizontal, AppTheme.scaled(24))
+                                .background(Color(hex: "F57921"))
+                                .foregroundStyle(welcomeButtonTextColor)
+                                .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(26)))
+                        }
+                        .padding(.horizontal, AppTheme.scaled(22))
+                        .padding(.top, AppTheme.scaled(isCompactHeight ? 0 : 6))
+
+                        Text(sponsorMessage)
+                            .font(AppTheme.systemFont(size: 17, weight: .medium))
+                            .foregroundStyle(welcomeTextColor.opacity(0.85))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(AppTheme.scaled(1.8))
+                            .padding(.horizontal, AppTheme.scaled(22))
                     }
-                    .padding(.horizontal, 22)
-                    .padding(.top, verticalSizeClass == .compact ? 0 : 6)
+                    .frame(maxWidth: AppTheme.scaled(360))
+                    .frame(maxWidth: .infinity, alignment: .center)
 
-                    Text(sponsorMessage)
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(welcomeTextColor.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(1.8)
-                        .padding(.horizontal, 22)
+                    Spacer(minLength: AppTheme.scaled(isCompactHeight ? 8 : 24))
                 }
-                .offset(y: verticalSizeClass == .compact ? -40 : -180)
-
-                Spacer(minLength: verticalSizeClass == .compact ? 0 : 12)
+                .padding(.horizontal, AppTheme.scaled(24) + proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing)
+                .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
             }
-            .padding(.top, 8)
         }
         .task {
             await runAnimationLoop()
         }
+    }
+
+    private func animationStage(in proxy: GeometryProxy) -> some View {
+        let availableWidth = max(proxy.size.width - AppTheme.scaled(48), 1)
+        let maxStageWidth = min(availableWidth, AppTheme.scaled(isCompactHeight ? 360 : 390))
+        let maxStageHeight = min(proxy.size.height * (isCompactHeight ? 0.48 : 0.56), AppTheme.scaled(isCompactHeight ? 240 : 390))
+
+        return ZStack {
+            Image(currentFrameName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: maxStageWidth, height: maxStageHeight)
+                .clipped()
+                .accessibilityHidden(true)
+        }
+        .frame(width: maxStageWidth, height: maxStageHeight)
+        .clipped()
+        .contentShape(Rectangle())
     }
 }
 

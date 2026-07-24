@@ -8,14 +8,14 @@ import UIKit
 
 struct RecipeListView: View {
     private let metricsColumnSpacingMultiplier: CGFloat = 1.1
-    private let metricsToFavoriteSpacingBase: CGFloat = 6
-    private let flagToContentSpacing: CGFloat = 6
-    private let difficultyDotSize: CGFloat = 12
-    private let difficultyToNameExtraSpacing: CGFloat = 2
+    private var metricsToFavoriteSpacingBase: CGFloat { AppTheme.scaled(6) }
+    private var flagToContentSpacing: CGFloat { AppTheme.scaled(6) }
+    private var difficultyDotSize: CGFloat { AppTheme.scaled(12) }
+    private var difficultyToNameExtraSpacing: CGFloat { AppTheme.scaled(2) }
     private let minDefaultServings: Int = 1
     private let maxDefaultServings: Int = 12
-    private let searchBarInnerHorizontalPadding: CGFloat = 6
-    private let searchBarEdgeIconNudge: CGFloat = 4
+    private var searchBarInnerHorizontalPadding: CGFloat { AppTheme.scaled(6) }
+    private var searchBarEdgeIconNudge: CGFloat { AppTheme.scaled(4) }
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
@@ -132,9 +132,9 @@ struct RecipeListView: View {
                                             }
                                         }
                                         .background(AppTheme.searchBarBackground)
-                                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 16)
+                                            RoundedRectangle(cornerRadius: AppTheme.scaled(16))
                                                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
                                         )
                                         .padding(.horizontal, listSideInset)
@@ -143,7 +143,7 @@ struct RecipeListView: View {
 
                                         if vm.isRandomModeActive {
                                             randomControls
-                                                .padding(.top, 10)
+                                                .padding(.top, AppTheme.scaled(10))
                                                 .padding(.bottom, 16)
                                                 .frame(maxWidth: contentMaxWidth, alignment: .leading)
                                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -295,7 +295,7 @@ struct RecipeListView: View {
     }
 
     private var contentMaxWidth: CGFloat {
-        horizontalSizeClass == .regular ? 760 : .infinity
+        horizontalSizeClass == .regular ? 980 : .infinity
     }
 
     private struct MetricColumnWidths {
@@ -374,7 +374,7 @@ struct RecipeListView: View {
     }
 
     private var listSideInset: CGFloat {
-        16
+        AppTheme.scaled(16)
     }
     private func headerRow(metricColumnWidths: MetricColumnWidths, onFilterOrSortChange: @escaping () -> Void) -> some View {
         HStack(spacing: flagToContentSpacing) {
@@ -384,10 +384,10 @@ struct RecipeListView: View {
                 showCountryPicker = true
             } label: {
                 Text(countryFilterEmoji)
-                    .font(.system(size: 16))
+                    .font(AppTheme.systemFont(size: 16))
             }
             .buttonStyle(.plain)
-            .frame(width: 34, alignment: .center)
+            .frame(width: AppTheme.scaled(34), alignment: .center)
 
             if showDifficultyColumn {
                 SortHeaderButton(
@@ -434,7 +434,7 @@ struct RecipeListView: View {
                             arrowSpacing: 3
                         ) {
                             Image(systemName: "flame")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(AppTheme.systemFont(size: 13, weight: .semibold))
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.prepTime)
@@ -450,7 +450,7 @@ struct RecipeListView: View {
                             arrowSpacing: 3
                         ) {
                             Image(systemName: "hourglass")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(AppTheme.systemFont(size: 13, weight: .semibold))
                                 .lineLimit(1)
                         } action: {
                             vm.setSort(.waitingTime)
@@ -467,7 +467,7 @@ struct RecipeListView: View {
                         arrowSpacing: 4
                     ) {
                         Image(systemName: listViewValue.headerSymbolName)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(AppTheme.systemFont(size: 13, weight: .semibold))
                             .lineLimit(1)
                     } action: {
                         vm.setSort(listViewValue.sortKey)
@@ -481,9 +481,9 @@ struct RecipeListView: View {
                     onFilterOrSortChange()
                 } label: {
                     Image(systemName: vm.favoritesOnly ? "heart.fill" : "heart")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(AppTheme.systemFont(size: 14, weight: .semibold))
                         .foregroundStyle(vm.favoritesOnly ? .red : AppTheme.primaryBlue.opacity(0.9))
-                        .frame(width: 18, alignment: .center)
+                        .frame(width: AppTheme.scaled(18), alignment: .center)
                 }
                 .buttonStyle(.plain)
                 .padding(.trailing, 4)
@@ -515,7 +515,7 @@ struct RecipeListView: View {
                 hasSeenWelcome = false
             } label: {
                 Text(appDisplayName)
-                    .font(.system(size: 30.4, weight: .semibold))
+                    .font(AppTheme.systemFont(size: 30.4, weight: .semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
@@ -523,9 +523,9 @@ struct RecipeListView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 10)
-        .padding(.bottom, 8)
+        .padding(.horizontal, AppTheme.scaled(16))
+        .padding(.top, AppTheme.scaled(10))
+        .padding(.bottom, AppTheme.scaled(8))
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -536,9 +536,9 @@ struct RecipeListView: View {
             requestScrollToTop()
         } label: {
             Image(systemName: vm.vegetarianOnly ? "leaf.circle.fill" : "leaf")
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 20, alignment: .center)
+                .frame(width: AppTheme.scaled(20), alignment: .center)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("Vegetarian filter"))
@@ -555,9 +555,9 @@ struct RecipeListView: View {
             requestScrollToTop()
         } label: {
             Image(systemName: vm.isRandomModeActive ? "shuffle.circle.fill" : "shuffle")
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 20, alignment: .center)
+                .frame(width: AppTheme.scaled(20), alignment: .center)
         }
         .buttonStyle(.plain)
         .padding(.leading, 8)
@@ -571,9 +571,9 @@ struct RecipeListView: View {
             }
         } label: {
             Image(systemName: showRecipeListImages ? "photo.fill" : "photo")
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 20, alignment: .center)
+                .frame(width: AppTheme.scaled(20), alignment: .center)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(AppLanguage.string("recipes.toggleImages", locale: locale)))
@@ -583,7 +583,7 @@ struct RecipeListView: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppTheme.primaryBlue.opacity(0.7))
-                .frame(width: 20, alignment: .center)
+                .frame(width: AppTheme.scaled(20), alignment: .center)
                 .padding(.leading, searchBarEdgeIconNudge)
 
             TextField(
@@ -615,23 +615,23 @@ struct RecipeListView: View {
             } label: {
                 Image(systemName: vm.searchScope.iconName)
                     .foregroundStyle(AppTheme.primaryBlue.opacity(0.85))
-                    .frame(width: 24, alignment: .center)
+                    .frame(width: AppTheme.scaled(24), alignment: .center)
                     .padding(.trailing, searchBarEdgeIconNudge + 2)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string(vm.searchScope.toggleAccessibilityKey, locale: locale)))
         }
         .opacity(loadingForegroundOpacity)
-        .padding(.vertical, 10)
+        .padding(.vertical, AppTheme.scaled(10))
         .padding(.horizontal, searchBarInnerHorizontalPadding)
-        .frame(minHeight: 44)
+        .frame(minHeight: AppTheme.scaled(44))
         .background(AppTheme.searchBarBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16))
                 .stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, AppTheme.scaled(16))
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -668,9 +668,9 @@ struct RecipeListView: View {
             }
         } label: {
             Image(systemName: "gearshape.fill")
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: 16, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: 20, alignment: .center)
+                .frame(width: AppTheme.scaled(20), alignment: .center)
         }
         .buttonStyle(.plain)
         .background(Color.clear)
@@ -695,13 +695,13 @@ struct RecipeListView: View {
                     }
                 } label: {
                     Image(systemName: "gearshape.fill")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(AppTheme.systemFont(size: 16, weight: .semibold))
                         .foregroundStyle(AppTheme.settingsCardHeaderForeground)
                 }
                 .buttonStyle(.plain)
             }
             .padding(.vertical, 2)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, AppTheme.scaled(14))
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 12) {
@@ -801,8 +801,8 @@ struct RecipeListView: View {
                                         Spacer(minLength: 0)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, AppTheme.scaled(10))
+                                    .padding(.horizontal, AppTheme.scaled(14))
                                     .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
@@ -813,7 +813,7 @@ struct RecipeListView: View {
                                 }
                             }
                         }
-                        .frame(width: 330)
+                        .frame(width: AppTheme.scaled(330))
                         .padding(.vertical, 4)
                         .modifier(PopoverCompactAdaptationModifier())
                     }
@@ -835,7 +835,7 @@ struct RecipeListView: View {
                         Button(action: decrementDefaultServings) {
                             Image(systemName: "minus")
                                 .font(.subheadline.weight(.semibold))
-                                .frame(width: 26, height: 26)
+                                .frame(width: AppTheme.scaled(26), height: AppTheme.scaled(26))
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
@@ -845,12 +845,12 @@ struct RecipeListView: View {
                         Text("\(defaultServings)")
                             .font(.headline)
                             .foregroundStyle(AppTheme.primaryBlue)
-                            .frame(width: 32)
+                            .frame(width: AppTheme.scaled(32))
 
                         Button(action: incrementDefaultServings) {
                             Image(systemName: "plus")
                                 .font(.subheadline.weight(.semibold))
-                                .frame(width: 26, height: 26)
+                                .frame(width: AppTheme.scaled(26), height: AppTheme.scaled(26))
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
@@ -934,20 +934,20 @@ struct RecipeListView: View {
                 .frame(minHeight: rowMinHeight)
             }
             .padding(.vertical, 4)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, AppTheme.scaled(14))
             .background(AppTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(12)))
             .overlay(
-                RoundedRectangle(cornerRadius: 12).stroke(AppTheme.primaryBlue.opacity(0.12), lineWidth: 1)
+                RoundedRectangle(cornerRadius: AppTheme.scaled(12)).stroke(AppTheme.primaryBlue.opacity(0.12), lineWidth: 1)
             )
         }
-        .padding(12)
+        .padding(AppTheme.scaled(12))
         .background(AppTheme.settingsCardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16)).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, AppTheme.scaled(16))
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -955,7 +955,7 @@ struct RecipeListView: View {
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 34))
+                .font(AppTheme.systemFont(size: 34))
                 .foregroundStyle(AppTheme.primaryBlue)
 
             Text(AppLanguage.string("recipes.noResults", locale: locale))
@@ -968,8 +968,8 @@ struct RecipeListView: View {
                 Text(AppLanguage.string("recipes.clearAllFilters", locale: locale))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.pageBackground)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 9)
+                    .padding(.horizontal, AppTheme.scaled(16))
+                    .padding(.vertical, AppTheme.scaled(9))
                     .background(AppTheme.primaryBlue)
                     .clipShape(Capsule())
             }
@@ -999,7 +999,7 @@ struct RecipeListView: View {
                 }
             }
         }
-        .frame(maxWidth: 320)
+        .frame(maxWidth: AppTheme.scaled(320))
         .frame(maxWidth: .infinity, alignment: .center)
     }
 
@@ -1010,8 +1010,8 @@ struct RecipeListView: View {
                 .foregroundStyle(isPrimary ? AppTheme.pageBackground : AppTheme.primaryBlue)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 9)
+                .padding(.horizontal, AppTheme.scaled(16))
+                .padding(.vertical, AppTheme.scaled(9))
                 .background(isPrimary ? AppTheme.primaryBlue : AppTheme.secondaryOffWhite)
                 .clipShape(Capsule())
                 .overlay(

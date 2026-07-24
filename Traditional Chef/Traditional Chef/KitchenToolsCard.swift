@@ -106,11 +106,11 @@ struct KitchenToolsCard: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: isExpanded)
-        .padding(12)
+        .padding(AppTheme.scaled(12))
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(16)))
         .overlay(
-            RoundedRectangle(cornerRadius: 16).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: AppTheme.scaled(16)).stroke(AppTheme.primaryBlue.opacity(0.08), lineWidth: 1)
         )
         .onDisappear {
             cardSpeaker.stop()
