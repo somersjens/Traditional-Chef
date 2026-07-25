@@ -16,6 +16,10 @@ struct RecipeListView: View {
     private let maxDefaultServings: Int = 12
     private var searchBarInnerHorizontalPadding: CGFloat { AppTheme.scaled(6) }
     private var searchBarEdgeIconNudge: CGFloat { AppTheme.scaled(4) }
+    private var stickyHeaderScale: CGFloat { UIDevice.current.userInterfaceIdiom == .pad ? 1.2 : 1 }
+    private var stickyHeaderSideInset: CGFloat { AppTheme.scaled(UIDevice.current.userInterfaceIdiom == .pad ? 24 : 16) }
+    private var stickyHeaderIconSize: CGFloat { 16 * stickyHeaderScale }
+    private var stickyHeaderIconWidth: CGFloat { AppTheme.scaled(20 * stickyHeaderScale) }
     private var difficultyColumnWidth: CGFloat { difficultyDotSize + difficultyToNameExtraSpacing }
     private enum ScrollAnchor {
         static let top = "recipe-list-top"
@@ -58,7 +62,7 @@ struct RecipeListView: View {
             ZStack {
                 AppTheme.pageBackground.ignoresSafeArea()
 
-                VStack(spacing: 10) {
+                VStack(spacing: AppTheme.scaled(10)) {
                     topBar
                         .opacity(loadingForegroundOpacity)
 
@@ -78,6 +82,7 @@ struct RecipeListView: View {
                             },
                             locale: locale
                         )
+                        .padding(.horizontal, AppTheme.scaled(16))
                         .frame(maxWidth: contentMaxWidth, alignment: .leading)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .opacity(loadingForegroundOpacity)
@@ -500,22 +505,21 @@ struct RecipeListView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: AppTheme.scaled(16)) {
             randomizeButton
             vegetarianFilterButton
             Spacer()
-            HStack(spacing: 14) {
+            HStack(spacing: AppTheme.scaled(16)) {
                 recipeImageToggleButton
                 settingsButton
             }
-            .padding(.trailing, 15)
         }
         .overlay(alignment: .center) {
             Button {
                 hasSeenWelcome = false
             } label: {
                 Text(appDisplayName)
-                    .font(AppTheme.systemFont(size: 30.4, weight: .semibold))
+                    .font(AppTheme.systemFont(size: 30.4 * stickyHeaderScale, weight: .semibold))
                     .foregroundStyle(AppTheme.primaryBlue)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
@@ -523,9 +527,9 @@ struct RecipeListView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(Text(AppLanguage.string("welcome.title", locale: locale)))
         }
-        .padding(.horizontal, AppTheme.scaled(16))
+        .padding(.horizontal, stickyHeaderSideInset)
         .padding(.top, AppTheme.scaled(10))
-        .padding(.bottom, AppTheme.scaled(8))
+        .padding(.bottom, AppTheme.scaled(10))
         .frame(maxWidth: contentMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -536,9 +540,9 @@ struct RecipeListView: View {
             requestScrollToTop()
         } label: {
             Image(systemName: vm.vegetarianOnly ? "leaf.circle.fill" : "leaf")
-                .font(AppTheme.systemFont(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: stickyHeaderIconSize, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: AppTheme.scaled(20), alignment: .center)
+                .frame(width: stickyHeaderIconWidth, alignment: .center)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("Vegetarian filter"))
@@ -555,9 +559,9 @@ struct RecipeListView: View {
             requestScrollToTop()
         } label: {
             Image(systemName: vm.isRandomModeActive ? "shuffle.circle.fill" : "shuffle")
-                .font(AppTheme.systemFont(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: stickyHeaderIconSize, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: AppTheme.scaled(20), alignment: .center)
+                .frame(width: stickyHeaderIconWidth, alignment: .center)
         }
         .buttonStyle(.plain)
         .padding(.leading, 8)
@@ -571,9 +575,9 @@ struct RecipeListView: View {
             }
         } label: {
             Image(systemName: showRecipeListImages ? "photo.fill" : "photo")
-                .font(AppTheme.systemFont(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: stickyHeaderIconSize, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: AppTheme.scaled(20), alignment: .center)
+                .frame(width: stickyHeaderIconWidth, alignment: .center)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(AppLanguage.string("recipes.toggleImages", locale: locale)))
@@ -649,7 +653,7 @@ struct RecipeListView: View {
         .frame(height: showSettings ? settingsCardMeasuredHeight : 0, alignment: .top)
         .clipped()
         .opacity(showSettings ? 1 : 0)
-        .padding(.top, showSettings ? 6 : 0)
+        .padding(.top, showSettings ? AppTheme.scaled(8) : 0)
         .onPreferenceChange(SettingsCardHeightPreferenceKey.self) { height in
             if height > 0 {
                 settingsCardMeasuredHeight = height
@@ -668,9 +672,9 @@ struct RecipeListView: View {
             }
         } label: {
             Image(systemName: "gearshape.fill")
-                .font(AppTheme.systemFont(size: 16, weight: .semibold))
+                .font(AppTheme.systemFont(size: stickyHeaderIconSize, weight: .semibold))
                 .foregroundStyle(AppTheme.primaryBlue)
-                .frame(width: AppTheme.scaled(20), alignment: .center)
+                .frame(width: stickyHeaderIconWidth, alignment: .center)
         }
         .buttonStyle(.plain)
         .background(Color.clear)
@@ -680,9 +684,9 @@ struct RecipeListView: View {
     private var settingsCard: some View {
         let selectedLanguage = AppLanguage.supported.first(where: { $0.code == appLanguage })
         let controlFont = Font.headline.weight(.regular)
-        let rowMinHeight: CGFloat = 44
-        let rowVerticalPadding: CGFloat = 4
-        return VStack(alignment: .leading, spacing: 12) {
+        let rowMinHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 54 : 44
+        let rowVerticalPadding: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 7 : 4
+        return VStack(alignment: .leading, spacing: AppTheme.scaled(12)) {
             HStack {
                 Text(AppLanguage.string("settings.title", locale: locale))
                     .font(.title3.weight(.semibold))
@@ -933,7 +937,7 @@ struct RecipeListView: View {
                 .padding(.vertical, rowVerticalPadding)
                 .frame(minHeight: rowMinHeight)
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, AppTheme.scaled(6))
             .padding(.horizontal, AppTheme.scaled(14))
             .background(AppTheme.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.scaled(12)))

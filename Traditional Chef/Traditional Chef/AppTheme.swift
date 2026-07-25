@@ -7,7 +7,9 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static var layoutScale: CGFloat { UIDevice.current.userInterfaceIdiom == .pad ? 2.25 : 1 }
+    // Scale text and layout together on iPad so the larger canvas stays readable
+    // while margins and touch targets retain their intended proportions.
+    static var layoutScale: CGFloat { UIDevice.current.userInterfaceIdiom == .pad ? 1.5 : 1 }
     static var iPadDynamicTypeSize: DynamicTypeSize? { UIDevice.current.userInterfaceIdiom == .pad ? .accessibility1 : nil }
 
     static func scaled(_ value: CGFloat) -> CGFloat { value * layoutScale }

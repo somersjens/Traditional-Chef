@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct WelcomeView: View {
     private let welcomeBackgroundColor = Color(hex: "FAF5F0")
@@ -16,7 +17,10 @@ struct WelcomeView: View {
     @State private var currentFrameName: String = "11"
     private var locale: Locale { Locale(identifier: appLanguage) }
     private var isCompactHeight: Bool { verticalSizeClass == .compact }
+    private var isIPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
     private var welcomeSpacing: CGFloat { AppTheme.scaled(isCompactHeight ? 8 : 18) }
+    private var horizontalInset: CGFloat { AppTheme.scaled(isIPad ? 28 : 24) }
+    private var contentMaxWidth: CGFloat { AppTheme.scaled(isIPad ? 500 : 360) }
     private var sponsorMessage: AttributedString {
         var message = AttributedString(AppLanguage.string("welcome.sponsorMessage", locale: locale))
         if let range = message.range(of: "Hakketjak") {
@@ -36,7 +40,10 @@ struct WelcomeView: View {
                 VStack(spacing: welcomeSpacing) {
                     Spacer(minLength: AppTheme.scaled(isCompactHeight ? 8 : 18))
 
+                    // The illustration is deliberately full bleed: individual
+                    // frames animate ingredients out through the screen edges.
                     animationStage(in: proxy)
+                        .padding(.horizontal, -(horizontalInset + max(proxy.safeAreaInsets.leading, proxy.safeAreaInsets.trailing)))
 
                     VStack(spacing: AppTheme.scaled(isCompactHeight ? 8 : 14)) {
                         Text(AppLanguage.string("welcome.greeting", locale: locale))
@@ -67,12 +74,13 @@ struct WelcomeView: View {
                             .lineSpacing(AppTheme.scaled(1.8))
                             .padding(.horizontal, AppTheme.scaled(22))
                     }
-                    .frame(maxWidth: AppTheme.scaled(360))
+                    .frame(maxWidth: contentMaxWidth)
                     .frame(maxWidth: .infinity, alignment: .center)
 
                     Spacer(minLength: AppTheme.scaled(isCompactHeight ? 8 : 24))
                 }
-                .padding(.horizontal, AppTheme.scaled(24) + proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing)
+                .padding(.leading, horizontalInset + proxy.safeAreaInsets.leading)
+                .padding(.trailing, horizontalInset + proxy.safeAreaInsets.trailing)
                 .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
             }
         }
@@ -82,9 +90,8 @@ struct WelcomeView: View {
     }
 
     private func animationStage(in proxy: GeometryProxy) -> some View {
-        let availableWidth = max(proxy.size.width - AppTheme.scaled(48), 1)
-        let maxStageWidth = min(availableWidth, AppTheme.scaled(isCompactHeight ? 360 : 390))
-        let maxStageHeight = min(proxy.size.height * (isCompactHeight ? 0.48 : 0.56), AppTheme.scaled(isCompactHeight ? 240 : 390))
+        let maxStageWidth = proxy.size.width
+        let maxStageHeight = min(proxy.size.height * (isCompactHeight ? 0.48 : 0.56), AppTheme.scaled(isCompactHeight ? 240 : (isIPad ? 340 : 390)))
 
         return ZStack {
             Image(currentFrameName)

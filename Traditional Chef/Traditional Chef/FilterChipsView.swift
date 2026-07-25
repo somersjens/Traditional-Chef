@@ -12,7 +12,7 @@ struct FilterChipsView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            HStack(spacing: 7) {
+            HStack(spacing: AppTheme.scaled(7)) {
                 ForEach(RecipeCategory.filterCategories) { cat in
                     let isOn = selected.contains(cat)
                     Button {
@@ -23,11 +23,10 @@ struct FilterChipsView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 4)
+            .padding(.vertical, AppTheme.scaled(4))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
-        .frame(height: 40)
+        .frame(height: AppTheme.scaled(40))
     }
 
     private func chipLabel(text: String, isSelected: Bool, availableWidth: CGFloat) -> some View {
